@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "out": "dist/js-search.js",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "sourceRoot": "source",
+    "target": "ES5"
+  },
+  "files": [
+    "source/index-strategy/index-strategy.ts",
+    "source/index-strategy/prefix-index-strategy.ts",
+    "source/pruning-strategy/all-words-must-match-pruning-strategy.ts",
+    "source/pruning-strategy/pruning-strategy.ts",
+    "source/sanitizer/lower-case-sanitizer.ts",
+    "source/sanitizer/sanitizer.ts",
+    "source/tokenizer/tokenizer.ts",
+    "source/tokenizer/whitespace-tokenizer.ts",
+    "source/search.ts",
+    "source/search-token-to-document-map.ts",
+    "source/uid-to-document-map.ts"
+  ]
+}
