@@ -117,11 +117,8 @@ class Search {
 
     for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
       var token:string = tokens[i];
-      var uidToDocumentMap:IUidToDocumentMap = this.searchIndex_[token];
 
-      if (uidToDocumentMap) {
-        uidToDocumentMaps.push(uidToDocumentMap);
-      }
+      uidToDocumentMaps.push(this.searchIndex_[token] || {});
     }
 
     var uidToDocumentMap:IUidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);

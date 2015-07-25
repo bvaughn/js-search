@@ -56,6 +56,12 @@ describe('Search', function() {
   it('should find no matches if none exist', function() {
     search.addIndex('title');
     search.addDocument(documentFoo);
-    validateSearchResults(search.search('notinthetitle'), []);
+    validateSearchResults(search.search('xyz'), []);
+  });
+
+  it('should find no matches if one token is empty', function() {
+    search.addIndex('title');
+    search.addDocument(documentFoo);
+    validateSearchResults(search.search('foo xyz'), []);
   });
 });

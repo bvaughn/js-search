@@ -126,10 +126,7 @@ var Search = (function () {
         var uidToDocumentMaps = [];
         for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
             var token = tokens[i];
-            var uidToDocumentMap = this.searchIndex_[token];
-            if (uidToDocumentMap) {
-                uidToDocumentMaps.push(uidToDocumentMap);
-            }
+            uidToDocumentMaps.push(this.searchIndex_[token] || {});
         }
         var uidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
         var documents = [];
