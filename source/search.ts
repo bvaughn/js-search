@@ -1,6 +1,7 @@
 /**
- * Enables simple client-side indexing and searching of a set of documents. Documents can be searchable by any field(s)
- * and indexing and search strategies are highly customizable.
+ * Simple client-side searching within a set of documents.
+ *
+ * <p>Documents can be searched by any number of fields. Indexing and search strategies are highly customizable.
  */
 class Search {
 
