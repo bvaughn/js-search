@@ -3,10 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>JS Search</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <body>
-<h3>Searchable Fields</h3>
-<ul>
+
+<ul class="list-inline">
+  <li>
+    <h3>Books</h3>
+  </li>
+  <li>
+    Index fields:
+  </li>
   <li>
     <input type="checkbox" checked id="titleCheckbox"> Title
   </li>
@@ -15,10 +22,9 @@
   </li>
 </ul>
 
-<input type="search" id="searchInput" placeholder="Search..">
+<input class="form-control" type="search" id="searchInput" placeholder="Search..">
 
-<h3>Books</h3>
-<table id="indexedBooksTable">
+<table id="indexedBooksTable" class="table">
   <thead>
     <tr>
       <th>ISBN</th>
@@ -35,7 +41,7 @@
 <script type="text/javascript">
   var search;
   var indexOnTitle = true, indexOnAuthor = true;
-  var books = [
+  var allBooks = [
     {isbn: '9781743293744', title: 'Old Man\'s War', author: 'John Scalzi'},
     {isbn: '9780312696955', title: 'The Lock Artist', author: 'Steve Hamilton'},
     {isbn: '0321784421', title: 'HTML5', author: 'Remy Sharp'},
@@ -69,33 +75,9 @@
     if (indexOnAuthor) {
       search.addIndex('author');
     }
-    search.addDocuments(books);
+    search.addDocuments(allBooks);
   };
   rebuildSearchIndex();
-
-  var searchResultsList = document.getElementById('searchResultsList');
-  var searchInput = document.getElementById('searchInput');
-
-  document.getElementById('authorCheckbox').onchange = function() {
-    indexOnAuthor = !indexOnAuthor;
-    rebuildSearchIndex();
-  };
-  document.getElementById('titleCheckbox').onchange = function() {
-    indexOnTitle = !indexOnTitle;
-    rebuildSearchIndex();
-  };
-  searchInput.oninput = function() {
-    var query = searchInput.value;
-    var results = search.search(query);
-
-    if (results.length > 0) {
-      updateBooksTable(results);
-    } else if (!query) {
-      updateBooksTable(books);
-    } else {
-      updateBooksTable([]);
-    }
-  };
 
   var indexedBooksTable = document.getElementById('indexedBooksTable');
   var indexedBooksTBody = indexedBooksTable.tBodies[0];
@@ -120,9 +102,40 @@
 
       indexedBooksTBody.appendChild(tableRow);
     }
+
+    var searchBooks = function() {
+      var query = searchInput.value;
+      var results = search.search(query);
+
+      if (results.length > 0) {
+        console.log('found',results.length,'results'); // TODO
+        updateBooksTable(results);
+      } else if (!!query) {
+        console.log('no results found for query'); // TODO
+        updateBooksTable([]);
+      } else {
+        console.log('cleared query, resetting',allBooks.length,'books'); // TODO
+        updateBooksTable(allBooks);
+      }
+    };
+
+    var searchResultsList = document.getElementById('searchResultsList');
+    var searchInput = document.getElementById('searchInput');
+
+    document.getElementById('authorCheckbox').onchange = function() {
+      indexOnAuthor = !indexOnAuthor;
+      rebuildSearchIndex();
+      searchBooks();
+    };
+    document.getElementById('titleCheckbox').onchange = function() {
+      indexOnTitle = !indexOnTitle;
+      rebuildSearchIndex();
+      searchBooks();
+    };
+    searchInput.oninput = searchBooks;
   };
 
-  updateBooksTable(books);
+  updateBooksTable(allBooks);
 </script>
 </body>
 </html>

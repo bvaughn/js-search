@@ -5,7 +5,7 @@
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
-    "sourceRoot": "source",
+    "sourceRoot": "/source/",
     "target": "ES5"
   },
   "files": [
