@@ -17,8 +17,19 @@
 
 <input type="search" id="searchInput" placeholder="Search..">
 
-<h3>Search Results</h3>
-<ul id="searchResultsList"></ul>
+<h3>Books</h3>
+<table id="indexedBooksTable">
+  <thead>
+    <tr>
+      <th>ISBN</th>
+      <th>Title</th>
+      <th>Author</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>
 
 <script type="text/javascript" src="dist/js-search.js"></script>
 <script type="text/javascript">
@@ -63,6 +74,7 @@
   rebuildSearchIndex();
 
   var searchResultsList = document.getElementById('searchResultsList');
+  var searchInput = document.getElementById('searchInput');
 
   document.getElementById('authorCheckbox').onchange = function() {
     indexOnAuthor = !indexOnAuthor;
@@ -72,19 +84,45 @@
     indexOnTitle = !indexOnTitle;
     rebuildSearchIndex();
   };
-  document.getElementById('searchInput').oninput = function(event) {
-    var query = event.target.value;
-    var books = search.search(query);
+  searchInput.oninput = function() {
+    var query = searchInput.value;
+    var results = search.search(query);
 
-    searchResultsList.innerHTML = '';
+    if (results.length > 0) {
+      updateBooksTable(results);
+    } else if (!query) {
+      updateBooksTable(books);
+    } else {
+      updateBooksTable([]);
+    }
+  };
+
+  var indexedBooksTable = document.getElementById('indexedBooksTable');
+  var indexedBooksTBody = indexedBooksTable.tBodies[0];
+
+  var updateBooksTable = function(books) {
+    indexedBooksTBody.innerHTML = '';
 
     for (var i = 0, length = books.length; i < length; i++) {
       var book = books[i];
-      var listItem = document.createElement('li');
-      listItem.innerHTML = book.title + ', <em>' + book.author + '</em>';
-      searchResultsList.appendChild(listItem);
+
+      var isbnColumn = document.createElement('td');
+      isbnColumn.innerText = book.isbn;
+      var titleColumn = document.createElement('td');
+      titleColumn.innerText = book.title;
+      var authorColumn = document.createElement('td');
+      authorColumn.innerText = book.author;
+
+      var tableRow = document.createElement('tr');
+      tableRow.appendChild(isbnColumn);
+      tableRow.appendChild(titleColumn);
+      tableRow.appendChild(authorColumn);
+
+      indexedBooksTBody.appendChild(tableRow);
     }
   };
+
+  updateBooksTable(books);
 </script>
 </body>
 </html>
