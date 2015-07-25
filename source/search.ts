@@ -101,7 +101,7 @@ class Search {
    * Add a new searchable field to the index. Existing documents will automatically be indexed using this new field.
    * @param field Searchable field (e.g. "title")
    */
-  public addSearchableField(field:string) {
+  public addIndex(field:string) {
     this.searchableFieldsMap_[field] = true;
     this.indexDocuments_(this.documents_, [field]);
   }

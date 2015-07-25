@@ -39,7 +39,7 @@ declare class Search {
     tokenizer: ITokenizer;
     addDocument(document: Object): void;
     addDocuments(documents: Array<Object>): void;
-    addSearchableField(field: string): void;
+    addIndex(field: string): void;
     search(query: string): Array<Object>;
     private indexDocuments_(documents, searchableFields);
 }

@@ -21,8 +21,8 @@ var angelsAndDemons = {
 };
 
 var search = new Search('isbn');
-search.addSearchableField('title');
-search.addSearchableField('author');
+search.addIndex('title');
+search.addIndex('author');
 search.addDocuments([theGreatGatsby, theDaVinciCode, angelsAndDemons]);
 search.search('The');   // theGreatGatsby, theDaVinciCode
 search.search('scott'); // theGreatGatsby

@@ -117,7 +117,7 @@ var Search = (function () {
         this.documents_.push.apply(this.documents_, documents);
         this.indexDocuments_(documents, Object.keys(this.searchableFieldsMap_));
     };
-    Search.prototype.addSearchableField = function (field) {
+    Search.prototype.addIndex = function (field) {
         this.searchableFieldsMap_[field] = true;
         this.indexDocuments_(this.documents_, [field]);
     };

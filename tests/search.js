@@ -29,7 +29,7 @@ describe('Search', function() {
   });
 
   it('should index a new document on all searchable fields', function() {
-    search.addSearchableField('title');
+    search.addIndex('title');
     spyOn(search.indexStrategy_, 'expandToken').and.returnValue([]);
     search.addDocument(documentBar);
     expect(search.indexStrategy_.expandToken).toHaveBeenCalledWith('bar');
@@ -38,14 +38,14 @@ describe('Search', function() {
   it('should re-index existing documents if a new searchable field is added', function() {
     search.addDocument(documentBar);
     spyOn(search.indexStrategy_, 'expandToken').and.returnValue([]);
-    search.addSearchableField('title');
+    search.addIndex('title');
     expect(search.indexStrategy_.expandToken).toHaveBeenCalledWith('bar');
 
   });
 
   it('should find matches for all searchable fields', function() {
-    search.addSearchableField('title');
-    search.addSearchableField('description');
+    search.addIndex('title');
+    search.addIndex('description');
     search.addDocument(documentFoo);
     // Search title text
     validateSearchResults(search.search('foo'), [documentFoo]);
@@ -54,7 +54,7 @@ describe('Search', function() {
   });
 
   it('should find no matches if none exist', function() {
-    search.addSearchableField('title');
+    search.addIndex('title');
     search.addDocument(documentFoo);
     validateSearchResults(search.search('notinthetitle'), []);
   });
