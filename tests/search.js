@@ -30,26 +30,16 @@ describe('Search', function() {
 
   it('should index a new document on all searchable fields', function() {
     search.addSearchableField('title');
-    spyOn(search.indexStrategy_, 'index');
+    spyOn(search.indexStrategy_, 'expandToken').and.returnValue([]);
     search.addDocument(documentBar);
-    expect(search.indexStrategy_.index).toHaveBeenCalled();
-    var args = search.indexStrategy_.index.calls.mostRecent().args;
-    expect(args[1]).toEqual(documentBar.uid);
-    expect(args[2].length).toEqual(1);
-    expect(args[2]).toContain('bar');
-    expect(args[3]).toBe(documentBar);
+    expect(search.indexStrategy_.expandToken).toHaveBeenCalledWith('bar');
   });
 
   it('should re-index existing documents if a new searchable field is added', function() {
     search.addDocument(documentBar);
-    spyOn(search.indexStrategy_, 'index');
+    spyOn(search.indexStrategy_, 'expandToken').and.returnValue([]);
     search.addSearchableField('title');
-    expect(search.indexStrategy_.index).toHaveBeenCalled();
-    var args = search.indexStrategy_.index.calls.mostRecent().args;
-    expect(args[1]).toEqual(documentBar.uid);
-    expect(args[2].length).toEqual(1);
-    expect(args[2]).toContain('bar');
-    expect(args[3]).toBe(documentBar);
+    expect(search.indexStrategy_.expandToken).toHaveBeenCalledWith('bar');
 
   });
 

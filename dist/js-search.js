@@ -2,18 +2,14 @@
 var PrefixIndexStrategy = (function () {
     function PrefixIndexStrategy() {
     }
-    PrefixIndexStrategy.prototype.index = function (searchIndex, uid, fieldTokens, document) {
-        for (var i = 0, numFieldValues = fieldTokens.length; i < numFieldValues; i++) {
-            var fieldToken = fieldTokens[i];
-            var prefixString = '';
-            for (var j = 0; j < fieldToken.length; j++) {
-                prefixString += fieldToken.charAt(j);
-                if (!searchIndex[prefixString]) {
-                    searchIndex[prefixString] = {};
-                }
-                searchIndex[prefixString][uid] = document;
-            }
+    PrefixIndexStrategy.prototype.expandToken = function (token) {
+        var expandedTokens = [];
+        var prefixString = '';
+        for (var i = 0; i < token.length; i++) {
+            prefixString += token.charAt(i);
+            expandedTokens.push(prefixString);
         }
+        return expandedTokens;
     };
     return PrefixIndexStrategy;
 })();
@@ -119,11 +115,11 @@ var Search = (function () {
     };
     Search.prototype.addDocuments = function (documents) {
         this.documents_.push.apply(this.documents_, documents);
-        this.initializeSearchIndex_(documents, Object.keys(this.searchableFieldsMap_));
+        this.indexDocuments_(documents, Object.keys(this.searchableFieldsMap_));
     };
     Search.prototype.addSearchableField = function (field) {
         this.searchableFieldsMap_[field] = true;
-        this.initializeSearchIndex_(this.documents_, [field]);
+        this.indexDocuments_(this.documents_, [field]);
     };
     Search.prototype.search = function (query) {
         var tokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
@@ -142,17 +138,27 @@ var Search = (function () {
         }
         return documents;
     };
-    Search.prototype.initializeSearchIndex_ = function (documents, searchableFields) {
+    Search.prototype.indexDocuments_ = function (documents, searchableFields) {
         this.initialized_ = true;
-        for (var i = 0, numDocuments = documents.length; i < numDocuments; i++) {
-            var document = documents[i];
+        for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
+            var document = documents[di];
             var uid = document[this.uidFieldName_];
-            for (var j = 0, numSearchableFields = searchableFields.length; j < numSearchableFields; j++) {
-                var searchableField = searchableFields[j];
+            for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
+                var searchableField = searchableFields[sfi];
                 var fieldValue = document[searchableField];
                 if (typeof fieldValue === 'string') {
                     var fieldTokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));
-                    this.indexStrategy_.index(this.searchIndex_, uid, fieldTokens, document);
+                    for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
+                        var fieldToken = fieldTokens[fti];
+                        var expandedTokens = this.indexStrategy_.expandToken(fieldToken);
+                        for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
+                            var expandedToken = expandedTokens[eti];
+                            if (!this.searchIndex_[expandedToken]) {
+                                this.searchIndex_[expandedToken] = {};
+                            }
+                            this.searchIndex_[expandedToken][uid] = document;
+                        }
+                    }
                 }
             }
         }

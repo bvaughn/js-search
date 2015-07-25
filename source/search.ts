@@ -1,3 +1,7 @@
+/**
+ * Enables simple client-side indexing and searching of a set of documents. Documents can be searchable by any field(s)
+ * and indexing and search strategies are highly customizable.
+ */
 class Search {
 
   private documents_:Array<Object>;
@@ -10,6 +14,11 @@ class Search {
   private searchIndex_:ISearchTokenToDocumentMap;
   private pruningStrategy_:IPruningStrategy;
 
+  /**
+   * Constructor.
+   * @param uidFieldName Field containing values that uniquely identify search documents; this field's values are used
+   *                     to ensure that a search result set does not contain duplicate objects.
+   */
   constructor(uidFieldName:string) {
     this.uidFieldName_ = uidFieldName;
 
@@ -23,6 +32,11 @@ class Search {
     this.searchIndex_ = {};
   }
 
+  /**
+   * Override the default index strategy.
+   * @param value Custom index strategy
+   * @throws Error if documents have already been indexed by this search instance
+   */
   public set indexStrategy(value:IIndexStrategy) {
     if (this.initialized_) {
       throw Error('IIndexStrategy cannot be set after initialization');
@@ -31,10 +45,19 @@ class Search {
     this.indexStrategy_ = value;
   }
 
+  /**
+   * Override the default pruning strategy.
+   * @param value Custom pruning strategy
+   */
   public set pruningStrategy(value:IPruningStrategy) {
     this.pruningStrategy_ = value;
   }
 
+  /**
+   * Override the default text sanitizing strategy.
+   * @param value Custom text sanitizing strategy
+   * @throws Error if documents have already been indexed by this search instance
+   */
   public set sanitizer(value:ISanitizer) {
     if (this.initialized_) {
       throw Error('ISanitizer cannot be set after initialization');
@@ -43,6 +66,11 @@ class Search {
     this.sanitizer_ = value;
   }
 
+  /**
+   * Override the default text tokenizing strategy.
+   * @param value Custom text tokenizing strategy
+   * @throws Error if documents have already been indexed by this search instance
+   */
   public set tokenizer(value:ITokenizer) {
     if (this.initialized_) {
       throw Error('ITokenizer cannot be set after initialization');
@@ -51,20 +79,37 @@ class Search {
     this.tokenizer_ = value;
   }
 
+  /**
+   * Add a searchable document to the index. Document will automatically be indexed for search.
+   * @param document
+   */
   public addDocument(document:Object):void {
     this.addDocuments([document]);
   }
 
+  /**
+   * Adds searchable documents to the index. Documents will automatically be indexed for search.
+   * @param document
+   */
   public addDocuments(documents:Array<Object>):void {
     this.documents_.push.apply(this.documents_, documents);
-    this.initializeSearchIndex_(documents, Object.keys(this.searchableFieldsMap_));
+    this.indexDocuments_(documents, Object.keys(this.searchableFieldsMap_));
   }
 
+  /**
+   * Add a new searchable field to the index. Existing documents will automatically be indexed using this new field.
+   * @param field Searchable field (e.g. "title")
+   */
   public addSearchableField(field:string) {
     this.searchableFieldsMap_[field] = true;
-    this.initializeSearchIndex_(this.documents_, [field]);
+    this.indexDocuments_(this.documents_, [field]);
   }
 
+  /**
+   * Search all documents for ones matching the specified query text.
+   * @param query
+   * @returns {Array<Object>}
+   */
   public search(query:string):Array<Object> {
     var tokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
     var uidToDocumentMaps:Array<IUidToDocumentMap> = [];
@@ -90,23 +135,36 @@ class Search {
     return documents;
   }
 
-  private initializeSearchIndex_(documents:Array<Object>, searchableFields:Array<string>):void {
+  private indexDocuments_(documents:Array<Object>, searchableFields:Array<string>):void {
     this.initialized_ = true;
 
-    for (var i = 0, numDocuments = documents.length; i < numDocuments; i++) {
-      var document:Object = documents[i];
+    for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
+      var document:Object = documents[di];
       var uid:string = document[this.uidFieldName_];
 
       // TODO Error if missing UID
 
-      for (var j = 0, numSearchableFields = searchableFields.length; j < numSearchableFields; j++) {
-        var searchableField:string = searchableFields[j];
+      for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
+        var searchableField:string = searchableFields[sfi];
         var fieldValue:any = document[searchableField];
 
         if (typeof fieldValue === 'string') {
           var fieldTokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));
 
-          this.indexStrategy_.index(this.searchIndex_, uid, fieldTokens, document);
+          for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
+            var fieldToken:string = fieldTokens[fti];
+            var expandedTokens:Array<string> = this.indexStrategy_.expandToken(fieldToken);
+
+            for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
+              var expandedToken = expandedTokens[eti];
+
+              if (!this.searchIndex_[expandedToken]) {
+                this.searchIndex_[expandedToken] = {};
+              }
+
+              this.searchIndex_[expandedToken][uid] = document;
+            }
+          }
         }
 
         // TODO console.warn if missing field

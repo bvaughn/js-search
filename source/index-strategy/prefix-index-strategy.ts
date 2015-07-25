@@ -1,19 +1,22 @@
+/**
+ * Indexes for prefix searches (e.g. the term "cat" is indexed as "c", "ca", and "cat" allowing prefix search lookups).
+ */
 class PrefixIndexStrategy implements IIndexStrategy {
 
-  public index(searchIndex:ISearchTokenToDocumentMap, uid:string, fieldTokens:Array<string>, document:Object):void {
-    for (var i = 0, numFieldValues = fieldTokens.length; i < numFieldValues; i++) {
-      var fieldToken:string = fieldTokens[i];
-      var prefixString:string = '';
+  /**
+   * @inheritDocs
+   */
+  public expandToken(token:string):Array<string> {
+    var expandedTokens = [];
 
-      for (var j = 0; j < fieldToken.length; j++) {
-        prefixString += fieldToken.charAt(j);
+    var prefixString:string = '';
 
-        if (!searchIndex[prefixString]) {
-          searchIndex[prefixString] = {};
-        }
+    for (var i = 0; i < token.length; i++) {
+      prefixString += token.charAt(i);
 
-        searchIndex[prefixString][uid] = document;
-      }
+      expandedTokens.push(prefixString);
     }
+
+    return expandedTokens;
   }
 };

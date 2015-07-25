@@ -1,8 +1,8 @@
 interface IIndexStrategy {
-    index(searchIndex: ISearchTokenToDocumentMap, uid: string, fieldTokens: Array<String>, document: Object): void;
+    expandToken(token: string): Array<string>;
 }
 declare class PrefixIndexStrategy implements IIndexStrategy {
-    index(searchIndex: ISearchTokenToDocumentMap, uid: string, fieldTokens: Array<string>, document: Object): void;
+    expandToken(token: string): Array<string>;
 }
 declare class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
     prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
@@ -41,7 +41,7 @@ declare class Search {
     addDocuments(documents: Array<Object>): void;
     addSearchableField(field: string): void;
     search(query: string): Array<Object>;
-    private initializeSearchIndex_(documents, searchableFields);
+    private indexDocuments_(documents, searchableFields);
 }
 interface ISearchTokenToDocumentMap {
     [uid: string]: IUidToDocumentMap;

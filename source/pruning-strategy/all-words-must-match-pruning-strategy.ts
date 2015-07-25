@@ -1,5 +1,11 @@
+/**
+ * This pruning policy only returns search results matching every search token.
+ */
 class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
 
+  /**
+   * @inheritDocs
+   */
   public prune(uidToDocumentMaps:Array<IUidToDocumentMap>):IUidToDocumentMap {
     var filteredUidToDocumentMap:IUidToDocumentMap = {};
 
