@@ -3,7 +3,7 @@
 
 For example, JS Search could be used to index the following books:
 
-```js
+```javascript
 var theGreatGatsby = {
   isbn: '9781597226769',
   title: 'The Great Gatsby',
@@ -24,7 +24,7 @@ var search = new Search('isbn');
 search.addIndex('title');
 search.addIndex('author');
 search.addDocuments([theGreatGatsby, theDaVinciCode, angelsAndDemons]);
-search.search('The');   // theGreatGatsby, theDaVinciCode
-search.search('scott'); // theGreatGatsby
-search.search('d');     // angelsAndDemons, theDaVinciCode
+search.search('The');   // [theGreatGatsby, theDaVinciCode]
+search.search('scott'); // [theGreatGatsby]
+search.search('d');     // [angelsAndDemons, theDaVinciCode]
 ```

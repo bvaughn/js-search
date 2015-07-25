@@ -2,9 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title></title>
+  <title>JS Search</title>
 </head>
 <body>
+<h3>Searchable Fields</h3>
+<ul>
+  <li>
+    <input type="checkbox" checked id="titleCheckbox"> Title
+  </li>
+  <li>
+    <input type="checkbox" checked id="authorCheckbox"> Author
+  </li>
+</ul>
 
+<input type="search" id="searchInput" placeholder="Search..">
+
+<h3>Search Results</h3>
+<ul id="searchResultsList"></ul>
+
+<script type="text/javascript" src="dist/js-search.js"></script>
+<script type="text/javascript">
+  var search;
+  var indexOnTitle = true, indexOnAuthor = true;
+  var books = [
+    {isbn: '9781743293744', title: 'Old Man\'s War', author: 'John Scalzi'},
+    {isbn: '9780312696955', title: 'The Lock Artist', author: 'Steve Hamilton'},
+    {isbn: '0321784421', title: 'HTML5', author: 'Remy Sharp'},
+    {isbn: '9781409063896', title: 'Right Ho Jeeves', author: 'P.D. Woodhouse'},
+    {isbn: '9781863406536', title: 'The Code of the Wooster', author: 'P.D. Woodhouse'},
+    {isbn: '9781580811194', title: 'Thank You Jeeves', author: 'P.D. Woodhouse'},
+    {isbn: '9780828815130', title: 'The DaVinci Code', author: 'Dan Brown'},
+    {isbn: '9780743501569', title: 'Angels & Demons', author: 'Dan Brown'},
+    {isbn: '9782267017908', title: 'The Silmarillion', author: 'J.R.R Tolkien'},
+    {isbn: '9780143125303', title: 'Syrup', author: 'Max Barry'},
+    {isbn: '9781407447292', title: 'The Lost Symbol', author: 'Dan Brown'},
+    {isbn: '9780730491217', title: 'The Book of Lies', author: 'Brad Meltzer'},
+    {isbn: '9783442541829', title: 'Lamb', author: 'Christopher Moore'},
+    {isbn: '9780061974779', title: 'Fool', author: 'Christopher Moore'},
+    {isbn: '9780575075337', title: 'Incompetence', author: 'Rob Grant'},
+    {isbn: '9780575078208', title: 'Fat', author: 'Rob Grant'},
+    {isbn: '9780140289756', title: 'Colony', author: 'Rob Grant'},
+    {isbn: '9780140171501', title: 'Backwards, Red Dwarf', author: 'Rob Grant'},
+    {isbn: '9780553819229', title: 'The Grand Design', author: 'Stephen Hawking'},
+    {isbn: '9781400123230', title: 'The Book of Samson', author: 'David Maine'},
+    {isbn: '9780312997304', title: 'The Preservationist', author: 'David Maine'},
+    {isbn: '9780312328504', title: 'Fallen', author: 'David Maine'},
+    {isbn: '9780312373016', title: 'Monster 1959', author: 'David Maine'}
+  ];
+
+  var rebuildSearchIndex = function() {
+    search = new Search('isbn');
+    if (indexOnTitle) {
+      search.addIndex('title');
+    }
+    if (indexOnAuthor) {
+      search.addIndex('author');
+    }
+    search.addDocuments(books);
+  };
+  rebuildSearchIndex();
+
+  var searchResultsList = document.getElementById('searchResultsList');
+
+  document.getElementById('authorCheckbox').onchange = function() {
+    indexOnAuthor = !indexOnAuthor;
+    rebuildSearchIndex();
+  };
+  document.getElementById('titleCheckbox').onchange = function() {
+    indexOnTitle = !indexOnTitle;
+    rebuildSearchIndex();
+  };
+  document.getElementById('searchInput').oninput = function(event) {
+    var query = event.target.value;
+    var books = search.search(query);
+
+    searchResultsList.innerHTML = '';
+
+    for (var i = 0, length = books.length; i < length; i++) {
+      var book = books[i];
+      var listItem = document.createElement('li');
+      listItem.innerHTML = book.title + ', <em>' + book.author + '</em>';
+      searchResultsList.appendChild(listItem);
+    }
+  };
+</script>
 </body>
 </html>
