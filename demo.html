@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <title>JS Search</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <style type="text/css">
+    mark {
+      padding: 0;
+      background-color: #449d44;
+      color: #ffffff;
+    }
+  </style>
 </head>
 <body>
 
@@ -81,19 +88,34 @@
 
   var indexedBooksTable = document.getElementById('indexedBooksTable');
   var indexedBooksTBody = indexedBooksTable.tBodies[0];
+  var searchResultsList = document.getElementById('searchResultsList');
+  var searchInput = document.getElementById('searchInput');
+
+  var tokenHighlighter = new TokenHighlighter();
+  var tokenizer = new WhitespaceTokenizer();
 
   var updateBooksTable = function(books) {
     indexedBooksTBody.innerHTML = '';
+
+    var tokens = tokenizer.tokenize(searchInput.value);
 
     for (var i = 0, length = books.length; i < length; i++) {
       var book = books[i];
 
       var isbnColumn = document.createElement('td');
       isbnColumn.innerText = book.isbn;
+
       var titleColumn = document.createElement('td');
-      titleColumn.innerText = book.title;
+      titleColumn.innerHTML =
+          indexOnTitle ?
+              tokenHighlighter.highlight(book.title, tokens) :
+              book.title;
+
       var authorColumn = document.createElement('td');
-      authorColumn.innerText = book.author;
+      authorColumn.innerHTML =
+          indexOnAuthor ?
+              tokenHighlighter.highlight(book.author, tokens) :
+              book.author;
 
       var tableRow = document.createElement('tr');
       tableRow.appendChild(isbnColumn);
@@ -108,19 +130,13 @@
       var results = search.search(query);
 
       if (results.length > 0) {
-        console.log('found',results.length,'results'); // TODO
         updateBooksTable(results);
       } else if (!!query) {
-        console.log('no results found for query'); // TODO
         updateBooksTable([]);
       } else {
-        console.log('cleared query, resetting',allBooks.length,'books'); // TODO
         updateBooksTable(allBooks);
       }
     };
-
-    var searchResultsList = document.getElementById('searchResultsList');
-    var searchInput = document.getElementById('searchInput');
 
     document.getElementById('authorCheckbox').onchange = function() {
       indexOnAuthor = !indexOnAuthor;

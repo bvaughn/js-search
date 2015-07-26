@@ -163,6 +163,57 @@ var WhitespaceTokenizer = (function () {
     return WhitespaceTokenizer;
 })();
 ;
+var TokenHighlighter = (function () {
+    function TokenHighlighter(opt_indexStrategy, opt_sanitizer, opt_wrapperTagName) {
+        this.indexStrategy_ = opt_indexStrategy || new PrefixIndexStrategy();
+        this.sanitizer_ = opt_sanitizer || new LowerCaseSanitizer();
+        this.wrapperTagName_ = opt_wrapperTagName || 'mark';
+    }
+    TokenHighlighter.prototype.highlight = function (text, tokens) {
+        var tagsLength = this.wrapText_('').length;
+        var tokenDictionary = {};
+        for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+            var token = this.sanitizer_.sanitize(tokens[i]);
+            var expandedTokens = this.indexStrategy_.expandToken(token);
+            for (var j = 0, numExpandedTokens = expandedTokens.length; j < numExpandedTokens; j++) {
+                var expandedToken = expandedTokens[j];
+                if (!tokenDictionary[expandedToken]) {
+                    tokenDictionary[expandedToken] = [token];
+                }
+                else {
+                    tokenDictionary[expandedToken].push(token);
+                }
+            }
+        }
+        var actualCurrentWord = '';
+        var sanitizedCurrentWord = '';
+        var currentWordStartIndex = 0;
+        for (var i = 0, textLength = text.length; i < textLength; i++) {
+            var character = text.charAt(i);
+            if (character === ' ') {
+                actualCurrentWord = '';
+                sanitizedCurrentWord = '';
+                currentWordStartIndex = i + 1;
+            }
+            else {
+                actualCurrentWord += character;
+                sanitizedCurrentWord += this.sanitizer_.sanitize(character);
+            }
+            if (tokenDictionary[sanitizedCurrentWord] &&
+                tokenDictionary[sanitizedCurrentWord].indexOf(sanitizedCurrentWord) >= 0) {
+                actualCurrentWord = this.wrapText_(actualCurrentWord);
+                text = text.substring(0, currentWordStartIndex) + actualCurrentWord + text.substring(i + 1);
+                i += tagsLength;
+                textLength += tagsLength;
+            }
+        }
+        return text;
+    };
+    TokenHighlighter.prototype.wrapText_ = function (text) {
+        return "<" + this.wrapperTagName_ + ">" + text + "</" + this.wrapperTagName_ + ">";
+    };
+    return TokenHighlighter;
+})();
 ;
 ;
 //# sourceMappingURL=js-search.js.map

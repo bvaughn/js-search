@@ -18,6 +18,7 @@
     "source/sanitizer/sanitizer.ts",
     "source/tokenizer/tokenizer.ts",
     "source/tokenizer/whitespace-tokenizer.ts",
+    "source/token-highlighter.ts",
     "source/search-token-to-document-map.ts",
     "source/uid-to-document-map.ts"
   ]

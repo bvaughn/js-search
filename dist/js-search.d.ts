@@ -43,6 +43,14 @@ interface ITokenizer {
 declare class WhitespaceTokenizer implements ITokenizer {
     tokenize(text: string): Array<string>;
 }
+declare class TokenHighlighter {
+    private indexStrategy_;
+    private sanitizer_;
+    private wrapperTagName_;
+    constructor(opt_indexStrategy: IIndexStrategy, opt_sanitizer: ISanitizer, opt_wrapperTagName: string);
+    highlight(text: string, tokens: Array<string>): string;
+    private wrapText_(text);
+}
 interface ISearchTokenToDocumentMap {
     [uid: string]: IUidToDocumentMap;
 }
