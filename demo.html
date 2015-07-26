@@ -91,13 +91,12 @@
   var searchResultsList = document.getElementById('searchResultsList');
   var searchInput = document.getElementById('searchInput');
 
-  var tokenHighlighter = new TokenHighlighter();
-  var tokenizer = new WhitespaceTokenizer();
+  var tokenHighlighter = new TokenHighlighter(search.indexStrategy, search.sanitizer);
 
   var updateBooksTable = function(books) {
     indexedBooksTBody.innerHTML = '';
 
-    var tokens = tokenizer.tokenize(searchInput.value);
+    var tokens = search.tokenizer.tokenize(searchInput.value);
 
     for (var i = 0, length = books.length; i < length; i++) {
       var book = books[i];

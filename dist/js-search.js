@@ -10,6 +10,9 @@ var JsSearch = (function () {
         this.searchIndex_ = {};
     }
     Object.defineProperty(JsSearch.prototype, "indexStrategy", {
+        get: function () {
+            return this.indexStrategy_;
+        },
         set: function (value) {
             if (this.initialized_) {
                 throw Error('IIndexStrategy cannot be set after initialization');
@@ -20,6 +23,9 @@ var JsSearch = (function () {
         configurable: true
     });
     Object.defineProperty(JsSearch.prototype, "pruningStrategy", {
+        get: function () {
+            return this.pruningStrategy_;
+        },
         set: function (value) {
             this.pruningStrategy_ = value;
         },
@@ -27,6 +33,9 @@ var JsSearch = (function () {
         configurable: true
     });
     Object.defineProperty(JsSearch.prototype, "sanitizer", {
+        get: function () {
+            return this.sanitizer_;
+        },
         set: function (value) {
             if (this.initialized_) {
                 throw Error('ISanitizer cannot be set after initialization');
@@ -37,6 +46,9 @@ var JsSearch = (function () {
         configurable: true
     });
     Object.defineProperty(JsSearch.prototype, "tokenizer", {
+        get: function () {
+            return this.tokenizer_;
+        },
         set: function (value) {
             if (this.initialized_) {
                 throw Error('ITokenizer cannot be set after initialization');

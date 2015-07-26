@@ -45,6 +45,9 @@ class JsSearch {
 
     this.indexStrategy_ = value;
   }
+  public get indexStrategy():IIndexStrategy {
+    return this.indexStrategy_;
+  }
 
   /**
    * Override the default pruning strategy.
@@ -52,6 +55,9 @@ class JsSearch {
    */
   public set pruningStrategy(value:IPruningStrategy) {
     this.pruningStrategy_ = value;
+  }
+  public get pruningStrategy():IPruningStrategy {
+    return this.pruningStrategy_;
   }
 
   /**
@@ -66,6 +72,9 @@ class JsSearch {
 
     this.sanitizer_ = value;
   }
+  public get sanitizer():ISanitizer {
+    return this.sanitizer_;
+  }
 
   /**
    * Override the default text tokenizing strategy.
@@ -78,6 +87,9 @@ class JsSearch {
     }
 
     this.tokenizer_ = value;
+  }
+  public get tokenizer():ITokenizer {
+    return this.tokenizer_;
   }
 
   /**

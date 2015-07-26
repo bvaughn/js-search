@@ -1,9 +1,20 @@
+/**
+ * This utility highlights the occurrences of tokens within a string of text. It can be used to give visual indicators
+ * of match criteria within searchable fields.
+ */
 class TokenHighlighter {
 
   private indexStrategy_:IIndexStrategy;
   private sanitizer_:ISanitizer
   private wrapperTagName_:string;
 
+  /**
+   * Constructor.
+   *
+   * @param opt_indexStrategy Index strategy used by JsSearch
+   * @param opt_sanitizer Sanitizer used by JsSearch
+   * @param opt_wrapperTagName Optional wrapper tag name; defaults to 'mark' (e.g. <mark>)
+   */
   constructor(opt_indexStrategy:IIndexStrategy, opt_sanitizer:ISanitizer, opt_wrapperTagName:string) {
     this.indexStrategy_ = opt_indexStrategy || new PrefixIndexStrategy();
     this.sanitizer_ = opt_sanitizer || new LowerCaseSanitizer();
@@ -70,7 +81,12 @@ class TokenHighlighter {
     return text;
   }
 
-  private wrapText_(text:string) {
+  /**
+   * @param text to wrap
+   * @returns Text wrapped by wrapper tag (e.g. "foo" becomes "<mark>foo</mark>")
+   * @private
+   */
+  private wrapText_(text:string):string {
     return `<${this.wrapperTagName_}>${text}</${this.wrapperTagName_}>`;
   }
 }
