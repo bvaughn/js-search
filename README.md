@@ -1,7 +1,14 @@
-# JS Search
-##### Simple client-side search utility
+# JsSearch: client-side search library
 
-For example, JS Search could be used to index the following books:
+### What is it?
+
+JsSearch enables efficient client-side searches of JavaScript and JSON objects.
+It is ES5 compatible and does not require jQuery or any other third-party libraries.
+
+### How does it work?
+
+Configure JsSearch by telling it which fields it should analyze for searching and then add the objects to be searched.
+For example:
 
 ```javascript
 var theGreatGatsby = {
@@ -20,7 +27,7 @@ var angelsAndDemons = {
   author: 'Dan Brown'
 };
 
-var search = new Search('isbn');
+var search = new JsSearch('isbn');
 search.addIndex('title');
 search.addIndex('author');
 search.addDocuments([theGreatGatsby, theDaVinciCode, angelsAndDemons]);

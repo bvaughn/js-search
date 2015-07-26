@@ -68,7 +68,7 @@
   ];
 
   var rebuildSearchIndex = function() {
-    search = new Search('isbn');
+    search = new JsSearch('isbn');
     if (indexOnTitle) {
       search.addIndex('title');
     }

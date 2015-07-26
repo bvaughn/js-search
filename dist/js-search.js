@@ -1,3 +1,104 @@
+var JsSearch = (function () {
+    function JsSearch(uidFieldName) {
+        this.uidFieldName_ = uidFieldName;
+        this.indexStrategy_ = new PrefixIndexStrategy();
+        this.pruningStrategy = new AllWordsMustMatchPruningStrategy();
+        this.sanitizer_ = new LowerCaseSanitizer();
+        this.tokenizer_ = new WhitespaceTokenizer();
+        this.documents_ = [];
+        this.searchableFieldsMap_ = {};
+        this.searchIndex_ = {};
+    }
+    Object.defineProperty(JsSearch.prototype, "indexStrategy", {
+        set: function (value) {
+            if (this.initialized_) {
+                throw Error('IIndexStrategy cannot be set after initialization');
+            }
+            this.indexStrategy_ = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JsSearch.prototype, "pruningStrategy", {
+        set: function (value) {
+            this.pruningStrategy_ = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JsSearch.prototype, "sanitizer", {
+        set: function (value) {
+            if (this.initialized_) {
+                throw Error('ISanitizer cannot be set after initialization');
+            }
+            this.sanitizer_ = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JsSearch.prototype, "tokenizer", {
+        set: function (value) {
+            if (this.initialized_) {
+                throw Error('ITokenizer cannot be set after initialization');
+            }
+            this.tokenizer_ = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    JsSearch.prototype.addDocument = function (document) {
+        this.addDocuments([document]);
+    };
+    JsSearch.prototype.addDocuments = function (documents) {
+        this.documents_.push.apply(this.documents_, documents);
+        this.indexDocuments_(documents, Object.keys(this.searchableFieldsMap_));
+    };
+    JsSearch.prototype.addIndex = function (field) {
+        this.searchableFieldsMap_[field] = true;
+        this.indexDocuments_(this.documents_, [field]);
+    };
+    JsSearch.prototype.search = function (query) {
+        var tokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
+        var uidToDocumentMaps = [];
+        for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+            var token = tokens[i];
+            uidToDocumentMaps.push(this.searchIndex_[token] || {});
+        }
+        var uidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
+        var documents = [];
+        for (var uid in uidToDocumentMap) {
+            documents.push(uidToDocumentMap[uid]);
+        }
+        return documents;
+    };
+    JsSearch.prototype.indexDocuments_ = function (documents, searchableFields) {
+        this.initialized_ = true;
+        for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
+            var document = documents[di];
+            var uid = document[this.uidFieldName_];
+            for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
+                var searchableField = searchableFields[sfi];
+                var fieldValue = document[searchableField];
+                if (typeof fieldValue === 'string') {
+                    var fieldTokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));
+                    for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
+                        var fieldToken = fieldTokens[fti];
+                        var expandedTokens = this.indexStrategy_.expandToken(fieldToken);
+                        for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
+                            var expandedToken = expandedTokens[eti];
+                            if (!this.searchIndex_[expandedToken]) {
+                                this.searchIndex_[expandedToken] = {};
+                            }
+                            this.searchIndex_[expandedToken][uid] = document;
+                        }
+                    }
+                }
+            }
+        }
+    };
+    return JsSearch;
+})();
+;
 ;
 var PrefixIndexStrategy = (function () {
     function PrefixIndexStrategy() {
@@ -60,107 +161,6 @@ var WhitespaceTokenizer = (function () {
         });
     };
     return WhitespaceTokenizer;
-})();
-;
-var Search = (function () {
-    function Search(uidFieldName) {
-        this.uidFieldName_ = uidFieldName;
-        this.indexStrategy_ = new PrefixIndexStrategy();
-        this.pruningStrategy = new AllWordsMustMatchPruningStrategy();
-        this.sanitizer_ = new LowerCaseSanitizer();
-        this.tokenizer_ = new WhitespaceTokenizer();
-        this.documents_ = [];
-        this.searchableFieldsMap_ = {};
-        this.searchIndex_ = {};
-    }
-    Object.defineProperty(Search.prototype, "indexStrategy", {
-        set: function (value) {
-            if (this.initialized_) {
-                throw Error('IIndexStrategy cannot be set after initialization');
-            }
-            this.indexStrategy_ = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Search.prototype, "pruningStrategy", {
-        set: function (value) {
-            this.pruningStrategy_ = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Search.prototype, "sanitizer", {
-        set: function (value) {
-            if (this.initialized_) {
-                throw Error('ISanitizer cannot be set after initialization');
-            }
-            this.sanitizer_ = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Search.prototype, "tokenizer", {
-        set: function (value) {
-            if (this.initialized_) {
-                throw Error('ITokenizer cannot be set after initialization');
-            }
-            this.tokenizer_ = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Search.prototype.addDocument = function (document) {
-        this.addDocuments([document]);
-    };
-    Search.prototype.addDocuments = function (documents) {
-        this.documents_.push.apply(this.documents_, documents);
-        this.indexDocuments_(documents, Object.keys(this.searchableFieldsMap_));
-    };
-    Search.prototype.addIndex = function (field) {
-        this.searchableFieldsMap_[field] = true;
-        this.indexDocuments_(this.documents_, [field]);
-    };
-    Search.prototype.search = function (query) {
-        var tokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
-        var uidToDocumentMaps = [];
-        for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-            var token = tokens[i];
-            uidToDocumentMaps.push(this.searchIndex_[token] || {});
-        }
-        var uidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
-        var documents = [];
-        for (var uid in uidToDocumentMap) {
-            documents.push(uidToDocumentMap[uid]);
-        }
-        return documents;
-    };
-    Search.prototype.indexDocuments_ = function (documents, searchableFields) {
-        this.initialized_ = true;
-        for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
-            var document = documents[di];
-            var uid = document[this.uidFieldName_];
-            for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
-                var searchableField = searchableFields[sfi];
-                var fieldValue = document[searchableField];
-                if (typeof fieldValue === 'string') {
-                    var fieldTokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));
-                    for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
-                        var fieldToken = fieldTokens[fti];
-                        var expandedTokens = this.indexStrategy_.expandToken(fieldToken);
-                        for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
-                            var expandedToken = expandedTokens[eti];
-                            if (!this.searchIndex_[expandedToken]) {
-                                this.searchIndex_[expandedToken] = {};
-                            }
-                            this.searchIndex_[expandedToken][uid] = document;
-                        }
-                    }
-                }
-            }
-        }
-    };
-    return Search;
 })();
 ;
 ;

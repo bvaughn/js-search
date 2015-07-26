@@ -3,7 +3,7 @@
  *
  * <p>Documents can be searched by any number of fields. Indexing and search strategies are highly customizable.
  */
-class Search {
+class JsSearch {
 
   private documents_:Array<Object>;
   private uidFieldName_:string;

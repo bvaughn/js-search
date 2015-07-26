@@ -9,6 +9,7 @@
     "target": "ES5"
   },
   "files": [
+    "source/js-search.ts",
     "source/index-strategy/index-strategy.ts",
     "source/index-strategy/prefix-index-strategy.ts",
     "source/pruning-strategy/all-words-must-match-pruning-strategy.ts",
@@ -17,7 +18,6 @@
     "source/sanitizer/sanitizer.ts",
     "source/tokenizer/tokenizer.ts",
     "source/tokenizer/whitespace-tokenizer.ts",
-    "source/search.ts",
     "source/search-token-to-document-map.ts",
     "source/uid-to-document-map.ts"
   ]
