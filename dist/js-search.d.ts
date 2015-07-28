@@ -40,6 +40,9 @@ declare class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
 interface IPruningStrategy {
     prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
 }
+declare class CaseSensitiveSanitizer implements ISanitizer {
+    sanitize(text: string): string;
+}
 declare class LowerCaseSanitizer implements ISanitizer {
     sanitize(text: string): string;
 }

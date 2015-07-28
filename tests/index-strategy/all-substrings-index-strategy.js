@@ -1,4 +1,4 @@
-describe('PrefixIndexStrategy', function() {
+describe('AllSubstringsIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {

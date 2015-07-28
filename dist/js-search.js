@@ -193,6 +193,15 @@ var AnyWordsThatMatchPruningStrategy = (function () {
     return AnyWordsThatMatchPruningStrategy;
 })();
 ;
+var CaseSensitiveSanitizer = (function () {
+    function CaseSensitiveSanitizer() {
+    }
+    CaseSensitiveSanitizer.prototype.sanitize = function (text) {
+        return text ? text.trim() : '';
+    };
+    return CaseSensitiveSanitizer;
+})();
+;
 var LowerCaseSanitizer = (function () {
     function LowerCaseSanitizer() {
     }

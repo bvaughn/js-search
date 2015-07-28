@@ -17,6 +17,7 @@
     "source/pruning-strategy/all-words-must-match-pruning-strategy.ts",
     "source/pruning-strategy/any-words-that-match-pruning-strategy.ts",
     "source/pruning-strategy/pruning-strategy.ts",
+    "source/sanitizer/case-sensitive-sanitizer.ts",
     "source/sanitizer/lower-case-sanitizer.ts",
     "source/sanitizer/sanitizer.ts",
     "source/tokenizer/tokenizer.ts",

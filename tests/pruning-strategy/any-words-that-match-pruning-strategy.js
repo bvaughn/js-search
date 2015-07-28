@@ -1,4 +1,4 @@
-describe('WhitespaceTokenizer', function() {
+describe('AnyWordsThatMatchPruningStrategy', function() {
   var documentA, documentB, documentC, mapOfA, mapOfAandB, mapOfAandC, mapOfB, mapOfNothing, pruningStrategy;
 
   var validatePrunedMap = function(map, expectedDocuments) {
