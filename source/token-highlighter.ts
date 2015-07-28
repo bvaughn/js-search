@@ -1,6 +1,8 @@
 /**
  * This utility highlights the occurrences of tokens within a string of text. It can be used to give visual indicators
  * of match criteria within searchable fields.
+ *
+ * <p>For performance purposes this highlighter only works with full-word or prefix token indexes.
  */
 class TokenHighlighter {
 

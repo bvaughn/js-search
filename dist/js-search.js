@@ -111,6 +111,32 @@ var JsSearch = (function () {
     return JsSearch;
 })();
 ;
+var AllSubstringsIndexStrategy = (function () {
+    function AllSubstringsIndexStrategy() {
+    }
+    AllSubstringsIndexStrategy.prototype.expandToken = function (token) {
+        var expandedTokens = [];
+        for (var i = 0, length = token.length; i < length; i++) {
+            var prefixString = '';
+            for (var j = i; j < length; j++) {
+                prefixString += token.charAt(j);
+                expandedTokens.push(prefixString);
+            }
+        }
+        return expandedTokens;
+    };
+    return AllSubstringsIndexStrategy;
+})();
+;
+var ExactWordIndexStrategy = (function () {
+    function ExactWordIndexStrategy() {
+    }
+    ExactWordIndexStrategy.prototype.expandToken = function (token) {
+        return token ? [token] : [];
+    };
+    return ExactWordIndexStrategy;
+})();
+;
 ;
 var PrefixIndexStrategy = (function () {
     function PrefixIndexStrategy() {

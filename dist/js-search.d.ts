@@ -19,6 +19,12 @@ declare class JsSearch {
     search(query: string): Array<Object>;
     private indexDocuments_(documents, searchableFields);
 }
+declare class AllSubstringsIndexStrategy implements IIndexStrategy {
+    expandToken(token: string): Array<string>;
+}
+declare class ExactWordIndexStrategy implements IIndexStrategy {
+    expandToken(token: string): Array<string>;
+}
 interface IIndexStrategy {
     expandToken(token: string): Array<string>;
 }

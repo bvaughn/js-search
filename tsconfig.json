@@ -10,6 +10,8 @@
   },
   "files": [
     "source/js-search.ts",
+    "source/index-strategy/all-substrings-index-strategy.ts",
+    "source/index-strategy/exact-word-index-strategy.ts",
     "source/index-strategy/index-strategy.ts",
     "source/index-strategy/prefix-index-strategy.ts",
     "source/pruning-strategy/all-words-must-match-pruning-strategy.ts",
