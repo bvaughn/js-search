@@ -10,7 +10,7 @@ describe('WhitespaceTokenizer', function() {
   };
 
   beforeEach(function() {
-    pruningStrategy = new AllWordsMustMatchPruningStrategy();
+    pruningStrategy = new AnyWordsThatMatchPruningStrategy();
     documentA = {
       uid: 'a'
     };
@@ -37,23 +37,19 @@ describe('WhitespaceTokenizer', function() {
     mapOfNothing = {};
   });
 
-  it('should return no matches if any map is empty', function() {
+  it('should return matches even if a map is empty', function() {
     validatePrunedMap(pruningStrategy.prune([mapOfNothing]), []);
-    validatePrunedMap(pruningStrategy.prune([mapOfNothing, mapOfA]), []);
-    validatePrunedMap(pruningStrategy.prune([mapOfA, mapOfNothing]), []);
+    validatePrunedMap(pruningStrategy.prune([mapOfNothing, mapOfA]), [documentA]);
+    validatePrunedMap(pruningStrategy.prune([mapOfA, mapOfNothing]), [documentA]);
   });
 
-  it('should return no matches if maps do not intersect', function() {
-    validatePrunedMap(pruningStrategy.prune([mapOfA, mapOfB]), []);
+  it('should return documents that exist in either maps', function() {
+    validatePrunedMap(pruningStrategy.prune([mapOfA, mapOfAandB]), [documentA, documentB]);
+    validatePrunedMap(pruningStrategy.prune([mapOfAandB, mapOfA]), [documentA, documentB]);
+    validatePrunedMap(pruningStrategy.prune([mapOfAandC, mapOfAandB]), [documentA, documentB, documentC]);
   });
 
-  it('should return only documents that exist in all maps', function() {
-    validatePrunedMap(pruningStrategy.prune([mapOfA, mapOfAandB]), [documentA]);
-    validatePrunedMap(pruningStrategy.prune([mapOfAandB, mapOfA]), [documentA]);
-    validatePrunedMap(pruningStrategy.prune([mapOfAandC, mapOfAandB]), [documentA]);
-  });
-
-  it('should not prune if all documents are present in all maps', function() {
+  it('should return documents that exist in all maps', function() {
     validatePrunedMap(pruningStrategy.prune([mapOfA, mapOfA]), [documentA]);
     validatePrunedMap(pruningStrategy.prune([mapOfAandB, mapOfAandB]), [documentA, documentB]);
   });

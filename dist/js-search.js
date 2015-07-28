@@ -177,6 +177,21 @@ var AllWordsMustMatchPruningStrategy = (function () {
     };
     return AllWordsMustMatchPruningStrategy;
 })();
+var AnyWordsThatMatchPruningStrategy = (function () {
+    function AnyWordsThatMatchPruningStrategy() {
+    }
+    AnyWordsThatMatchPruningStrategy.prototype.prune = function (uidToDocumentMaps) {
+        var filteredUidToDocumentMap = {};
+        for (var i = 0, numMaps = uidToDocumentMaps.length; i < numMaps; i++) {
+            var uidToDocumentMap = uidToDocumentMaps[i];
+            for (var uid in uidToDocumentMap) {
+                filteredUidToDocumentMap[uid] = uidToDocumentMap[uid];
+            }
+        }
+        return filteredUidToDocumentMap;
+    };
+    return AnyWordsThatMatchPruningStrategy;
+})();
 ;
 var LowerCaseSanitizer = (function () {
     function LowerCaseSanitizer() {

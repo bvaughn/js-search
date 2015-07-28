@@ -34,6 +34,9 @@ declare class PrefixIndexStrategy implements IIndexStrategy {
 declare class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
     prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
 }
+declare class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
+    prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
+}
 interface IPruningStrategy {
     prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
 }
