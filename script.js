@@ -56,15 +56,14 @@ var updateBooksTable = function(books) {
     var query = searchInput.value;
     var results = search.search(query);
 
-    bookCountBadge.innerText = results.length + ' books';
+    updateBookCount(results.length);
 
     if (results.length > 0) {
       updateBooksTable(results);
     } else if (!!query) {
       updateBooksTable([]);
     } else {
-      bookCountBadge.innerText = allBooks.length + ' books';
-
+      updateBookCount(allBooks.length);
       updateBooksTable(allBooks);
     }
   };
@@ -82,6 +81,9 @@ var updateBooksTable = function(books) {
   searchInput.oninput = searchBooks;
 };
 
+var updateBookCount = function(numBooks) {
+  bookCountBadge.innerText = numBooks + ' books';
+};
 var hideElement  = function(element) {
   element.className += ' hidden';
 };
@@ -96,7 +98,7 @@ xmlhttp.onreadystatechange = function() {
 
     allBooks = json.books;
 
-    bookCountBadge.innerText = allBooks.length + ' books';
+    updateBookCount(allBooks.length);
 
     var loadingProgressBar = document.getElementById('loadingProgressBar');
     hideElement(loadingProgressBar);
