@@ -5,6 +5,12 @@
 JsSearch enables efficient client-side searches of JavaScript and JSON objects.
 It is ES5 compatible and does not require jQuery or any other third-party libraries.
 
+### Is there a demo?
+
+Yes there is!
+
+[http://bvaughn.github.io/js-search/](http://bvaughn.github.io/js-search/)
+
 ### How does it work?
 
 Configure JsSearch by telling it which fields it should analyze for searching and then add the objects to be searched.
