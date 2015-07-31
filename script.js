@@ -83,10 +83,10 @@ var updateBooksTable = function(books) {
 };
 
 var hideElement  = function(element) {
-  element.className += 'hidden';
+  element.className += ' hidden';
 };
 var showElement = function(element) {
-  element.className = element.className.replace('hidden', '');
+  element.className = element.className.replace(/\s*hidden/, '');
 };
 
 var xmlhttp = new XMLHttpRequest();
