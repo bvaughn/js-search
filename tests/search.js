@@ -1,4 +1,4 @@
-describe('JsSearch', function() {
+describe('Search', function() {
   var documentBar, documentBaz, documentFoo, search;
 
   var validateSearchResults = function(results, expectedDocuments) {
@@ -9,7 +9,7 @@ describe('JsSearch', function() {
   };
 
   beforeEach(function() {
-    search = new JsSearch.JsSearch('uid');
+    search = new JsSearch.Search('uid');
 
     documentBar = {
       uid: 'bar',

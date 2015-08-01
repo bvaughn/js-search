@@ -9,7 +9,6 @@
     "target": "ES5"
   },
   "files": [
-    "source/js-search.ts",
     "source/index-strategy/all-substrings-index-strategy.ts",
     "source/index-strategy/exact-word-index-strategy.ts",
     "source/index-strategy/index-strategy.ts",
@@ -22,6 +21,7 @@
     "source/sanitizer/case-sensitive-sanitizer.ts",
     "source/sanitizer/lower-case-sanitizer.ts",
     "source/sanitizer/sanitizer.ts",
+    "source/search.ts",
     "source/tokenizer/simple-tokenizer.ts",
     "source/tokenizer/tokenizer.ts",
     "source/token-highlighter.ts",

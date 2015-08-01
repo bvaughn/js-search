@@ -1,4 +1,4 @@
-# JsSearch: client-side search library
+# Search: client-side search library
 
 Js Search enables efficient client-side searches of JavaScript and JSON objects.
 It is ES5 compatible and does not require jQuery or any other third-party libraries.
@@ -42,7 +42,7 @@ var angelsAndDemons = {
   author: 'Dan Brown'
 };
 
-var search = new JsSearch('isbn');
+var search = new Search('isbn');
 search.addIndex('title');
 search.addIndex('author');
 search.addDocuments([theGreatGatsby, theDaVinciCode, angelsAndDemons]);
@@ -72,9 +72,9 @@ Js Search does not implement its own stemming library but it does support stemmi
 ```javascript
 var stemmer = require('porter-stemmer').stemmer;
 search.indexStrategy =
-    new JsSearch.StemmingIndexStrategyDecorator(
+    new Search.StemmingIndexStrategyDecorator(
         stemmer,
-        new JsSearch.PrefixIndexStrategy());
+        new Search.PrefixIndexStrategy());
 ```
 
 ### Stop Words

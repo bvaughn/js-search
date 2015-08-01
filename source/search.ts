@@ -15,7 +15,7 @@ module JsSearch {
    *
    * <p>Documents can be searched by any number of fields. Indexing and search strategies are highly customizable.
    */
-  export class JsSearch {
+  export class Search {
 
     private documents_:Array<Object>;
     private uidFieldName_:string;

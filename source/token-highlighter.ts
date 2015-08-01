@@ -14,8 +14,8 @@ module JsSearch {
     /**
      * Constructor.
      *
-     * @param opt_indexStrategy Index strategy used by JsSearch
-     * @param opt_sanitizer Sanitizer used by JsSearch
+     * @param opt_indexStrategy Index strategy used by Search
+     * @param opt_sanitizer Sanitizer used by Search
      * @param opt_wrapperTagName Optional wrapper tag name; defaults to 'mark' (e.g. <mark>)
      */
     constructor(opt_indexStrategy:IIndexStrategy, opt_sanitizer:ISanitizer, opt_wrapperTagName:string) {

@@ -4,7 +4,33 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
+    class AllSubstringsIndexStrategy implements IIndexStrategy {
+        expandToken(token: string): Array<string>;
+    }
+}
+declare module JsSearch {
+    class ExactWordIndexStrategy implements IIndexStrategy {
+        expandToken(token: string): Array<string>;
+    }
+}
+declare module JsSearch {
     class PrefixIndexStrategy implements IIndexStrategy {
+        expandToken(token: string): Array<string>;
+    }
+}
+declare module JsSearch {
+    class StemmingIndexStrategyDecorator implements IIndexStrategy {
+        private decoratedIndexStrategy_;
+        private stemmingFunction_;
+        constructor(stemmingFunction: (text: string) => string, decoratedIndexStrategy: IIndexStrategy);
+        expandToken(token: string): Array<string>;
+    }
+}
+declare module JsSearch {
+    class StopWordsIndexStrategyDecorator implements IIndexStrategy {
+        private decoratedIndexStrategy_;
+        private stopWordsMap_;
+        constructor(decoratedIndexStrategy: IIndexStrategy);
         expandToken(token: string): Array<string>;
     }
 }
@@ -24,7 +50,17 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
+    class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
+        prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
+    }
+}
+declare module JsSearch {
     interface ISanitizer {
+        sanitize(text: string): string;
+    }
+}
+declare module JsSearch {
+    class CaseSensitiveSanitizer implements ISanitizer {
         sanitize(text: string): string;
     }
 }
@@ -49,7 +85,7 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    class JsSearch {
+    class Search {
         private documents_;
         private uidFieldName_;
         private indexStrategy_;
@@ -69,42 +105,6 @@ declare module JsSearch {
         addIndex(field: string): void;
         search(query: string): Array<Object>;
         private indexDocuments_(documents, searchableFields);
-    }
-}
-declare module JsSearch {
-    class AllSubstringsIndexStrategy implements IIndexStrategy {
-        expandToken(token: string): Array<string>;
-    }
-}
-declare module JsSearch {
-    class ExactWordIndexStrategy implements IIndexStrategy {
-        expandToken(token: string): Array<string>;
-    }
-}
-declare module JsSearch {
-    class StemmingIndexStrategyDecorator implements IIndexStrategy {
-        private decoratedIndexStrategy_;
-        private stemmingFunction_;
-        constructor(stemmingFunction: (text: string) => string, decoratedIndexStrategy: IIndexStrategy);
-        expandToken(token: string): Array<string>;
-    }
-}
-declare module JsSearch {
-    class StopWordsIndexStrategyDecorator implements IIndexStrategy {
-        private decoratedIndexStrategy_;
-        private stopWordsMap_;
-        constructor(decoratedIndexStrategy: IIndexStrategy);
-        expandToken(token: string): Array<string>;
-    }
-}
-declare module JsSearch {
-    class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
-        prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
-    }
-}
-declare module JsSearch {
-    class CaseSensitiveSanitizer implements ISanitizer {
-        sanitize(text: string): string;
     }
 }
 declare module JsSearch {
