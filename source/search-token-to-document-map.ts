@@ -1,3 +1,5 @@
-interface ISearchTokenToDocumentMap {
-  [uid: string]: IUidToDocumentMap;
+module JsSearch {
+  export interface ISearchTokenToDocumentMap {
+    [uid: string]: IUidToDocumentMap;
+  };
 };

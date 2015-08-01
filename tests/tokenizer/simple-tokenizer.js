@@ -2,7 +2,7 @@ describe('SimpleTokenizer', function() {
   var tokenizer;
 
   beforeEach(function() {
-    tokenizer = new SimpleTokenizer();
+    tokenizer = new JsSearch.SimpleTokenizer();
   });
 
   it('should convert single-token strings', function() {

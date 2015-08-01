@@ -1,3 +1,5 @@
-interface IUidToDocumentMap {
-  [uid: string]: Object;
+module JsSearch {
+  export interface IUidToDocumentMap {
+    [uid: string]: Object;
+  };
 };

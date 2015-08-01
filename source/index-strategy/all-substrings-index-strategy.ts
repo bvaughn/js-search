@@ -1,24 +1,29 @@
-/**
- * Indexes for all substring searches (e.g. the term "cat" is indexed as "c", "ca", "cat", "a", "at", and "t").
- */
-class AllSubstringsIndexStrategy implements IIndexStrategy {
+/// <reference path="index-strategy.ts" />
+
+module JsSearch {
 
   /**
-   * @inheritDocs
+   * Indexes for all substring searches (e.g. the term "cat" is indexed as "c", "ca", "cat", "a", "at", and "t").
    */
-  public expandToken(token:string):Array<string> {
-    var expandedTokens = [];
+  export class AllSubstringsIndexStrategy implements IIndexStrategy {
 
-    for (var i = 0, length = token.length; i < length; ++i) {
-      var prefixString:string = '';
+    /**
+     * @inheritDocs
+     */
+    public expandToken(token:string):Array<string> {
+      var expandedTokens = [];
 
-      for (var j = i; j < length; ++j) {
-        prefixString += token.charAt(j);
+      for (var i = 0, length = token.length; i < length; ++i) {
+        var prefixString:string = '';
 
-        expandedTokens.push(prefixString);
+        for (var j = i; j < length; ++j) {
+          prefixString += token.charAt(j);
+
+          expandedTokens.push(prefixString);
+        }
       }
-    }
 
-    return expandedTokens;
-  }
+      return expandedTokens;
+    }
+  };
 };

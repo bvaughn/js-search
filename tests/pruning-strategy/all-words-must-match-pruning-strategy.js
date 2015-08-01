@@ -10,7 +10,7 @@ describe('AllWordsMustMatchPruningStrategy', function() {
   };
 
   beforeEach(function() {
-    pruningStrategy = new AllWordsMustMatchPruningStrategy();
+    pruningStrategy = new JsSearch.AllWordsMustMatchPruningStrategy();
     documentA = {
       uid: 'a'
     };

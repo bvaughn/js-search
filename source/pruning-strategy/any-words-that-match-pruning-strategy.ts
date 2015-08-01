@@ -1,22 +1,28 @@
-/**
- * This pruning policy returns search results matching any search token.
- */
-class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
+/// <reference path="pruning-strategy.ts" />
+/// <reference path="../uid-to-document-map.ts" />
+
+module JsSearch {
 
   /**
-   * @inheritDocs
+   * This pruning policy returns search results matching any search token.
    */
-  public prune(uidToDocumentMaps:Array<IUidToDocumentMap>):IUidToDocumentMap {
-    var filteredUidToDocumentMap:IUidToDocumentMap = {};
+  export class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
 
-    for (var i = 0, numMaps = uidToDocumentMaps.length; i < numMaps; i++) {
-      var uidToDocumentMap:IUidToDocumentMap = uidToDocumentMaps[i];
+    /**
+     * @inheritDocs
+     */
+    public prune(uidToDocumentMaps:Array<IUidToDocumentMap>):IUidToDocumentMap {
+      var filteredUidToDocumentMap:IUidToDocumentMap = {};
 
-      for (var uid in uidToDocumentMap) {
-        filteredUidToDocumentMap[uid] = uidToDocumentMap[uid];
+      for (var i = 0, numMaps = uidToDocumentMaps.length; i < numMaps; i++) {
+        var uidToDocumentMap:IUidToDocumentMap = uidToDocumentMaps[i];
+
+        for (var uid in uidToDocumentMap) {
+          filteredUidToDocumentMap[uid] = uidToDocumentMap[uid];
+        }
       }
-    }
 
-    return filteredUidToDocumentMap;
-  }
-}
+      return filteredUidToDocumentMap;
+    }
+  };
+};

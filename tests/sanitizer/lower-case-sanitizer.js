@@ -2,7 +2,7 @@ describe('LowerCaseSanitizer', function() {
   var sanitizer;
 
   beforeEach(function() {
-    sanitizer = new LowerCaseSanitizer();
+    sanitizer = new JsSearch.LowerCaseSanitizer();
   });
 
   it('should handle falsy values', function() {

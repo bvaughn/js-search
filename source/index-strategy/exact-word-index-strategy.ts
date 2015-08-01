@@ -1,12 +1,17 @@
-/**
- * Indexes for exact word matches.
- */
-class ExactWordIndexStrategy implements IIndexStrategy {
+/// <reference path="index-strategy.ts" />
+
+module JsSearch {
 
   /**
-   * @inheritDocs
+   * Indexes for exact word matches.
    */
-  public expandToken(token:string):Array<string> {
-    return token ? [token] : [];
-  }
+  export class ExactWordIndexStrategy implements IIndexStrategy {
+
+    /**
+     * @inheritDocs
+     */
+    public expandToken(token:string):Array<string> {
+      return token ? [token] : [];
+    }
+  };
 };

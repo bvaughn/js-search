@@ -9,7 +9,7 @@ describe('JsSearch', function() {
   };
 
   beforeEach(function() {
-    search = new JsSearch('uid');
+    search = new JsSearch.JsSearch('uid');
 
     documentBar = {
       uid: 'bar',

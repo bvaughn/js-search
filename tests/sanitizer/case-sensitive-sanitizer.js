@@ -2,7 +2,7 @@ describe('CaseSensitiveSanitizer', function() {
   var sanitizer;
 
   beforeEach(function() {
-    sanitizer = new CaseSensitiveSanitizer();
+    sanitizer = new JsSearch.CaseSensitiveSanitizer();
   });
 
   it('should handle falsy values', function() {

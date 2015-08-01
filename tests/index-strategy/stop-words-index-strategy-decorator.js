@@ -2,7 +2,7 @@ describe('PrefixIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {
-    indexStrategy = new StopWordsIndexStrategyDecorator(new PrefixIndexStrategy());
+    indexStrategy = new JsSearch.StopWordsIndexStrategyDecorator(new JsSearch.PrefixIndexStrategy());
   });
 
   it('should not expand empty tokens', function() {

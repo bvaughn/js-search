@@ -1,22 +1,27 @@
-/**
- * Indexes for prefix searches (e.g. the term "cat" is indexed as "c", "ca", and "cat" allowing prefix search lookups).
- */
-class PrefixIndexStrategy implements IIndexStrategy {
+/// <reference path="index-strategy.ts" />
+
+module JsSearch {
 
   /**
-   * @inheritDocs
+   * Indexes for prefix searches (e.g. the term "cat" is indexed as "c", "ca", and "cat" allowing prefix search lookups).
    */
-  public expandToken(token:string):Array<string> {
-    var expandedTokens = [];
+  export class PrefixIndexStrategy implements IIndexStrategy {
 
-    var prefixString:string = '';
+    /**
+     * @inheritDocs
+     */
+    public expandToken(token:string):Array<string> {
+      var expandedTokens = [];
 
-    for (var i = 0, length = token.length; i < length; ++i) {
-      prefixString += token.charAt(i);
+      var prefixString:string = '';
 
-      expandedTokens.push(prefixString);
+      for (var i = 0, length = token.length; i < length; ++i) {
+        prefixString += token.charAt(i);
+
+        expandedTokens.push(prefixString);
+      }
+
+      return expandedTokens;
     }
-
-    return expandedTokens;
-  }
+  };
 };

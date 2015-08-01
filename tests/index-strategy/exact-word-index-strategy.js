@@ -2,7 +2,7 @@ describe('ExactWordIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {
-    indexStrategy = new ExactWordIndexStrategy();
+    indexStrategy = new JsSearch.ExactWordIndexStrategy();
   });
 
   it('should not expand empty tokens', function() {

@@ -2,7 +2,7 @@ describe('AllSubstringsIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {
-    indexStrategy = new AllSubstringsIndexStrategy();
+    indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
   });
 
   it('should not expand empty tokens', function() {

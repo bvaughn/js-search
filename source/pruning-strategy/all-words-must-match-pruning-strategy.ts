@@ -1,30 +1,36 @@
-/**
- * This pruning policy only returns search results matching every search token.
- */
-class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
+/// <reference path="pruning-strategy.ts" />
+/// <reference path="../uid-to-document-map.ts" />
+
+module JsSearch {
 
   /**
-   * @inheritDocs
+   * This pruning policy only returns search results matching every search token.
    */
-  public prune(uidToDocumentMaps:Array<IUidToDocumentMap>):IUidToDocumentMap {
-    var filteredUidToDocumentMap:IUidToDocumentMap = {};
+  export class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
 
-    for (var i = 0, numMaps = uidToDocumentMaps.length; i < numMaps; i++) {
-      var uidToDocumentMap:IUidToDocumentMap = uidToDocumentMaps[i];
+    /**
+     * @inheritDocs
+     */
+    public prune(uidToDocumentMaps:Array<IUidToDocumentMap>):IUidToDocumentMap {
+      var filteredUidToDocumentMap:IUidToDocumentMap = {};
 
-      if (i === 0) {
-        for (var uid in uidToDocumentMap) {
-          filteredUidToDocumentMap[uid] = uidToDocumentMap[uid];
-        }
-      } else {
-        for (var uid in filteredUidToDocumentMap) {
-          if (!uidToDocumentMap[uid]) {
-            delete filteredUidToDocumentMap[uid];
+      for (var i = 0, numMaps = uidToDocumentMaps.length; i < numMaps; i++) {
+        var uidToDocumentMap:IUidToDocumentMap = uidToDocumentMaps[i];
+
+        if (i === 0) {
+          for (var uid in uidToDocumentMap) {
+            filteredUidToDocumentMap[uid] = uidToDocumentMap[uid];
+          }
+        } else {
+          for (var uid in filteredUidToDocumentMap) {
+            if (!uidToDocumentMap[uid]) {
+              delete filteredUidToDocumentMap[uid];
+            }
           }
         }
       }
-    }
 
-    return filteredUidToDocumentMap;
-  }
-}
+      return filteredUidToDocumentMap;
+    }
+  };
+};

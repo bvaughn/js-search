@@ -2,7 +2,7 @@ describe('TokenHighlighter', function() {
   var tag, tokenHighlighter;
 
   beforeEach(function() {
-    tokenHighlighter = new TokenHighlighter();
+    tokenHighlighter = new JsSearch.TokenHighlighter();
   });
 
   it('should handle empty strings', function() {

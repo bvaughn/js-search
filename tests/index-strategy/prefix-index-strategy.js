@@ -2,7 +2,7 @@ describe('PrefixIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {
-    indexStrategy = new PrefixIndexStrategy();
+    indexStrategy = new JsSearch.PrefixIndexStrategy();
   });
 
   it('should not expand empty tokens', function() {
