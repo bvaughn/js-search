@@ -31,6 +31,12 @@ interface IIndexStrategy {
 declare class PrefixIndexStrategy implements IIndexStrategy {
     expandToken(token: string): Array<string>;
 }
+declare class StopWordsIndexStrategyDecorator implements IIndexStrategy {
+    private decoratedIndexStrategy_;
+    private stopWordsMap_;
+    constructor(decoratedIndexStrategy: IIndexStrategy);
+    expandToken(token: string): Array<string>;
+}
 declare class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
     prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
 }

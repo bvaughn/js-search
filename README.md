@@ -79,14 +79,10 @@ search.indexStrategy = {
 
 ### Stop Words
 
-Stop words are very common (e.g. a, an, and, the, of) and are often not semantically meaningful. By default Js Search does not filter these words, but filtering can be achieved using a custom index strategy like so:
+Stop words are very common (e.g. a, an, and, the, of) and are often not semantically meaningful. By default Js Search does not filter these words, but filtering can be achieved using one of the built-in strategies like so:
 
 ```javascript
-search.indexStrategy = {
-  expandToken(token) {
-    // Token is a string (e.g. search, searching, searched)
-    // If token is a stop-word (e.g. a, and, the)
-    // Then return an empty array to remove it from the search index
-  }
-};
+search.indexStrategy =
+	new StopWordsIndexStrategyDecorator(
+    	new PrefixIndexStrategy());
 ```

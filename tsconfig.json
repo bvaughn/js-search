@@ -14,6 +14,7 @@
     "source/index-strategy/exact-word-index-strategy.ts",
     "source/index-strategy/index-strategy.ts",
     "source/index-strategy/prefix-index-strategy.ts",
+    "source/index-strategy/stop-words-index-strategy-decorator.ts",
     "source/pruning-strategy/all-words-must-match-pruning-strategy.ts",
     "source/pruning-strategy/any-words-that-match-pruning-strategy.ts",
     "source/pruning-strategy/pruning-strategy.ts",
