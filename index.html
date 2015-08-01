@@ -23,12 +23,13 @@
     <li>Index strategy:</li>
     <li>
       <select id="indexStrategySelect">
-        <option value="AllSubstringsIndexStrategy">All substrings</option>
-        <option value="ExactWordIndexStrategy">Exact match</option>
-        <option value="PrefixIndexStrategy" selected>Prefix matching</option>
+        <option value="JsSearch.AllSubstringsIndexStrategy">All substrings</option>
+        <option value="JsSearch.ExactWordIndexStrategy">Exact match</option>
+        <option value="JsSearch.PrefixIndexStrategy" selected>Prefix matching</option>
       </select>
     </li>
     <li><input type="checkbox" id="removeStopWordsCheckbox"> Remove stop words</li>
+    <li><input type="checkbox" id="useStemmingCheckbox"> Use stemming</li>
     <li><input type="checkbox" id="highlightMatchingTokensCheckbox"> Highlight matches</li>
   </p>
 
@@ -64,7 +65,8 @@
   </div>
 </div>
 
-<script type="text/javascript" src="https://rawgit.com/bvaughn/js-search/master/dist/js-search.js"></script>
+<script type="text/javascript" src="https://rawgit.com/kristopolous/Porter-Stemmer/master/PorterStemmer1980.min.js"></script>
+<script type="text/javascript" src="http://localhost:8080/dist/js-search.js"></script>
 <script type="text/javascript" src="script.js"></script>
 </body>
 </html>

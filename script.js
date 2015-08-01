@@ -5,6 +5,7 @@ var indexStrategySelect = document.getElementById('indexStrategySelect');
 var removeStopWordsCheckbox = document.getElementById('removeStopWordsCheckbox');
 var indexOnTitleCheckbox = document.getElementById('indexOnTitleCheckbox');
 var highlightMatchingTokensCheckbox = document.getElementById('highlightMatchingTokensCheckbox');
+var useStemmingCheckbox = document.getElementById('useStemmingCheckbox');
 
 var rebuildAndRerunSearch = function() {
   rebuildSearchIndex();
@@ -15,21 +16,27 @@ indexOnAuthorCheckbox.onchange = rebuildAndRerunSearch;
 indexStrategySelect.onchange = rebuildAndRerunSearch;
 removeStopWordsCheckbox.onchange = rebuildAndRerunSearch;
 indexOnTitleCheckbox.onchange = rebuildAndRerunSearch;
+useStemmingCheckbox.onchange = rebuildAndRerunSearch;
 
 var rebuildSearchIndex = function() {
-  search = new JsSearch('isbn');
-  var indexStrategy = eval('new ' + indexStrategySelect.value + '()');
+  search = new JsSearch.Search('isbn');
+
+  var indexStrategy =  eval('new ' + indexStrategySelect.value + '()');
   if (removeStopWordsCheckbox.checked) {
-    search.indexStrategy = new StopWordsIndexStrategyDecorator(new PrefixIndexStrategy());
-  } else {
-    search.indexStrategy = indexStrategy;
+    indexStrategy = new JsSearch.StopWordsIndexStrategyDecorator(indexStrategy);
   }
+  if (useStemmingCheckbox.checked) {
+    indexStrategy = new JsSearch.StemmingIndexStrategyDecorator(stemmer, indexStrategy);
+  }
+  search.indexStrategy = indexStrategy;
+
   if (indexOnTitleCheckbox.checked) {
     search.addIndex('title');
   }
   if (indexOnAuthorCheckbox.checked) {
     search.addIndex('author');
   }
+
   search.addDocuments(allBooks);
 };
 rebuildSearchIndex();
@@ -39,7 +46,7 @@ var indexedBooksTBody = indexedBooksTable.tBodies[0];
 var searchInput = document.getElementById('searchInput');
 var bookCountBadge = document.getElementById('bookCountBadge');
 
-var tokenHighlighter = new TokenHighlighter(search.indexStrategy, search.sanitizer);
+var tokenHighlighter = new JsSearch.TokenHighlighter(search.indexStrategy, search.sanitizer);
 
 var updateBooksTable = function(books) {
   indexedBooksTBody.innerHTML = '';
