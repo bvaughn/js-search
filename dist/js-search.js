@@ -116,9 +116,9 @@ var AllSubstringsIndexStrategy = (function () {
     }
     AllSubstringsIndexStrategy.prototype.expandToken = function (token) {
         var expandedTokens = [];
-        for (var i = 0, length = token.length; i < length; i++) {
+        for (var i = 0, length = token.length; i < length; ++i) {
             var prefixString = '';
-            for (var j = i; j < length; j++) {
+            for (var j = i; j < length; ++j) {
                 prefixString += token.charAt(j);
                 expandedTokens.push(prefixString);
             }
@@ -144,7 +144,7 @@ var PrefixIndexStrategy = (function () {
     PrefixIndexStrategy.prototype.expandToken = function (token) {
         var expandedTokens = [];
         var prefixString = '';
-        for (var i = 0; i < token.length; i++) {
+        for (var i = 0, length = token.length; i < length; ++i) {
             prefixString += token.charAt(i);
             expandedTokens.push(prefixString);
         }

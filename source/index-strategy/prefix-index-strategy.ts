@@ -11,7 +11,7 @@ class PrefixIndexStrategy implements IIndexStrategy {
 
     var prefixString:string = '';
 
-    for (var i = 0; i < token.length; i++) {
+    for (var i = 0, length = token.length; i < length; ++i) {
       prefixString += token.charAt(i);
 
       expandedTokens.push(prefixString);

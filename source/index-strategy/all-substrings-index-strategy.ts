@@ -9,10 +9,10 @@ class AllSubstringsIndexStrategy implements IIndexStrategy {
   public expandToken(token:string):Array<string> {
     var expandedTokens = [];
 
-    for (var i = 0, length = token.length; i < length; i++) {
+    for (var i = 0, length = token.length; i < length; ++i) {
       var prefixString:string = '';
 
-      for (var j = i; j < length; j++) {
+      for (var j = i; j < length; ++j) {
         prefixString += token.charAt(j);
 
         expandedTokens.push(prefixString);
