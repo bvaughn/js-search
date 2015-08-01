@@ -49,10 +49,10 @@ declare class LowerCaseSanitizer implements ISanitizer {
 interface ISanitizer {
     sanitize(text: string): string;
 }
-interface ITokenizer {
+declare class SimpleTokenizer implements ITokenizer {
     tokenize(text: string): Array<string>;
 }
-declare class WhitespaceTokenizer implements ITokenizer {
+interface ITokenizer {
     tokenize(text: string): Array<string>;
 }
 declare class TokenHighlighter {

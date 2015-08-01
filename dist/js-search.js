@@ -4,7 +4,7 @@ var JsSearch = (function () {
         this.indexStrategy_ = new PrefixIndexStrategy();
         this.pruningStrategy = new AllWordsMustMatchPruningStrategy();
         this.sanitizer_ = new LowerCaseSanitizer();
-        this.tokenizer_ = new WhitespaceTokenizer();
+        this.tokenizer_ = new SimpleTokenizer();
         this.documents_ = [];
         this.searchableFieldsMap_ = {};
         this.searchIndex_ = {};
@@ -212,18 +212,18 @@ var LowerCaseSanitizer = (function () {
 })();
 ;
 ;
-;
-var WhitespaceTokenizer = (function () {
-    function WhitespaceTokenizer() {
+var SimpleTokenizer = (function () {
+    function SimpleTokenizer() {
     }
-    WhitespaceTokenizer.prototype.tokenize = function (text) {
-        return text.split(/\s+/)
+    SimpleTokenizer.prototype.tokenize = function (text) {
+        return text.split(/[^a-zA-Z0-9\-']+/)
             .filter(function (text) {
             return !!text;
         });
     };
-    return WhitespaceTokenizer;
+    return SimpleTokenizer;
 })();
+;
 ;
 var TokenHighlighter = (function () {
     function TokenHighlighter(opt_indexStrategy, opt_sanitizer, opt_wrapperTagName) {

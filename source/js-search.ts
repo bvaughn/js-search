@@ -26,7 +26,7 @@ class JsSearch {
     this.indexStrategy_ = new PrefixIndexStrategy();
     this.pruningStrategy = new AllWordsMustMatchPruningStrategy();
     this.sanitizer_ = new LowerCaseSanitizer();
-    this.tokenizer_ = new WhitespaceTokenizer();
+    this.tokenizer_ = new SimpleTokenizer();
 
     this.documents_ = [];
     this.searchableFieldsMap_ = {};
