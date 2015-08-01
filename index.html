@@ -29,8 +29,14 @@
       </select>
     </li>
     <li><input type="checkbox" id="removeStopWordsCheckbox"> Remove stop words</li>
+    <li>Sanitizer:</li>
+    <li>
+      <select id="sanitizerSelect">
+        <option value="JsSearch.CaseSensitiveSanitizer">Case Sensitive</option>
+        <option value="JsSearch.LowerCaseSanitizer" selected>Lower Case</option>
+      </select>
+    </li>
     <li><input type="checkbox" id="useStemmingCheckbox"> Use stemming</li>
-    <li><input type="checkbox" id="highlightMatchingTokensCheckbox"> Highlight matches</li>
   </p>
 
   <form>

@@ -4,8 +4,8 @@ var indexOnAuthorCheckbox = document.getElementById('indexOnAuthorCheckbox');
 var indexStrategySelect = document.getElementById('indexStrategySelect');
 var removeStopWordsCheckbox = document.getElementById('removeStopWordsCheckbox');
 var indexOnTitleCheckbox = document.getElementById('indexOnTitleCheckbox');
-var highlightMatchingTokensCheckbox = document.getElementById('highlightMatchingTokensCheckbox');
 var useStemmingCheckbox = document.getElementById('useStemmingCheckbox');
+var sanitizerSelect = document.getElementById('sanitizerSelect');
 
 var rebuildAndRerunSearch = function() {
   rebuildSearchIndex();
@@ -17,6 +17,7 @@ indexStrategySelect.onchange = rebuildAndRerunSearch;
 removeStopWordsCheckbox.onchange = rebuildAndRerunSearch;
 indexOnTitleCheckbox.onchange = rebuildAndRerunSearch;
 useStemmingCheckbox.onchange = rebuildAndRerunSearch;
+sanitizerSelect.onchange = rebuildAndRerunSearch;
 
 var rebuildSearchIndex = function() {
   search = new JsSearch.Search('isbn');
@@ -25,10 +26,13 @@ var rebuildSearchIndex = function() {
   if (removeStopWordsCheckbox.checked) {
     indexStrategy = new JsSearch.StopWordsIndexStrategyDecorator(indexStrategy);
   }
-  if (useStemmingCheckbox.checked) {
-    indexStrategy = new JsSearch.StemmingIndexStrategyDecorator(stemmer, indexStrategy);
-  }
   search.indexStrategy = indexStrategy;
+
+  var sanitizer =  eval('new ' + sanitizerSelect.value + '()');
+  if (useStemmingCheckbox.checked) {
+    sanitizer = new JsSearch.StemmingSanitizerDecorator(stemmer, sanitizer);
+  }
+  search.sanitizer = sanitizer;
 
   if (indexOnTitleCheckbox.checked) {
     search.addIndex('title');
@@ -39,14 +43,11 @@ var rebuildSearchIndex = function() {
 
   search.addDocuments(allBooks);
 };
-rebuildSearchIndex();
 
 var indexedBooksTable = document.getElementById('indexedBooksTable');
 var indexedBooksTBody = indexedBooksTable.tBodies[0];
 var searchInput = document.getElementById('searchInput');
 var bookCountBadge = document.getElementById('bookCountBadge');
-
-var tokenHighlighter = new JsSearch.TokenHighlighter(search.indexStrategy, search.sanitizer);
 
 var updateBooksTable = function(books) {
   indexedBooksTBody.innerHTML = '';
@@ -60,16 +61,10 @@ var updateBooksTable = function(books) {
     isbnColumn.innerText = book.isbn;
 
     var titleColumn = document.createElement('td');
-    titleColumn.innerHTML =
-      highlightMatchingTokensCheckbox.checked && indexOnTitleCheckbox.checked ?
-        tokenHighlighter.highlight(book.title, tokens) :
-        book.title;
+    titleColumn.innerHTML = book.title;
 
     var authorColumn = document.createElement('td');
-    authorColumn.innerHTML =
-      highlightMatchingTokensCheckbox.checked && indexOnAuthorCheckbox.checked ?
-        tokenHighlighter.highlight(book.author, tokens) :
-        book.author;
+    authorColumn.innerHTML = book.author;
 
     var tableRow = document.createElement('tr');
     tableRow.appendChild(isbnColumn);
@@ -92,8 +87,6 @@ var updateBookCountAndTable = function() {
     updateBooksTable(allBooks);
   }
 };
-
-highlightMatchingTokensCheckbox.onchange = updateBookCountAndTable;
 
 var searchBooks = function() {
   results = search.search(searchInput.value);
@@ -125,8 +118,8 @@ xmlhttp.onreadystatechange = function() {
     hideElement(loadingProgressBar);
     showElement(indexedBooksTable);
 
-    updateBooksTable(allBooks);
     rebuildSearchIndex();
+    updateBooksTable(allBooks);
   }
 }
 xmlhttp.open('GET', 'books.json', true);
