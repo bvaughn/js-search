@@ -1,4 +1,4 @@
-/// <reference path="index-strategy.ts" />
+/// <reference path="sanitizer.ts" />
 
 module JsSearch {
 
@@ -10,9 +10,9 @@ module JsSearch {
    * decorated index strategy. It requires an external stemming function to be provided; for this purpose I recommend
    * the NPM 'porter-stemmer' library. For more information see http://tartarus.org/~martin/PorterStemmer/
    */
-  export class StemmingIndexStrategyDecorator implements IIndexStrategy {
+  export class StemmingSanitizerDecorator implements ISanitizer {
 
-    private decoratedIndexStrategy_:IIndexStrategy;
+    private decoratedSanitizer_:ISanitizer;
     private stemmingFunction_:(text:string) => string;
 
     /**
@@ -21,17 +21,17 @@ module JsSearch {
      * @param stemmingFunction Function capable of accepting a word and returning its stem.
      * @param decoratedIndexStrategy Index strategy to be run after all stop words have been removed.
      */
-    constructor(stemmingFunction:(text:string) => string, decoratedIndexStrategy:IIndexStrategy) {
-      this.decoratedIndexStrategy_ = decoratedIndexStrategy;
+    constructor(stemmingFunction:(text:string) => string, decoratedSanitizer:ISanitizer) {
+      this.decoratedSanitizer_ = decoratedSanitizer;
       this.stemmingFunction_ = stemmingFunction;
     }
 
     /**
      * @inheritDocs
      */
-    public expandToken(token:string):Array<string> {
-      return this.decoratedIndexStrategy_.expandToken(
-        this.stemmingFunction_(token));
+    public sanitize(text:string):string {
+      return this.decoratedSanitizer_.sanitize(
+        this.stemmingFunction_(text));
     }
   };
 };

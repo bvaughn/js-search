@@ -71,10 +71,10 @@ Js Search does not implement its own stemming library but it does support stemmi
 
 ```javascript
 var stemmer = require('porter-stemmer').stemmer;
-search.indexStrategy =
-    new Search.StemmingIndexStrategyDecorator(
+search.sanitizer =
+    new JsSearch.StemmingSanitizerDecorator(
         stemmer,
-        new Search.PrefixIndexStrategy());
+        new JsSearch.LowerCaseSanitizer());
 ```
 
 ### Stop Words

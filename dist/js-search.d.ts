@@ -19,14 +19,6 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    class StemmingIndexStrategyDecorator implements IIndexStrategy {
-        private decoratedIndexStrategy_;
-        private stemmingFunction_;
-        constructor(stemmingFunction: (text: string) => string, decoratedIndexStrategy: IIndexStrategy);
-        expandToken(token: string): Array<string>;
-    }
-}
-declare module JsSearch {
     class StopWordsIndexStrategyDecorator implements IIndexStrategy {
         private decoratedIndexStrategy_;
         private stopWordsMap_;
@@ -66,6 +58,14 @@ declare module JsSearch {
 }
 declare module JsSearch {
     class LowerCaseSanitizer implements ISanitizer {
+        sanitize(text: string): string;
+    }
+}
+declare module JsSearch {
+    class StemmingSanitizerDecorator implements ISanitizer {
+        private decoratedSanitizer_;
+        private stemmingFunction_;
+        constructor(stemmingFunction: (text: string) => string, decoratedSanitizer: ISanitizer);
         sanitize(text: string): string;
     }
 }
