@@ -1,7 +1,7 @@
 {
   "name": "js-search",
   "version": "1.0.0",
-  "description": "",
+  "description": "### What is it?",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -20,5 +20,22 @@
     "test": "karma start karma.conf.js --auto-watch"
   },
   "author": "Brian Vaughn <briandavidvaughn@gmail.com> (https://github.com/bvaughn/)",
-  "license": "ISC"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bvaughn/js-search.git"
+  },
+  "keywords": [
+    "search",
+    "javascript",
+    "js",
+    "clientside",
+    "client-side",
+    "local",
+    "query"
+  ],
+  "bugs": {
+    "url": "https://github.com/bvaughn/js-search/issues"
+  },
+  "homepage": "https://github.com/bvaughn/js-search"
 }

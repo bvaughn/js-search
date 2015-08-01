@@ -1,19 +1,29 @@
 # JsSearch: client-side search library
 
-### What is it?
-
 JsSearch enables efficient client-side searches of JavaScript and JSON objects.
 It is ES5 compatible and does not require jQuery or any other third-party libraries.
 
-### Is there a demo?
+You can see a live demo of JS search here:
 
-Yes there is!
+[bvaughn.github.io/js-search/](http://bvaughn.github.io/js-search/)
 
-[http://bvaughn.github.io/js-search/](http://bvaughn.github.io/js-search/)
+There are also some JS Perf benchmarks comparing JS Search to Lunr JS:
 
-### How does it work?
+[jsperf.com/js-search-vs-lunr-js](http://jsperf.com/js-search-vs-lunr-js)
+
+### Installation
+
+You can install using either [Bower](http://bower.io/) or [NPM](https://www.npmjs.com/) like so:
+
+```shell
+npm install js-search
+bower install js-search
+```
+
+### Overview
 
 Configure JsSearch by telling it which fields it should analyze for searching and then add the objects to be searched.
+
 For example:
 
 ```javascript
