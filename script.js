@@ -1,10 +1,10 @@
-var search;
-var allBooks = [];
+var search, results, allBooks = [];
 
 var indexOnAuthorCheckbox = document.getElementById('indexOnAuthorCheckbox');
 var indexStrategySelect = document.getElementById('indexStrategySelect');
 var removeStopWordsCheckbox = document.getElementById('removeStopWordsCheckbox');
 var indexOnTitleCheckbox = document.getElementById('indexOnTitleCheckbox');
+var highlightMatchingTokensCheckbox = document.getElementById('highlightMatchingTokensCheckbox');
 
 var rebuildAndRerunSearch = function() {
   rebuildSearchIndex();
@@ -54,13 +54,13 @@ var updateBooksTable = function(books) {
 
     var titleColumn = document.createElement('td');
     titleColumn.innerHTML =
-      indexOnTitleCheckbox.checked ?
+      highlightMatchingTokensCheckbox.checked && indexOnTitleCheckbox.checked ?
         tokenHighlighter.highlight(book.title, tokens) :
         book.title;
 
     var authorColumn = document.createElement('td');
     authorColumn.innerHTML =
-      indexOnAuthorCheckbox.checked ?
+      highlightMatchingTokensCheckbox.checked && indexOnAuthorCheckbox.checked ?
         tokenHighlighter.highlight(book.author, tokens) :
         book.author;
 
@@ -73,20 +73,24 @@ var updateBooksTable = function(books) {
   }
 };
 
-var searchBooks = function() {
-  var query = searchInput.value;
-  var results = search.search(query);
-
+var updateBookCountAndTable = function() {
   updateBookCount(results.length);
 
   if (results.length > 0) {
     updateBooksTable(results);
-  } else if (!!query) {
+  } else if (!!searchInput.value) {
     updateBooksTable([]);
   } else {
     updateBookCount(allBooks.length);
     updateBooksTable(allBooks);
   }
+};
+
+highlightMatchingTokensCheckbox.onchange = updateBookCountAndTable;
+
+var searchBooks = function() {
+  results = search.search(searchInput.value);
+  updateBookCountAndTable();
 };
 
 searchInput.oninput = searchBooks;
