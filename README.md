@@ -67,16 +67,14 @@ search.tokenizer = {
 
 Stemming is the process of reducing search tokens to their root (or "stem") so that searches for different forms of a word will still yield results. For example "search", "searching" and "searched" all get reduced to the stem "search".
 
-Js Search does not currently provide stemming but you can add it by supplying a custom index strategy like so:
+Js Search does not implement its own stemming library but it does support stemming through the use of third-party libraries like so:
 
 ```javascript
-search.indexStrategy = {
-  expandToken(token) {
-    // Token is a string (e.g. search, searching, searched)
-    // You could run it throug a stemmer first
-    // Then pass it onto another built-in class like PrefixIndexStrategy
-  }
-};
+var stemmer = require('porter-stemmer').stemmer;
+search.indexStrategy =
+    new JsSearch.StemmingIndexStrategyDecorator(
+        stemmer,
+        new JsSearch.PrefixIndexStrategy());
 ```
 
 ### Stop Words

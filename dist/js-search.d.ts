@@ -82,6 +82,14 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
+    class StemmingIndexStrategyDecorator implements IIndexStrategy {
+        private decoratedIndexStrategy_;
+        private stemmingFunction_;
+        constructor(stemmingFunction: (text: string) => string, decoratedIndexStrategy: IIndexStrategy);
+        expandToken(token: string): Array<string>;
+    }
+}
+declare module JsSearch {
     class StopWordsIndexStrategyDecorator implements IIndexStrategy {
         private decoratedIndexStrategy_;
         private stopWordsMap_;

@@ -282,6 +282,23 @@ var JsSearch;
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
+    var StemmingIndexStrategyDecorator = (function () {
+        function StemmingIndexStrategyDecorator(stemmingFunction, decoratedIndexStrategy) {
+            this.decoratedIndexStrategy_ = decoratedIndexStrategy;
+            this.stemmingFunction_ = stemmingFunction;
+        }
+        StemmingIndexStrategyDecorator.prototype.expandToken = function (token) {
+            return this.decoratedIndexStrategy_.expandToken(this.stemmingFunction_(token));
+        };
+        return StemmingIndexStrategyDecorator;
+    })();
+    JsSearch.StemmingIndexStrategyDecorator = StemmingIndexStrategyDecorator;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+/// <reference path="index-strategy.ts" />
+var JsSearch;
+(function (JsSearch) {
     var StopWordsIndexStrategyDecorator = (function () {
         function StopWordsIndexStrategyDecorator(decoratedIndexStrategy) {
             this.decoratedIndexStrategy_ = decoratedIndexStrategy;
