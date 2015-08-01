@@ -7,8 +7,8 @@ Js Search is a lightweight version of [Lunr JS](http://lunrjs.com/). It is not a
 
 Here are some JS Perf benchmarks comparing the two libraries. (Thanks to [olivernn](https://github.com/olivernn) for tweaking the Lunr side for a better comparison!)
 
-* [Js Search vs Lunr JS: Building an index](http://jsperf.com/js-search-vs-lunr-js-build-search-index/2)
-* [Js Search vs Lunr JS: Running searches](http://jsperf.com/js-search-vs-lunr-js-running-searches/3)
+* [Js Search vs Lunr JS: Building an index](http://jsperf.com/js-search-vs-lunr-js-build-search-index/4)
+* [Js Search vs Lunr JS: Running searches](http://jsperf.com/js-search-vs-lunr-js-running-searches/4)
 
 ### Installation
 
