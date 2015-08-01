@@ -9,7 +9,6 @@ You can see a live demo of JS search here:
 
 There are also some JS Perf benchmarks comparing JS Search to Lunr JS:
 
-[jsperf.com/js-search-vs-lunr-js](http://jsperf.com/js-search-vs-lunr-js)
 * Building an index: [jsperf.com/js-search-vs-lunr-js-build-search-index](http://jsperf.com/js-search-vs-lunr-js-build-search-index) (94% faster) 
 * Searching text: [jsperf.com/js-search-vs-lunr-js-running-searches](http://jsperf.com/js-search-vs-lunr-js-running-searches) (78% faster)
 
