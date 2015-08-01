@@ -18,7 +18,7 @@ indexOnTitleCheckbox.onchange = rebuildAndRerunSearch;
 
 var rebuildSearchIndex = function() {
   search = new JsSearch('isbn');
-  var indexStrategy = eval(`new ${indexStrategySelect.value}()`);
+  var indexStrategy = eval('new ' + indexStrategySelect.value + '()');
   if (removeStopWordsCheckbox.checked) {
     search.indexStrategy = new StopWordsIndexStrategyDecorator(new PrefixIndexStrategy());
   } else {
