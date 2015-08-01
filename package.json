@@ -13,10 +13,12 @@
     "karma": "^0.13.3",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
-    "typescript": "^1.5.3"
+    "typescript": "^1.5.3",
+    "uglify-js": "^2.4.24"
   },
   "scripts": {
     "compile": "tsc --project .",
+    "compress": "uglifyjs --compress --mangle -o dist/js-search.min.js -- dist/js-search.js",
     "test": "karma start karma.conf.js --auto-watch"
   },
   "author": "Brian Vaughn <briandavidvaughn@gmail.com> (https://github.com/bvaughn/)",
