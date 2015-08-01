@@ -16,10 +16,19 @@
     <a href="https://github.com/bvaughn/js-search">github.com/bvaughn/js-search</a>
   </h4>
 
-  <p>
-    Books indexed by:
-    <input type="checkbox" checked id="titleCheckbox"> Title
-    <input type="checkbox" checked id="authorCheckbox"> Author
+  <ul class="list-inline">
+    <li>Books indexed by:</li>
+    <li><input type="checkbox" checked id="indexOnTitleCheckbox"> Title</li>
+    <li><input type="checkbox" checked id="indexOnAuthorCheckbox"> Author</li>
+    <li>Index strategy:</li>
+    <li>
+      <select id="indexStrategySelect">
+        <option value="AllSubstringsIndexStrategy">All substrings</option>
+        <option value="ExactWordIndexStrategy">Exact match</option>
+        <option value="PrefixIndexStrategy" selected>Prefix matching</option>
+      </select>
+    </li>
+    <li><input type="checkbox" id="removeStopWordsCheckbox"> remove stop words</li>
   </p>
 
   <form>
@@ -54,7 +63,7 @@
   </div>
 </div>
 
-<script type="text/javascript" src="https://rawgit.com/bvaughn/js-search/master/dist/js-search.js"></script>
+<script type="text/javascript" src="http://localhost:8080/dist/js-search.js"></script>
 <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
