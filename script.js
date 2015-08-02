@@ -22,17 +22,15 @@ sanitizerSelect.onchange = rebuildAndRerunSearch;
 var rebuildSearchIndex = function() {
   search = new JsSearch.Search('isbn');
 
-  var indexStrategy =  eval('new ' + indexStrategySelect.value + '()');
-  if (removeStopWordsCheckbox.checked) {
-    indexStrategy = new JsSearch.StopWordsIndexStrategyDecorator(indexStrategy);
-  }
-  search.indexStrategy = indexStrategy;
-
-  var sanitizer =  eval('new ' + sanitizerSelect.value + '()');
   if (useStemmingCheckbox.checked) {
-    sanitizer = new JsSearch.StemmingSanitizerDecorator(stemmer, sanitizer);
+    search.tokenizer = new JsSearch.StemmingTokenizer(stemmer, search.tokenizer);
   }
-  search.sanitizer = sanitizer;
+  if (removeStopWordsCheckbox.checked) {
+    search.tokenizer = new JsSearch.StopWordsTokenizer(search.tokenizer);
+  }
+
+  search.indexStrategy =  eval('new ' + indexStrategySelect.value + '()');
+  search.sanitizer =  eval('new ' + sanitizerSelect.value + '()');;
 
   if (indexOnTitleCheckbox.checked) {
     search.addIndex('title');
