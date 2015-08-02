@@ -62,57 +62,6 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-/// <reference path="index-strategy.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var StopWordsIndexStrategyDecorator = (function () {
-        function StopWordsIndexStrategyDecorator(decoratedIndexStrategy) {
-            this.decoratedIndexStrategy_ = decoratedIndexStrategy;
-            this.stopWordsMap_ = {};
-            this.stopWordsMap_['a'] = true;
-            this.stopWordsMap_['about'] = true;
-            this.stopWordsMap_['an'] = true;
-            this.stopWordsMap_['are'] = true;
-            this.stopWordsMap_['as'] = true;
-            this.stopWordsMap_['at'] = true;
-            this.stopWordsMap_['be'] = true;
-            this.stopWordsMap_['by '] = true;
-            this.stopWordsMap_['for'] = true;
-            this.stopWordsMap_['from'] = true;
-            this.stopWordsMap_['how'] = true;
-            this.stopWordsMap_['i'] = true;
-            this.stopWordsMap_['in'] = true;
-            this.stopWordsMap_['is'] = true;
-            this.stopWordsMap_['it'] = true;
-            this.stopWordsMap_['of'] = true;
-            this.stopWordsMap_['on'] = true;
-            this.stopWordsMap_['or'] = true;
-            this.stopWordsMap_['that'] = true;
-            this.stopWordsMap_['the'] = true;
-            this.stopWordsMap_['this'] = true;
-            this.stopWordsMap_['to'] = true;
-            this.stopWordsMap_['was'] = true;
-            this.stopWordsMap_['what'] = true;
-            this.stopWordsMap_['when'] = true;
-            this.stopWordsMap_['where'] = true;
-            this.stopWordsMap_['who'] = true;
-            this.stopWordsMap_['will'] = true;
-            this.stopWordsMap_['with'] = true;
-        }
-        StopWordsIndexStrategyDecorator.prototype.expandToken = function (token) {
-            if (this.stopWordsMap_[token]) {
-                return [];
-            }
-            else {
-                return this.decoratedIndexStrategy_.expandToken(token);
-            }
-        };
-        return StopWordsIndexStrategyDecorator;
-    })();
-    JsSearch.StopWordsIndexStrategyDecorator = StopWordsIndexStrategyDecorator;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -210,23 +159,6 @@ var JsSearch;
         return LowerCaseSanitizer;
     })();
     JsSearch.LowerCaseSanitizer = LowerCaseSanitizer;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-/// <reference path="sanitizer.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var StemmingSanitizerDecorator = (function () {
-        function StemmingSanitizerDecorator(stemmingFunction, decoratedSanitizer) {
-            this.decoratedSanitizer_ = decoratedSanitizer;
-            this.stemmingFunction_ = stemmingFunction;
-        }
-        StemmingSanitizerDecorator.prototype.sanitize = function (text) {
-            return this.decoratedSanitizer_.sanitize(this.stemmingFunction_(text));
-        };
-        return StemmingSanitizerDecorator;
-    })();
-    JsSearch.StemmingSanitizerDecorator = StemmingSanitizerDecorator;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
@@ -385,6 +317,45 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+/// <reference path="tokenizer.ts" />
+var JsSearch;
+(function (JsSearch) {
+    var StemmingTokenizer = (function () {
+        function StemmingTokenizer(stemmingFunction, decoratedTokenizer) {
+            this.stemmingFunction_ = stemmingFunction;
+            this.tokenizer_ = decoratedTokenizer;
+        }
+        StemmingTokenizer.prototype.tokenize = function (text) {
+            return this.tokenizer_.tokenize(text)
+                .map(function (token) {
+                return this.stemmingFunction_(token);
+            }, this);
+        };
+        return StemmingTokenizer;
+    })();
+    JsSearch.StemmingTokenizer = StemmingTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+/// <reference path="tokenizer.ts" />
+var JsSearch;
+(function (JsSearch) {
+    var StopWordsTokenizer = (function () {
+        function StopWordsTokenizer(decoratedTokenizer) {
+            this.tokenizer_ = decoratedTokenizer;
+        }
+        StopWordsTokenizer.prototype.tokenize = function (text) {
+            return this.tokenizer_.tokenize(text)
+                .filter(function (token) {
+                return !JsSearch.StopWordsMap[token];
+            });
+        };
+        return StopWordsTokenizer;
+    })();
+    JsSearch.StopWordsTokenizer = StopWordsTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
 var JsSearch;
 (function (JsSearch) {
     var TokenHighlighter = (function () {
@@ -440,6 +411,42 @@ var JsSearch;
     })();
     JsSearch.TokenHighlighter = TokenHighlighter;
     ;
+})(JsSearch || (JsSearch = {}));
+;
+var JsSearch;
+(function (JsSearch) {
+    JsSearch.StopWordsMap = {
+        a: true,
+        about: true,
+        an: true,
+        and: true,
+        are: true,
+        as: true,
+        at: true,
+        be: true,
+        by: true,
+        for: true,
+        from: true,
+        how: true,
+        i: true,
+        in: true,
+        is: true,
+        it: true,
+        of: true,
+        on: true,
+        or: true,
+        that: true,
+        the: true,
+        this: true,
+        to: true,
+        was: true,
+        what: true,
+        when: true,
+        where: true,
+        who: true,
+        will: true,
+        with: true,
+    };
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=js-search.js.map

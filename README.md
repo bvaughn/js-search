@@ -53,36 +53,48 @@ search.search('d');     // [angelsAndDemons, theDaVinciCode]
 
 ### Tokenization
 
-Tokenization is the process of breaking text (e.g. sentences) into smaller, searchable tokens (e.g. words or parts of words). Js Search provides a basic tokenizer by default that should work well for English but you can provider your own like so:
+Tokenization is the process of breaking text (e.g. sentences) into smaller, searchable tokens (e.g. words or parts of words). Js Search provides a basic tokenizer that should work well for English but you can provider your own like so:
 
 ```javascript
 search.tokenizer = {
-  tokenize(text) {
-    // Convert text to an Array of strings however you'd like
+  tokenize( text /* string */ ) {
+    // Convert text to an Array of strings and return the Array
   }
 };
 ```
 
 ### Stemming
 
-Stemming is the process of reducing search tokens to their root (or "stem") so that searches for different forms of a word will still yield results. For example "search", "searching" and "searched" all get reduced to the stem "search".
+Stemming is the process of reducing search tokens to their root (or "stem") so that searches for different forms of a word will still yield results. For example "search", "searching" and "searched" can all be reduced to the stem "search".
 
-Js Search does not implement its own stemming library but it does support stemming through the use of third-party libraries like so:
+Js Search does not implement its own stemming library but it does support stemming through the use of third-party libraries.
+
+To enable stemming, use the `StemmingTokenizer` like so:
 
 ```javascript
 var stemmer = require('porter-stemmer').stemmer;
-search.sanitizer =
-    new JsSearch.StemmingSanitizerDecorator(
-        stemmer,
-        new JsSearch.LowerCaseSanitizer());
+
+search.tokenizer =
+	new JsSearch.StemmingTokenizer(
+        stemmer, // Function should accept a string param and return a string
+	    new JsSearch.SimpleTokenizer());
 ```
 
 ### Stop Words
 
-Stop words are very common (e.g. a, an, and, the, of) and are often not semantically meaningful. By default Js Search does not filter these words, but filtering can be achieved using one of the built-in strategies like so:
+Stop words are very common (e.g. a, an, and, the, of) and are often not semantically meaningful. By default Js Search does not filter these words, but filtering can be enabled by using the `StopWordsTokenizer` like so:
 
 ```javascript
-search.indexStrategy =
-	new StopWordsIndexStrategyDecorator(
-    	new PrefixIndexStrategy());
+search.tokenizer =
+	new JsSearch.StopWordsTokenizer(
+    	new JsSearch.SimpleTokenizer());
 ```
+
+By default Js Search uses a slightly modified version of the Google History stop words listed on [www.ranks.nl/stopwords](http://www.ranks.nl/stopwords). You can modify this list of stop words by adding or removing values from the `JsSearch.StopWordsMap` object like so:
+
+```javascript
+JsSearch.StopWordsMap.the = false; // Do not treate "the" as a stop word
+JsSearch.StopWordsMap.bob = true;  // Treate "bob" as a stop word
+```
+
+Note that stop words are lower case and so using a case-sensitive sanitizer may prevent some stop words from being removed.

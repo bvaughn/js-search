@@ -19,14 +19,6 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    class StopWordsIndexStrategyDecorator implements IIndexStrategy {
-        private decoratedIndexStrategy_;
-        private stopWordsMap_;
-        constructor(decoratedIndexStrategy: IIndexStrategy);
-        expandToken(token: string): Array<string>;
-    }
-}
-declare module JsSearch {
     interface IPruningStrategy {
         prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
     }
@@ -58,14 +50,6 @@ declare module JsSearch {
 }
 declare module JsSearch {
     class LowerCaseSanitizer implements ISanitizer {
-        sanitize(text: string): string;
-    }
-}
-declare module JsSearch {
-    class StemmingSanitizerDecorator implements ISanitizer {
-        private decoratedSanitizer_;
-        private stemmingFunction_;
-        constructor(stemmingFunction: (text: string) => string, decoratedSanitizer: ISanitizer);
         sanitize(text: string): string;
     }
 }
@@ -108,6 +92,21 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
+    class StemmingTokenizer implements ITokenizer {
+        private stemmingFunction_;
+        private tokenizer_;
+        constructor(stemmingFunction: (text: string) => string, decoratedTokenizer: ITokenizer);
+        tokenize(text: string): Array<string>;
+    }
+}
+declare module JsSearch {
+    class StopWordsTokenizer implements ITokenizer {
+        private tokenizer_;
+        constructor(decoratedTokenizer: ITokenizer);
+        tokenize(text: string): Array<string>;
+    }
+}
+declare module JsSearch {
     class TokenHighlighter {
         private indexStrategy_;
         private sanitizer_;
@@ -116,4 +115,38 @@ declare module JsSearch {
         highlight(text: string, tokens: Array<string>): string;
         private wrapText_(text);
     }
+}
+declare module JsSearch {
+    var StopWordsMap: {
+        a: boolean;
+        about: boolean;
+        an: boolean;
+        and: boolean;
+        are: boolean;
+        as: boolean;
+        at: boolean;
+        be: boolean;
+        by: boolean;
+        for: boolean;
+        from: boolean;
+        how: boolean;
+        i: boolean;
+        in: boolean;
+        is: boolean;
+        it: boolean;
+        of: boolean;
+        on: boolean;
+        or: boolean;
+        that: boolean;
+        the: boolean;
+        this: boolean;
+        to: boolean;
+        was: boolean;
+        what: boolean;
+        when: boolean;
+        where: boolean;
+        who: boolean;
+        will: boolean;
+        with: boolean;
+    };
 }
