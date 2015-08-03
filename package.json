@@ -17,9 +17,10 @@
     "uglify-js": "^2.4.24"
   },
   "scripts": {
+    "build": "npm run compile && npm run compress && npm run test",
     "compile": "tsc --project .",
     "compress": "uglifyjs --compress --mangle -o dist/js-search.min.js -- dist/js-search.js",
-    "test": "karma start karma.conf.js --auto-watch"
+    "test": "karma start karma.conf.js"
   },
   "author": "Brian Vaughn <briandavidvaughn@gmail.com> (https://github.com/bvaughn/)",
   "license": "MIT",
