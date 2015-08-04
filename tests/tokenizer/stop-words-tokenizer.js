@@ -21,4 +21,11 @@ describe('StopWordsTokenizer', function() {
   it('should handle all stop word token sets', function() {
     expect(tokenizer.tokenize('a and the')).toEqual([]);
   });
+
+  it('should not remove Object.prototype properties', function() {
+    expect(tokenizer.tokenize('constructor')).toEqual(['constructor']);
+    expect(tokenizer.tokenize('hasOwnProperty')).toEqual(['hasOwnProperty']);
+    expect(tokenizer.tokenize('toString')).toEqual(['toString']);
+    expect(tokenizer.tokenize('valueOf')).toEqual(['valueOf']);
+  });
 });

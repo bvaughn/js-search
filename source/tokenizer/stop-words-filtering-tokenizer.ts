@@ -26,7 +26,7 @@ module JsSearch {
     public tokenize(text:string):Array<string> {
       return this.tokenizer_.tokenize(text)
         .filter(function(token:string):boolean {
-          return !JsSearch.StopWordsMap[token];
+          return token && JsSearch.StopWordsMap[token] !== token;
         });
     }
   };

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.1
+Udpated stop-words list to avoid filtering `Object.prototype` properties.
+
 ## 1.1.0
 Refactored stemming and stop-word support to be based on `ITokenizer` decorators for better accuracy.
 Updated README examples with more info.
