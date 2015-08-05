@@ -3,13 +3,6 @@
 Js Search enables efficient client-side searches of JavaScript and JSON objects.
 It is ES5 compatible and does not require jQuery or any other third-party libraries.
 
-Js Search is a lightweight version of [Lunr JS](http://lunrjs.com/). It is not as full-featured. (For example, Js Search does not currently provide a stemming feature.) However it is a little faster (runtime) and smaller (filesize) which may make it a compelling option in some cases.
-
-Here are some JS Perf benchmarks comparing the two libraries. (Thanks to [olivernn](https://github.com/olivernn) for tweaking the Lunr side for a better comparison!)
-
-* [Js Search vs Lunr JS: Building an index](http://jsperf.com/js-search-vs-lunr-js-build-search-index/4)
-* [Js Search vs Lunr JS: Running searches](http://jsperf.com/js-search-vs-lunr-js-running-searches/4)
-
 ### Installation
 
 You can install using either [Bower](http://bower.io/) or [NPM](https://www.npmjs.com/) like so:
@@ -98,3 +91,13 @@ JsSearch.StopWordsMap.bob = true;  // Treate "bob" as a stop word
 ```
 
 Note that stop words are lower case and so using a case-sensitive sanitizer may prevent some stop words from being removed.
+
+### TF-IDF ranking
+
+Term frequency–inverse document frequency (or TF-IDF) is a numeric statistic intended to reflect how important a word (or words) are to a document within a corpus. The TF-IDF value increases proportionally to the number of times a word appears in the document but is offset by the frequency of the word in the corpus. This helps to adjust for the fact that some words (e.g. and, or, the) appear more frequently than others.
+
+By default Js Search supports TF-IDF ranking but this can be disabled for performance reasons if it is not required. You can specify an alternate `ISearchIndex` implementation in order to disable TF-IDF, like so:
+
+```javascript
+search.searchIndex = new JsSearch.UnorderedSearchIndex();
+```
