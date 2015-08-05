@@ -1,13 +1,9 @@
 /// <reference path="index-strategy/index-strategy.ts" />
 /// <reference path="index-strategy/prefix-index-strategy.ts" />
-/// <reference path="pruning-strategy/all-words-must-match-pruning-strategy.ts" />
-/// <reference path="pruning-strategy/pruning-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
 /// <reference path="sanitizer/sanitizer.ts" />
-/// <reference path="search-index" />
-/// <reference path="token-document-index" />
-/// <reference path="token-index" />
-/// <reference path="token-to-idf-cache" />
+/// <reference path="search-index/search-index.ts" />
+/// <reference path="search-index/tf-idf-search-index.ts" />
 /// <reference path="tokenizer/simple-tokenizer.ts" />
 /// <reference path="tokenizer/tokenizer.ts" />
 
@@ -21,18 +17,12 @@ module JsSearch {
   export class Search {
 
     private documents_:Array<Object>;
-    private enableTfIdf_:boolean;
-    private indexDocumentStrategy_:Function;
     private indexStrategy_:IIndexStrategy;
     private initialized_:boolean;
     private sanitizer_:ISanitizer;
     private searchableFieldsMap_:Object;
-    private searchIndex_:TokenToDocumentMap;
-    private searchStrategy_:Function;
-    private tfIdfSearchIndex_:SearchIndex;
+    private searchIndex_:ISearchIndex;
     private tokenizer_:ITokenizer;
-    private tokenToIdfCache_:TokenToIdfCache;
-    private pruningStrategy_:IPruningStrategy;
     private uidFieldName_:string;
 
     /**
@@ -43,38 +33,14 @@ module JsSearch {
     constructor(uidFieldName:string) {
       this.uidFieldName_ = uidFieldName;
 
+      // Set default/recommended strategies
       this.indexStrategy_ = new PrefixIndexStrategy();
-      this.pruningStrategy = new AllWordsMustMatchPruningStrategy();
+      this.searchIndex_ = new TfIdfSearchIndex(this.uidFieldName_);
       this.sanitizer_ = new LowerCaseSanitizer();
       this.tokenizer_ = new SimpleTokenizer();
 
       this.documents_ = [];
       this.searchableFieldsMap_ = {};
-      this.searchIndex_ = {};
-      this.tfIdfSearchIndex_ = {};
-      this.tokenToIdfCache_ = {};
-
-      // Enabled by default
-      this.enableTfIdf = true;
-    }
-
-    /**
-     * Toggle TF-IDF mode.
-     *
-     * <p>This mode is enabled by default as it offers a significant improvement in the ranking of search results. It
-     * can be disabled for [runtime] performance purposes though.
-     */
-    public set enableTfIdf(value:boolean) {
-      if (this.initialized_) {
-        throw Error('TF-IDF cannot be enabled or disabled after initialization');
-      }
-
-      this.enableTfIdf_ = value;
-      this.indexDocumentStrategy_ = value ? this.indexDocumentTfIdfEnabled_ : this.indexDocumentTfIdfDisabled_;
-      this.searchStrategy_ = value ? this.searchTfIdfEnabled_ : this.searchTfIdfDisabled_;
-    }
-    public get enableTfIdf():boolean {
-      return this.enableTfIdf_;
     }
 
     /**
@@ -94,17 +60,6 @@ module JsSearch {
     }
 
     /**
-     * Override the default pruning strategy.
-     * @param value Custom pruning strategy
-     */
-    public set pruningStrategy(value:IPruningStrategy) {
-      this.pruningStrategy_ = value;
-    }
-    public get pruningStrategy():IPruningStrategy {
-      return this.pruningStrategy_;
-    }
-
-    /**
      * Override the default text sanitizing strategy.
      * @param value Custom text sanitizing strategy
      * @throws Error if documents have already been indexed by this search instance
@@ -118,6 +73,22 @@ module JsSearch {
     }
     public get sanitizer():ISanitizer {
       return this.sanitizer_;
+    }
+
+    /**
+     * Override the default search index strategy.
+     * @param value Custom search index strategy
+     * @throws Error if documents have already been indexed
+     */
+    public set searchIndex(value:ISearchIndex) {
+      if (this.initialized_) {
+        throw Error('ISearchIndex cannot be set after initialization');
+      }
+
+      this.searchIndex_ = value;
+    }
+    public get searchIndex():ISearchIndex {
+      return this.searchIndex_;
     }
 
     /**
@@ -170,89 +141,10 @@ module JsSearch {
     public search(query:string):Array<Object> {
       var tokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
 
-      return this.searchStrategy_(query, tokens);
-    }
-
-    /**
-     * Calculate the inverse document frequency of a search token. This calculation diminishes the weight of tokens that
-     * occur very frequently in the set of searchable documents and increases the weight of terms that occur rarely.
-     */
-    private calculateIdf_(token:string):number {
-      if (!this.tokenToIdfCache_[token]) {
-        var numDocumentsWithToken:number = 0;
-
-        if (this.tfIdfSearchIndex_[token]) {
-          numDocumentsWithToken = <number> this.tfIdfSearchIndex_[token].$documentsCount;
-        }
-
-        this.tokenToIdfCache_[token] = 1 + Math.log(this.documents_.length / (1 + numDocumentsWithToken));
-      }
-
-      return this.tokenToIdfCache_[token];
-    }
-
-    /**
-     * Calculate the term frequency–inverse document frequency (TF-IDF) ranking for a set of search tokens and a
-     * document. The TF-IDF is a numeric statistic intended to reflect how important a word (or words) are to a document
-     * in a corpus. The TF-IDF value increases proportionally to the number of times a word appears in the document but
-     * is offset by the frequency of the word in the corpus. This helps to adjust for the fact that some words appear
-     * more frequently in general (e.g. a, and, the).
-     */
-    private calculateTfIdf_(tokens:Array<string>, document:Object):number {
-      var score:number = 0;
-
-      for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
-        var token:string = tokens[i];
-
-        var inverseDocumentFrequency:number = this.calculateIdf_(token);
-        inverseDocumentFrequency = inverseDocumentFrequency === Infinity ? 0 : inverseDocumentFrequency;
-
-        var termFrequency:number = 0;
-        var uid:any = document && document[this.uidFieldName_];
-
-        if (this.tfIdfSearchIndex_[token] &&
-            this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid]) {
-          termFrequency = this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid].$tokenCount;
-        }
-
-        score += termFrequency * inverseDocumentFrequency;
-      }
-
-      return score;
-    }
-
-    private indexDocumentTfIdfDisabled_(token:string, uid:string, document:Object):void {
-      if (!this.searchIndex_[token]) {
-        this.searchIndex_[token] = {};
-      }
-
-      this.searchIndex_[token][uid] = document;
-    }
-
-    private indexDocumentTfIdfEnabled_(token:string, uid:string, document:Object):void {
-      if (!this.tfIdfSearchIndex_[token]) {
-        this.tfIdfSearchIndex_[token] = {
-          $documentsCount: 0,
-          $totalTokenCount: 1,
-          $uidToDocumentMap: {}
-        };
-      } else {
-        this.tfIdfSearchIndex_[token].$totalTokenCount++;
-      }
-
-      if (!this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid]) {
-        this.tfIdfSearchIndex_[token].$documentsCount++;
-        this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid] = {
-          $tokenCount: 1,
-          $document: document
-        };
-      } else {
-        this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid].$tokenCount++;
-      }
+      return this.searchIndex_.search(tokens);
     }
 
     private indexDocuments_(documents:Array<Object>, searchableFields:Array<string>):void {
-      this.tokenToIdfCache_ = {}; // New index invalidates previous IDF cache
       this.initialized_ = true;
 
       for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
@@ -273,59 +165,12 @@ module JsSearch {
               for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
                 var expandedToken = expandedTokens[eti];
 
-                this.indexDocumentStrategy_(expandedToken, uid, document);
+                this.searchIndex_.indexDocument(expandedToken, uid, document);
               }
             }
           }
         }
       }
-    }
-
-    private searchTfIdfEnabled_(query:string, tokens:Array<string>):Array<Object> {
-      var uidToDocumentIndexMaps:Array<UidToTokenDocumentIndexMap> = [];
-
-      for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-        var token:string = tokens[i];
-
-        uidToDocumentIndexMaps.push(
-          this.tfIdfSearchIndex_[token] && this.tfIdfSearchIndex_[token].$uidToDocumentMap || {});
-      }
-
-      var uidToDocumentDocumentIndexMap:UidToTokenDocumentIndexMap =
-        this.pruningStrategy_.prune(uidToDocumentIndexMaps);
-      var documents:Array<Object> = [];
-
-      for (var uid in uidToDocumentDocumentIndexMap) {
-        documents.push(uidToDocumentDocumentIndexMap[uid].$document);
-      }
-
-      // Return documents sorted by TF-IDF
-      documents = documents.sort(function (documentA, documentB) {
-        return this.calculateTfIdf_(tokens, documentB) -
-          this.calculateTfIdf_(tokens, documentA);
-      }.bind(this));
-
-      return documents;
-    }
-
-    private searchTfIdfDisabled_(query:string, tokens:Array<string>):Array<Object> {
-      var uidToDocumentMaps:Array<UidToDocumentMap> = [];
-
-      for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-        var token:string = tokens[i];
-
-        uidToDocumentMaps.push(
-          this.searchIndex_[token] || {});
-      }
-
-      var uidToDocumentMap:UidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
-      var documents:Array<Object> = [];
-
-      for (var uid in uidToDocumentMap) {
-        documents.push(uidToDocumentMap[uid]);
-      }
-
-      return documents;
     }
   };
 };

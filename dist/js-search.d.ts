@@ -19,26 +19,6 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    interface IPruningStrategy {
-        prune(uidToDocumentMaps: Array<UidToDocumentMap>): UidToDocumentMap;
-    }
-}
-declare module JsSearch {
-    interface UidToDocumentMap {
-        [uid: string]: any;
-    }
-}
-declare module JsSearch {
-    class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
-        prune(uidToDocumentMaps: Array<UidToDocumentMap>): UidToDocumentMap;
-    }
-}
-declare module JsSearch {
-    class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
-        prune(uidToDocumentMaps: Array<UidToDocumentMap>): UidToDocumentMap;
-    }
-}
-declare module JsSearch {
     interface ISanitizer {
         sanitize(text: string): string;
     }
@@ -54,26 +34,26 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    interface SearchIndex {
-        [token: string]: TokenIndex;
+    interface ISearchIndex {
+        indexDocument(token: string, uid: string, document: Object): void;
+        search(tokens: Array<string>): Array<Object>;
     }
 }
 declare module JsSearch {
-    interface TokenDocumentIndex {
-        $tokenCount: number;
-        $document: Object;
-    }
-}
-declare module JsSearch {
-    interface TokenIndex {
-        $documentsCount: number;
-        $totalTokenCount: number;
-        $uidToDocumentMap: UidToTokenDocumentIndexMap;
-    }
-}
-declare module JsSearch {
-    interface TokenToIdfCache {
-        [uid: string]: number;
+    class TfIdfSearchIndex implements ISearchIndex {
+        private numDocuments_;
+        private tokenToIdfCache_;
+        private tokenToNumDocumentsMap_;
+        private tokenToTotalNumOccurrencesMap_;
+        private tokenToUidToDocumentMap_;
+        private tokenToUidToNumOccurrencesMap_;
+        private uidFieldName_;
+        private uidMap_;
+        constructor(uidFieldName: string);
+        indexDocument(token: string, uid: string, document: Object): void;
+        search(tokens: Array<string>): Array<Object>;
+        private calculateIdf_(token);
+        private calculateTfIdf_(tokens, document);
     }
 }
 declare module JsSearch {
@@ -89,36 +69,31 @@ declare module JsSearch {
 declare module JsSearch {
     class Search {
         private documents_;
-        private enableTfIdf_;
-        private indexDocumentStrategy_;
         private indexStrategy_;
         private initialized_;
         private sanitizer_;
         private searchableFieldsMap_;
         private searchIndex_;
-        private searchStrategy_;
-        private tfIdfSearchIndex_;
         private tokenizer_;
-        private tokenToIdfCache_;
-        private pruningStrategy_;
         private uidFieldName_;
         constructor(uidFieldName: string);
-        enableTfIdf: boolean;
         indexStrategy: IIndexStrategy;
-        pruningStrategy: IPruningStrategy;
         sanitizer: ISanitizer;
+        searchIndex: ISearchIndex;
         tokenizer: ITokenizer;
         addDocument(document: Object): void;
         addDocuments(documents: Array<Object>): void;
         addIndex(field: string): void;
         search(query: string): Array<Object>;
-        private calculateIdf_(token);
-        private calculateTfIdf_(tokens, document);
-        private indexDocumentTfIdfDisabled_(token, uid, document);
-        private indexDocumentTfIdfEnabled_(token, uid, document);
         private indexDocuments_(documents, searchableFields);
-        private searchTfIdfEnabled_(query, tokens);
-        private searchTfIdfDisabled_(query, tokens);
+    }
+}
+declare module JsSearch {
+    class SimpleSearchIndex implements ISearchIndex {
+        private tokenToUidToDocumentMap_;
+        constructor();
+        indexDocument(token: string, uid: string, document: Object): void;
+        search(tokens: Array<string>): Array<Object>;
     }
 }
 declare module JsSearch {
@@ -267,15 +242,5 @@ declare module JsSearch {
         constructor(opt_indexStrategy: IIndexStrategy, opt_sanitizer: ISanitizer, opt_wrapperTagName: string);
         highlight(text: string, tokens: Array<string>): string;
         private wrapText_(text);
-    }
-}
-declare module JsSearch {
-    interface TokenToDocumentMap {
-        [uid: string]: UidToDocumentMap;
-    }
-}
-declare module JsSearch {
-    interface UidToTokenDocumentIndexMap {
-        [uid: string]: TokenDocumentIndex;
     }
 }
