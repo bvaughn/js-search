@@ -21,15 +21,17 @@ module JsSearch {
   export class Search {
 
     private documents_:Array<Object>;
-    private uidFieldName_:string;
+    private enableTfIdf_:boolean;
     private indexStrategy_:IIndexStrategy;
     private initialized_:boolean;
-    private tokenizer_:ITokenizer;
     private sanitizer_:ISanitizer;
     private searchableFieldsMap_:Object;
-    private searchIndex_:SearchIndex;
-    private pruningStrategy_:IPruningStrategy;
+    private searchIndex_:TokenToDocumentMap;
+    private tfIdfSearchIndex_:SearchIndex;
+    private tokenizer_:ITokenizer;
     private tokenToIdfCache_:TokenToIdfCache;
+    private pruningStrategy_:IPruningStrategy;
+    private uidFieldName_:string;
 
     /**
      * Constructor.
@@ -47,7 +49,25 @@ module JsSearch {
       this.documents_ = [];
       this.searchableFieldsMap_ = {};
       this.searchIndex_ = {};
+      this.tfIdfSearchIndex_ = {};
       this.tokenToIdfCache_ = {};
+    }
+
+    /**
+     * Toggle TF-IDF mode.
+     *
+     * <p>This mode is enabled by default as it offers a significant improvement in the ranking of search results. It
+     * can be disabled for [runtime] performance purposes though.
+     */
+    public set enableTfIdf(value:boolean) {
+      if (this.initialized_) {
+        throw Error('TF-IDF cannot be enabled or disabled after initialization');
+      }
+
+      this.enableTfIdf_ = value;
+    }
+    public get enableTfIdf():boolean {
+      return this.enableTfIdf_;
     }
 
     /**
@@ -62,7 +82,6 @@ module JsSearch {
 
       this.indexStrategy_ = value;
     }
-
     public get indexStrategy():IIndexStrategy {
       return this.indexStrategy_;
     }
@@ -74,7 +93,6 @@ module JsSearch {
     public set pruningStrategy(value:IPruningStrategy) {
       this.pruningStrategy_ = value;
     }
-
     public get pruningStrategy():IPruningStrategy {
       return this.pruningStrategy_;
     }
@@ -91,7 +109,6 @@ module JsSearch {
 
       this.sanitizer_ = value;
     }
-
     public get sanitizer():ISanitizer {
       return this.sanitizer_;
     }
@@ -108,7 +125,6 @@ module JsSearch {
 
       this.tokenizer_ = value;
     }
-
     public get tokenizer():ITokenizer {
       return this.tokenizer_;
     }
@@ -146,28 +162,52 @@ module JsSearch {
      */
     public search(query:string):Array<Object> {
       var tokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
-      var uidToDocumentMaps:Array<UidToDocumentMap> = [];
 
-      for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-        var token:string = tokens[i];
+      if (this.enableTfIdf_) {
+        var uidToDocumentIndexMaps:Array<UidToTokenDocumentIndexMap> = [];
 
-        uidToDocumentMaps.push(this.searchIndex_[token] && this.searchIndex_[token].$uidToDocumentMap || {});
+        for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+          var token:string = tokens[i];
+
+          uidToDocumentIndexMaps.push(
+            this.tfIdfSearchIndex_[token] && this.tfIdfSearchIndex_[token].$uidToDocumentMap || {});
+        }
+
+        var uidToDocumentDocumentIndexMap:UidToTokenDocumentIndexMap =
+          this.pruningStrategy_.prune(uidToDocumentIndexMaps);
+        var documents:Array<Object> = [];
+
+        for (var uid in uidToDocumentDocumentIndexMap) {
+          documents.push(uidToDocumentDocumentIndexMap[uid].$document);
+        }
+
+        // Return documents sorted by TF-IDF
+        documents = documents.sort(function (documentA, documentB) {
+          return this.calculateTfIdf_(tokens, documentB) -
+            this.calculateTfIdf_(tokens, documentA);
+        }.bind(this));
+
+        return documents;
+
+      } else {
+        var uidToDocumentMaps:Array<UidToDocumentMap> = [];
+
+        for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+          var token:string = tokens[i];
+
+          uidToDocumentMaps.push(
+            this.searchIndex_[token] || {});
+        }
+
+        var uidToDocumentMap:UidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
+        var documents:Array<Object> = [];
+
+        for (var uid in uidToDocumentMap) {
+          documents.push(uidToDocumentMap[uid]);
+        }
+
+        return documents;
       }
-
-      var uidToDocumentMap:UidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
-      var documents:Array<Object> = [];
-
-      for (var uid in uidToDocumentMap) {
-        documents.push(uidToDocumentMap[uid].$document);
-      }
-
-      // Return documents sorted by TF-IDF
-      documents = documents.sort(function(documentA, documentB) {
-        return this.calculateTfIdf_(tokens, documentB) -
-               this.calculateTfIdf_(tokens, documentA);
-      }.bind(this));
-
-      return documents;
     }
 
     /**
@@ -178,8 +218,8 @@ module JsSearch {
       if (!this.tokenToIdfCache_[token]) {
         var numDocumentsWithToken:number = 0;
 
-        if (this.searchIndex_[token]) {
-          numDocumentsWithToken = <number> this.searchIndex_[token].$documentsCount;
+        if (this.tfIdfSearchIndex_[token]) {
+          numDocumentsWithToken = <number> this.tfIdfSearchIndex_[token].$documentsCount;
         }
 
         this.tokenToIdfCache_[token] = 1 + Math.log(this.documents_.length / (1 + numDocumentsWithToken));
@@ -207,15 +247,37 @@ module JsSearch {
         var termFrequency:number = 0;
         var uid:any = document && document[this.uidFieldName_];
 
-        if (this.searchIndex_[token] &&
-            this.searchIndex_[token].$uidToDocumentMap[uid]) {
-          termFrequency = this.searchIndex_[token].$uidToDocumentMap[uid].$tokenCount;
+        if (this.tfIdfSearchIndex_[token] &&
+            this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid]) {
+          termFrequency = this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid].$tokenCount;
         }
 
         score += termFrequency * inverseDocumentFrequency;
       }
 
       return score;
+    }
+
+    private indexDocumentForTfIdf_(token:string, uid:string, document:Object):void {
+      if (!this.tfIdfSearchIndex_[token]) {
+        this.tfIdfSearchIndex_[token] = {
+          $documentsCount: 0,
+          $totalTokenCount: 1,
+          $uidToDocumentMap: {}
+        };
+      } else {
+        this.tfIdfSearchIndex_[token].$totalTokenCount++;
+      }
+
+      if (!this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid]) {
+        this.tfIdfSearchIndex_[token].$documentsCount++;
+        this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid] = {
+          $tokenCount: 1,
+          $document: document
+        };
+      } else {
+        this.tfIdfSearchIndex_[token].$uidToDocumentMap[uid].$tokenCount++;
+      }
     }
 
     private indexDocuments_(documents:Array<Object>, searchableFields:Array<string>):void {
@@ -240,24 +302,14 @@ module JsSearch {
               for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
                 var expandedToken = expandedTokens[eti];
 
-                if (!this.searchIndex_[expandedToken]) {
-                  this.searchIndex_[expandedToken] = {
-                    $documentsCount: 0,
-                    $totalTokenCount: 1,
-                    $uidToDocumentMap: {}
-                  };
+                if (this.enableTfIdf_) {
+                  this.indexDocumentForTfIdf_(expandedToken, uid, document);
                 } else {
-                  this.searchIndex_[expandedToken].$totalTokenCount++;
-                }
+                  if (!this.searchIndex_[expandedToken]) {
+                    this.searchIndex_[expandedToken] = {};
+                  }
 
-                if (!this.searchIndex_[expandedToken].$uidToDocumentMap[uid]) {
-                  this.searchIndex_[expandedToken].$documentsCount++;
-                  this.searchIndex_[expandedToken].$uidToDocumentMap[uid] = {
-                    $tokenCount: 1,
-                    $document: document
-                  };
-                } else {
-                  this.searchIndex_[expandedToken].$uidToDocumentMap[uid].$tokenCount++;
+                  this.searchIndex_[expandedToken][uid] = document;
                 }
               }
             }

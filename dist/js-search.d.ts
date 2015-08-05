@@ -25,7 +25,7 @@ declare module JsSearch {
 }
 declare module JsSearch {
     interface UidToDocumentMap {
-        [uid: string]: TokenDocumentIndex;
+        [uid: string]: any;
     }
 }
 declare module JsSearch {
@@ -68,7 +68,7 @@ declare module JsSearch {
     interface TokenIndex {
         $documentsCount: number;
         $totalTokenCount: number;
-        $uidToDocumentMap: UidToDocumentMap;
+        $uidToDocumentMap: UidToTokenDocumentIndexMap;
     }
 }
 declare module JsSearch {
@@ -89,16 +89,19 @@ declare module JsSearch {
 declare module JsSearch {
     class Search {
         private documents_;
-        private uidFieldName_;
+        private enableTfIdf_;
         private indexStrategy_;
         private initialized_;
-        private tokenizer_;
         private sanitizer_;
         private searchableFieldsMap_;
         private searchIndex_;
-        private pruningStrategy_;
+        private tfIdfSearchIndex_;
+        private tokenizer_;
         private tokenToIdfCache_;
+        private pruningStrategy_;
+        private uidFieldName_;
         constructor(uidFieldName: string);
+        enableTfIdf: boolean;
         indexStrategy: IIndexStrategy;
         pruningStrategy: IPruningStrategy;
         sanitizer: ISanitizer;
@@ -109,6 +112,7 @@ declare module JsSearch {
         search(query: string): Array<Object>;
         private calculateIdf_(token);
         private calculateTfIdf_(tokens, document);
+        private indexDocumentForTfIdf_(token, uid, document);
         private indexDocuments_(documents, searchableFields);
     }
 }
@@ -258,5 +262,15 @@ declare module JsSearch {
         constructor(opt_indexStrategy: IIndexStrategy, opt_sanitizer: ISanitizer, opt_wrapperTagName: string);
         highlight(text: string, tokens: Array<string>): string;
         private wrapText_(text);
+    }
+}
+declare module JsSearch {
+    interface TokenToDocumentMap {
+        [uid: string]: UidToDocumentMap;
+    }
+}
+declare module JsSearch {
+    interface UidToTokenDocumentIndexMap {
+        [uid: string]: TokenDocumentIndex;
     }
 }

@@ -29,7 +29,9 @@
     "source/token-document-index.ts",
     "source/token-highlighter.ts",
     "source/token-index.ts",
+    "source/token-to-document-map.ts",
     "source/token-to-idf-cache.ts",
-    "source/uid-to-document-map.ts"
+    "source/uid-to-document-map.ts",
+    "source/uid-to-token-document-index-map.ts"
   ]
 }

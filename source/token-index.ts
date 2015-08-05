@@ -18,6 +18,6 @@ module JsSearch {
     /**
      * UID to document map for each document in which the current token appears.
      */
-    $uidToDocumentMap:UidToDocumentMap;
+    $uidToDocumentMap:UidToTokenDocumentIndexMap;
   }
 };

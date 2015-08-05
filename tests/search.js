@@ -65,28 +65,32 @@ describe('Search', function() {
     validateSearchResults(search.search('foo xyz'), []);
   });
 
-  describe('TF-IDF', function() {
-    var documents = [];
+  var documents = [];
+  var addSampleDocuments = function() {
+    search.addIndex('title');
 
+    var titles = [
+      'this document is about node.',
+      'this document is about ruby.',
+      'this document is about ruby and node.',
+      'this document is about node. it has node examples'
+    ];
+
+    for (var i = 0, length = titles.length; i < length; ++i) {
+      var document = {
+        uid: i,
+        title: titles[i]
+      };
+
+      documents.push(document);
+      search.addDocument(document);
+    }
+  };
+
+  describe('TF-IDF enabled', function() {
     beforeEach(function() {
-      search.addIndex('title');
-
-      var titles = [
-        'this document is about node.',
-        'this document is about ruby.',
-        'this document is about ruby and node.',
-        'this document is about node. it has node examples'
-      ];
-
-      for (var i = 0, length = titles.length; i < length; ++i) {
-        var document = {
-          uid: i,
-          title: titles[i]
-        };
-
-        documents.push(document);
-        search.addDocument(document);
-      }
+      search.enableTfIdf = true;
+      addSampleDocuments();
     });
 
     var calculateIdf = function(numDocumentsWithToken) {
@@ -127,7 +131,21 @@ describe('Search', function() {
       // The 4th document has "node" twice so it should be first of the 3
       expect(results[0]).toEqual(documents[3]);
     });
+  });
 
-    // TODO tf-idf ordering tests
+  describe('TF-IDF disabled', function() {
+    beforeEach(function() {
+      search.enableTfIdf = false;
+      addSampleDocuments();
+    });
+
+    it('should order search results by TF-IDF descending', function() {
+      var results = search.search('node');
+
+      expect(results.length).toEqual(3);
+      expect(results[0]).toEqual(documents[0]);
+      expect(results[1]).toEqual(documents[2]);
+      expect(results[2]).toEqual(documents[3]);
+    });
   });
 });
