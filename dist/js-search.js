@@ -108,51 +108,48 @@ var JsSearch;
     var TfIdfSearchIndex = (function () {
         function TfIdfSearchIndex(uidFieldName) {
             this.uidFieldName_ = uidFieldName;
-            this.numDocuments_ = 0;
             this.tokenToIdfCache_ = {};
-            this.tokenToNumDocumentsMap_ = {};
-            this.tokenToTotalNumOccurrencesMap_ = {};
-            this.tokenToUidToDocumentMap_ = {};
-            this.tokenToUidToNumOccurrencesMap_ = {};
-            this.uidMap_ = {};
+            this.tokenMap_ = {};
         }
         TfIdfSearchIndex.prototype.indexDocument = function (token, uid, document) {
-            delete this.tokenToIdfCache_[token];
-            if (!this.uidMap_[uid]) {
-                this.numDocuments_++;
-                this.uidMap_[uid] = true;
-            }
-            if (!this.tokenToUidToDocumentMap_[token]) {
-                this.tokenToNumDocumentsMap_[token] = 0;
-                this.tokenToTotalNumOccurrencesMap_[token] = 1;
-                this.tokenToUidToDocumentMap_[token] = {};
-                this.tokenToUidToNumOccurrencesMap_[token] = {};
+            this.tokenToIdfCache_ = {};
+            if (!this.tokenMap_[token]) {
+                this.tokenMap_[token] = {
+                    $numDocumentOccurrences: 0,
+                    $totalNumOccurrences: 1,
+                    $uidMap: {},
+                };
             }
             else {
-                this.tokenToTotalNumOccurrencesMap_[token]++;
+                this.tokenMap_[token].$totalNumOccurrences++;
             }
-            if (!this.tokenToUidToDocumentMap_[token][uid]) {
-                this.tokenToNumDocumentsMap_[token]++;
-                this.tokenToUidToDocumentMap_[token][uid] = document;
-                this.tokenToUidToNumOccurrencesMap_[token][uid] = 1;
+            if (!this.tokenMap_[token].$uidMap[uid]) {
+                this.tokenMap_[token].$numDocumentOccurrences++;
+                this.tokenMap_[token].$uidMap[uid] = {
+                    $document: document,
+                    $numTokenOccurrences: 1
+                };
             }
             else {
-                this.tokenToUidToNumOccurrencesMap_[token][uid]++;
+                this.tokenMap_[token].$uidMap[uid].$numTokenOccurrences++;
             }
         };
-        TfIdfSearchIndex.prototype.search = function (tokens) {
+        TfIdfSearchIndex.prototype.search = function (tokens, documents) {
             var uidToDocumentMap = {};
             for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
                 var token = tokens[i];
-                var currentUidToDocumentMap = this.tokenToUidToDocumentMap_[token] || {};
+                var tokenMetadata = this.tokenMap_[token];
+                if (!tokenMetadata) {
+                    return [];
+                }
                 if (i === 0) {
-                    for (var uid in currentUidToDocumentMap) {
-                        uidToDocumentMap[uid] = currentUidToDocumentMap[uid];
+                    for (var uid in tokenMetadata.$uidMap) {
+                        uidToDocumentMap[uid] = tokenMetadata.$uidMap[uid].$document;
                     }
                 }
                 else {
                     for (var uid in uidToDocumentMap) {
-                        if (!currentUidToDocumentMap[uid]) {
+                        if (!tokenMetadata.$uidMap[uid]) {
                             delete uidToDocumentMap[uid];
                         }
                     }
@@ -163,30 +160,29 @@ var JsSearch;
                 documents.push(uidToDocumentMap[uid]);
             }
             return documents.sort(function (documentA, documentB) {
-                return this.calculateTfIdf_(tokens, documentB) -
-                    this.calculateTfIdf_(tokens, documentA);
+                return this.calculateTfIdf_(tokens, documentB, documents) -
+                    this.calculateTfIdf_(tokens, documentA, documents);
             }.bind(this));
         };
-        TfIdfSearchIndex.prototype.calculateIdf_ = function (token) {
+        TfIdfSearchIndex.prototype.calculateIdf_ = function (token, documents) {
             if (!this.tokenToIdfCache_[token]) {
-                var numDocumentsWithToken = this.tokenToNumDocumentsMap_[token] || 0;
-                this.tokenToIdfCache_[token] = 1 + Math.log(this.numDocuments_ / (1 + numDocumentsWithToken));
+                var numDocumentsWithToken = this.tokenMap_[token] && this.tokenMap_[token].$numDocumentOccurrences || 0;
+                this.tokenToIdfCache_[token] = 1 + Math.log(documents.length / (1 + numDocumentsWithToken));
             }
             return this.tokenToIdfCache_[token];
         };
-        TfIdfSearchIndex.prototype.calculateTfIdf_ = function (tokens, document) {
+        TfIdfSearchIndex.prototype.calculateTfIdf_ = function (tokens, document, documents) {
             var score = 0;
             for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
                 var token = tokens[i];
-                var inverseDocumentFrequency = this.calculateIdf_(token);
+                var inverseDocumentFrequency = this.calculateIdf_(token, documents);
                 if (inverseDocumentFrequency === Infinity) {
                     inverseDocumentFrequency = 0;
                 }
-                var termFrequency = 0;
                 var uid = document && document[this.uidFieldName_];
-                if (this.tokenToUidToNumOccurrencesMap_[token]) {
-                    termFrequency = this.tokenToUidToNumOccurrencesMap_[token][uid] || 0;
-                }
+                var termFrequency = this.tokenMap_[token] &&
+                    this.tokenMap_[token].$uidMap[uid] &&
+                    this.tokenMap_[token].$uidMap[uid].$numTokenOccurrences || 0;
                 score += termFrequency * inverseDocumentFrequency;
             }
             return score;
@@ -194,6 +190,10 @@ var JsSearch;
         return TfIdfSearchIndex;
     })();
     JsSearch.TfIdfSearchIndex = TfIdfSearchIndex;
+    ;
+    ;
+    ;
+    ;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
@@ -234,7 +234,7 @@ var JsSearch;
         function Search(uidFieldName) {
             this.uidFieldName_ = uidFieldName;
             this.indexStrategy_ = new JsSearch.PrefixIndexStrategy();
-            this.searchIndex_ = new JsSearch.TfIdfSearchIndex(this.uidFieldName_);
+            this.searchIndex_ = new JsSearch.TfIdfSearchIndex(uidFieldName);
             this.sanitizer_ = new JsSearch.LowerCaseSanitizer();
             this.tokenizer_ = new JsSearch.SimpleTokenizer();
             this.documents_ = [];
@@ -305,7 +305,7 @@ var JsSearch;
         };
         Search.prototype.search = function (query) {
             var tokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
-            return this.searchIndex_.search(tokens);
+            return this.searchIndex_.search(tokens, this.documents_);
         };
         Search.prototype.indexDocuments_ = function (documents, searchableFields) {
             this.initialized_ = true;
@@ -338,17 +338,17 @@ var JsSearch;
 /// <reference path="search-index.ts" />
 var JsSearch;
 (function (JsSearch) {
-    var SimpleSearchIndex = (function () {
-        function SimpleSearchIndex() {
+    var UnorderedSearchIndex = (function () {
+        function UnorderedSearchIndex() {
             this.tokenToUidToDocumentMap_ = {};
         }
-        SimpleSearchIndex.prototype.indexDocument = function (token, uid, document) {
+        UnorderedSearchIndex.prototype.indexDocument = function (token, uid, document) {
             if (!this.tokenToUidToDocumentMap_[token]) {
                 this.tokenToUidToDocumentMap_[token] = {};
             }
             this.tokenToUidToDocumentMap_[token][uid] = document;
         };
-        SimpleSearchIndex.prototype.search = function (tokens) {
+        UnorderedSearchIndex.prototype.search = function (tokens, documents) {
             var uidToDocumentMap = {};
             for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
                 var token = tokens[i];
@@ -372,9 +372,9 @@ var JsSearch;
             }
             return documents;
         };
-        return SimpleSearchIndex;
+        return UnorderedSearchIndex;
     })();
-    JsSearch.SimpleSearchIndex = SimpleSearchIndex;
+    JsSearch.UnorderedSearchIndex = UnorderedSearchIndex;
     ;
 })(JsSearch || (JsSearch = {}));
 ;

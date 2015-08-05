@@ -3,9 +3,9 @@
 module JsSearch {
 
   /**
-   * TODO
+   * Search index capable of returning results matching a set of tokens but without any meaningful rank or order.
    */
-  export class SimpleSearchIndex implements ISearchIndex {
+  export class UnorderedSearchIndex implements ISearchIndex {
 
     private tokenToUidToDocumentMap_:{[token:string]:{[uid:string]:any}};
 
@@ -27,7 +27,7 @@ module JsSearch {
     /**
      * @inheritDocs
      */
-    public search(tokens:Array<string>):Array<Object> {
+    public search(tokens:Array<string>, documents:Array<Object>):Array<Object> {
       var uidToDocumentMap:{[uid:string]:any} = {};
 
       for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {

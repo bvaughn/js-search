@@ -36,24 +36,19 @@ declare module JsSearch {
 declare module JsSearch {
     interface ISearchIndex {
         indexDocument(token: string, uid: string, document: Object): void;
-        search(tokens: Array<string>): Array<Object>;
+        search(tokens: Array<string>, documents: Array<Object>): Array<Object>;
     }
 }
 declare module JsSearch {
     class TfIdfSearchIndex implements ISearchIndex {
-        private numDocuments_;
         private tokenToIdfCache_;
-        private tokenToNumDocumentsMap_;
-        private tokenToTotalNumOccurrencesMap_;
-        private tokenToUidToDocumentMap_;
-        private tokenToUidToNumOccurrencesMap_;
+        private tokenMap_;
         private uidFieldName_;
-        private uidMap_;
         constructor(uidFieldName: string);
         indexDocument(token: string, uid: string, document: Object): void;
-        search(tokens: Array<string>): Array<Object>;
-        private calculateIdf_(token);
-        private calculateTfIdf_(tokens, document);
+        search(tokens: Array<string>, documents: Array<Object>): Array<Object>;
+        private calculateIdf_(token, documents);
+        private calculateTfIdf_(tokens, document, documents);
     }
 }
 declare module JsSearch {
@@ -89,11 +84,11 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    class SimpleSearchIndex implements ISearchIndex {
+    class UnorderedSearchIndex implements ISearchIndex {
         private tokenToUidToDocumentMap_;
         constructor();
         indexDocument(token: string, uid: string, document: Object): void;
-        search(tokens: Array<string>): Array<Object>;
+        search(tokens: Array<string>, documents: Array<Object>): Array<Object>;
     }
 }
 declare module JsSearch {

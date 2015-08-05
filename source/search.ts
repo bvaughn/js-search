@@ -35,7 +35,7 @@ module JsSearch {
 
       // Set default/recommended strategies
       this.indexStrategy_ = new PrefixIndexStrategy();
-      this.searchIndex_ = new TfIdfSearchIndex(this.uidFieldName_);
+      this.searchIndex_ = new TfIdfSearchIndex(uidFieldName);
       this.sanitizer_ = new LowerCaseSanitizer();
       this.tokenizer_ = new SimpleTokenizer();
 
@@ -141,7 +141,7 @@ module JsSearch {
     public search(query:string):Array<Object> {
       var tokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
 
-      return this.searchIndex_.search(tokens);
+      return this.searchIndex_.search(tokens, this.documents_);
     }
 
     private indexDocuments_(documents:Array<Object>, searchableFields:Array<string>):void {

@@ -3,7 +3,7 @@ describe('Search', function() {
 
   beforeEach(function() {
     search = new JsSearch.Search('uid');
-    search.searchIndex = new JsSearch.SimpleSearchIndex();
+    search.searchIndex = new JsSearch.UnorderedSearchIndex();
     search.addIndex('title');
 
     var titles = [

@@ -3,77 +3,70 @@
 module JsSearch {
 
   /**
-   * TODO
+   * Search index capable of returning results matching a set of tokens and ranked according to TF-IDF.
    */
   export class TfIdfSearchIndex implements ISearchIndex {
 
-    private numDocuments_:number;
     private tokenToIdfCache_:{[token:string]:number};
-    private tokenToNumDocumentsMap_:{[uid:string]:number};
-    private tokenToTotalNumOccurrencesMap_:{[uid:string]:number};
-    private tokenToUidToDocumentMap_:{[token:string]:{[uid:string]:any}};
-    private tokenToUidToNumOccurrencesMap_:{[token:string]:{[uid:string]:number}};
+    private tokenMap_:ITfIdfTokenMap;
     private uidFieldName_:string;
-    private uidMap_:{[uid:string]:boolean};
 
     constructor(uidFieldName:string) {
       this.uidFieldName_ = uidFieldName;
-
-      this.numDocuments_ = 0;
       this.tokenToIdfCache_ = {};
-      this.tokenToNumDocumentsMap_ = {};
-      this.tokenToTotalNumOccurrencesMap_ = {};
-      this.tokenToUidToDocumentMap_ = {};
-      this.tokenToUidToNumOccurrencesMap_ = {};
-      this.uidMap_ = {};
+      this.tokenMap_ = {};
     }
 
     /**
      * @inheritDocs
      */
     public indexDocument(token:string, uid:string, document:Object):void {
-      delete this.tokenToIdfCache_[token]; // New index invalidates previous IDF cache
+      this.tokenToIdfCache_ = {}; // New index invalidates previous IDF caches
 
-      if (!this.uidMap_[uid]) {
-        this.numDocuments_++;
-        this.uidMap_[uid] = true;
+      if (!this.tokenMap_[token]) {
+        this.tokenMap_[token] = {
+          $numDocumentOccurrences: 0,
+          $totalNumOccurrences: 1,
+          $uidMap: {},
+        };
+      } else {
+        this.tokenMap_[token].$totalNumOccurrences++;
       }
 
-      if (!this.tokenToUidToDocumentMap_[token]) {
-        this.tokenToNumDocumentsMap_[token] = 0;
-        this.tokenToTotalNumOccurrencesMap_[token] = 1;
-        this.tokenToUidToDocumentMap_[token] = {};
-        this.tokenToUidToNumOccurrencesMap_[token] = {};
-      } else {
-        this.tokenToTotalNumOccurrencesMap_[token]++;
-      }
+      if (!this.tokenMap_[token].$uidMap[uid]) {
+        this.tokenMap_[token].$numDocumentOccurrences++;
 
-      if (!this.tokenToUidToDocumentMap_[token][uid]) {
-        this.tokenToNumDocumentsMap_[token]++;
-        this.tokenToUidToDocumentMap_[token][uid] = document;
-        this.tokenToUidToNumOccurrencesMap_[token][uid] = 1;
+        this.tokenMap_[token].$uidMap[uid] = {
+          $document: document,
+          $numTokenOccurrences: 1
+        };
       } else {
-        this.tokenToUidToNumOccurrencesMap_[token][uid]++;
+        this.tokenMap_[token].$uidMap[uid].$numTokenOccurrences++;
       }
     }
 
     /**
      * @inheritDocs
      */
-    public search(tokens:Array<string>):Array<Object> {
-      var uidToDocumentMap:{[uid:string]:any} = {};
+    public search(tokens:Array<string>, documents:Array<Object>):Array<Object> {
+      var uidToDocumentMap:{[uid:string]:Object} = {};
 
       for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
         var token:string = tokens[i];
-        var currentUidToDocumentMap:{[uid:string]:any} = this.tokenToUidToDocumentMap_[token] || {};
+        var tokenMetadata:ITfIdfTokenMetadata = this.tokenMap_[token];
+
+        // Short circuit if no matches were found for any given token.
+        if (!tokenMetadata) {
+          return [];
+        }
 
         if (i === 0) {
-          for (var uid in currentUidToDocumentMap) {
-            uidToDocumentMap[uid] = currentUidToDocumentMap[uid];
+          for (var uid in tokenMetadata.$uidMap) {
+            uidToDocumentMap[uid] = tokenMetadata.$uidMap[uid].$document;
           }
         } else {
           for (var uid in uidToDocumentMap) {
-            if (!currentUidToDocumentMap[uid]) {
+            if (!tokenMetadata.$uidMap[uid]) {
               delete uidToDocumentMap[uid];
             }
           }
@@ -88,8 +81,8 @@ module JsSearch {
 
       // Return documents sorted by TF-IDF
       return documents.sort(function (documentA, documentB) {
-        return this.calculateTfIdf_(tokens, documentB) -
-               this.calculateTfIdf_(tokens, documentA);
+        return this.calculateTfIdf_(tokens, documentB, documents) -
+               this.calculateTfIdf_(tokens, documentA, documents);
       }.bind(this));
     }
 
@@ -97,11 +90,11 @@ module JsSearch {
      * Calculate the inverse document frequency of a search token. This calculation diminishes the weight of tokens that
      * occur very frequently in the set of searchable documents and increases the weight of terms that occur rarely.
      */
-    private calculateIdf_(token:string):number {
+    private calculateIdf_(token:string, documents:Array<Object>):number {
       if (!this.tokenToIdfCache_[token]) {
-        var numDocumentsWithToken:number = this.tokenToNumDocumentsMap_[token] || 0;
+        var numDocumentsWithToken:number = this.tokenMap_[token] && this.tokenMap_[token].$numDocumentOccurrences || 0;
 
-        this.tokenToIdfCache_[token] = 1 + Math.log(this.numDocuments_ / (1 + numDocumentsWithToken));
+        this.tokenToIdfCache_[token] = 1 + Math.log(documents.length / (1 + numDocumentsWithToken));
       }
 
       return this.tokenToIdfCache_[token];
@@ -114,29 +107,47 @@ module JsSearch {
      * is offset by the frequency of the word in the corpus. This helps to adjust for the fact that some words appear
      * more frequently in general (e.g. a, and, the).
      */
-    private calculateTfIdf_(tokens:Array<string>, document:Object):number {
+    private calculateTfIdf_(tokens:Array<string>, document:Object, documents:Array<Object>):number {
       var score:number = 0;
 
       for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
         var token:string = tokens[i];
 
-        var inverseDocumentFrequency:number = this.calculateIdf_(token);
+        var inverseDocumentFrequency:number = this.calculateIdf_(token, documents);
 
         if (inverseDocumentFrequency === Infinity) {
           inverseDocumentFrequency = 0;
         }
 
-        var termFrequency:number = 0;
         var uid:any = document && document[this.uidFieldName_];
-
-        if (this.tokenToUidToNumOccurrencesMap_[token]) {
-          termFrequency = this.tokenToUidToNumOccurrencesMap_[token][uid] || 0;
-        }
+        var termFrequency:number =
+          this.tokenMap_[token] &&
+          this.tokenMap_[token].$uidMap[uid] &&
+          this.tokenMap_[token].$uidMap[uid].$numTokenOccurrences || 0;
 
         score += termFrequency * inverseDocumentFrequency;
       }
 
       return score;
     }
+  };
+
+  interface ITfIdfTokenMap {
+    [token:string]:ITfIdfTokenMetadata;
+  };
+
+  interface ITfIdfTokenMetadata {
+    $numDocumentOccurrences:number;
+    $totalNumOccurrences:number;
+    $uidMap:ITfIdfUidMap;
+  };
+
+  interface ITfIdfUidMap {
+    [uid:string]:ITfIdfUidMetadata;
+  };
+
+  interface ITfIdfUidMetadata {
+    $document:Object;
+    $numTokenOccurrences:number;
   };
 };

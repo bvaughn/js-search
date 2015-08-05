@@ -26,11 +26,11 @@ describe('Search', function() {
   });
 
   var calculateIdf = function(numDocumentsWithToken) {
-    return 1 + Math.log(search.searchIndex.numDocuments_/(1 + numDocumentsWithToken));
+    return 1 + Math.log(search.documents_.length/(1 + numDocumentsWithToken));
   };
 
   var assertIdf = function(term, numDocumentsWithToken) {
-    expect(search.searchIndex.calculateIdf_(term)).toEqual(calculateIdf(numDocumentsWithToken));
+    expect(search.searchIndex.calculateIdf_(term, search.documents_)).toEqual(calculateIdf(numDocumentsWithToken));
   };
 
   describe('IDF', function() {
@@ -53,14 +53,10 @@ describe('Search', function() {
   };
 
   var assertTfIdf = function(terms, document, expectedTfIdf) {
-    expect(search.searchIndex.calculateTfIdf_(terms, document)).toEqual(expectedTfIdf);
+    expect(search.searchIndex.calculateTfIdf_(terms, document, search.documents_)).toEqual(expectedTfIdf);
   };
 
   describe('TF-IDF', function() {
-    it('should calculate the correct number of documents', function() {
-      expect(search.searchIndex.numDocuments_).toEqual(search.documents_.length);
-    });
-
     it('should compute for single tokens within the corpus', function() {
       assertTfIdf(['node'], documents[0], calculateTfIdf(3, 1));
       assertTfIdf(['node'], documents[3], calculateTfIdf(3, 2));
