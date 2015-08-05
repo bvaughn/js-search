@@ -90,11 +90,13 @@ declare module JsSearch {
     class Search {
         private documents_;
         private enableTfIdf_;
+        private indexDocumentStrategy_;
         private indexStrategy_;
         private initialized_;
         private sanitizer_;
         private searchableFieldsMap_;
         private searchIndex_;
+        private searchStrategy_;
         private tfIdfSearchIndex_;
         private tokenizer_;
         private tokenToIdfCache_;
@@ -112,8 +114,11 @@ declare module JsSearch {
         search(query: string): Array<Object>;
         private calculateIdf_(token);
         private calculateTfIdf_(tokens, document);
-        private indexDocumentForTfIdf_(token, uid, document);
+        private indexDocumentTfIdfDisabled_(token, uid, document);
+        private indexDocumentTfIdfEnabled_(token, uid, document);
         private indexDocuments_(documents, searchableFields);
+        private searchTfIdfEnabled_(query, tokens);
+        private searchTfIdfDisabled_(query, tokens);
     }
 }
 declare module JsSearch {

@@ -211,6 +211,7 @@ var JsSearch;
             this.searchIndex_ = {};
             this.tfIdfSearchIndex_ = {};
             this.tokenToIdfCache_ = {};
+            this.enableTfIdf = true;
         }
         Object.defineProperty(Search.prototype, "enableTfIdf", {
             get: function () {
@@ -221,6 +222,8 @@ var JsSearch;
                     throw Error('TF-IDF cannot be enabled or disabled after initialization');
                 }
                 this.enableTfIdf_ = value;
+                this.indexDocumentStrategy_ = value ? this.indexDocumentTfIdfEnabled_ : this.indexDocumentTfIdfDisabled_;
+                this.searchStrategy_ = value ? this.searchTfIdfEnabled_ : this.searchTfIdfDisabled_;
             },
             enumerable: true,
             configurable: true
@@ -287,36 +290,7 @@ var JsSearch;
         };
         Search.prototype.search = function (query) {
             var tokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
-            if (this.enableTfIdf_) {
-                var uidToDocumentIndexMaps = [];
-                for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-                    var token = tokens[i];
-                    uidToDocumentIndexMaps.push(this.tfIdfSearchIndex_[token] && this.tfIdfSearchIndex_[token].$uidToDocumentMap || {});
-                }
-                var uidToDocumentDocumentIndexMap = this.pruningStrategy_.prune(uidToDocumentIndexMaps);
-                var documents = [];
-                for (var uid in uidToDocumentDocumentIndexMap) {
-                    documents.push(uidToDocumentDocumentIndexMap[uid].$document);
-                }
-                documents = documents.sort(function (documentA, documentB) {
-                    return this.calculateTfIdf_(tokens, documentB) -
-                        this.calculateTfIdf_(tokens, documentA);
-                }.bind(this));
-                return documents;
-            }
-            else {
-                var uidToDocumentMaps = [];
-                for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-                    var token = tokens[i];
-                    uidToDocumentMaps.push(this.searchIndex_[token] || {});
-                }
-                var uidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
-                var documents = [];
-                for (var uid in uidToDocumentMap) {
-                    documents.push(uidToDocumentMap[uid]);
-                }
-                return documents;
-            }
+            return this.searchStrategy_(query, tokens);
         };
         Search.prototype.calculateIdf_ = function (token) {
             if (!this.tokenToIdfCache_[token]) {
@@ -344,7 +318,13 @@ var JsSearch;
             }
             return score;
         };
-        Search.prototype.indexDocumentForTfIdf_ = function (token, uid, document) {
+        Search.prototype.indexDocumentTfIdfDisabled_ = function (token, uid, document) {
+            if (!this.searchIndex_[token]) {
+                this.searchIndex_[token] = {};
+            }
+            this.searchIndex_[token][uid] = document;
+        };
+        Search.prototype.indexDocumentTfIdfEnabled_ = function (token, uid, document) {
             if (!this.tfIdfSearchIndex_[token]) {
                 this.tfIdfSearchIndex_[token] = {
                     $documentsCount: 0,
@@ -382,20 +362,42 @@ var JsSearch;
                             var expandedTokens = this.indexStrategy_.expandToken(fieldToken);
                             for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
                                 var expandedToken = expandedTokens[eti];
-                                if (this.enableTfIdf_) {
-                                    this.indexDocumentForTfIdf_(expandedToken, uid, document);
-                                }
-                                else {
-                                    if (!this.searchIndex_[expandedToken]) {
-                                        this.searchIndex_[expandedToken] = {};
-                                    }
-                                    this.searchIndex_[expandedToken][uid] = document;
-                                }
+                                this.indexDocumentStrategy_(expandedToken, uid, document);
                             }
                         }
                     }
                 }
             }
+        };
+        Search.prototype.searchTfIdfEnabled_ = function (query, tokens) {
+            var uidToDocumentIndexMaps = [];
+            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+                var token = tokens[i];
+                uidToDocumentIndexMaps.push(this.tfIdfSearchIndex_[token] && this.tfIdfSearchIndex_[token].$uidToDocumentMap || {});
+            }
+            var uidToDocumentDocumentIndexMap = this.pruningStrategy_.prune(uidToDocumentIndexMaps);
+            var documents = [];
+            for (var uid in uidToDocumentDocumentIndexMap) {
+                documents.push(uidToDocumentDocumentIndexMap[uid].$document);
+            }
+            documents = documents.sort(function (documentA, documentB) {
+                return this.calculateTfIdf_(tokens, documentB) -
+                    this.calculateTfIdf_(tokens, documentA);
+            }.bind(this));
+            return documents;
+        };
+        Search.prototype.searchTfIdfDisabled_ = function (query, tokens) {
+            var uidToDocumentMaps = [];
+            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+                var token = tokens[i];
+                uidToDocumentMaps.push(this.searchIndex_[token] || {});
+            }
+            var uidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
+            var documents = [];
+            for (var uid in uidToDocumentMap) {
+                documents.push(uidToDocumentMap[uid]);
+            }
+            return documents;
         };
         return Search;
     })();
