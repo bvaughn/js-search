@@ -12,6 +12,6 @@ module JsSearch {
      * @param uidToDocumentMaps Array of results sets
      * @return Pruned result set
      */
-    prune(uidToDocumentMaps:Array<IUidToDocumentMap>):IUidToDocumentMap;
+    prune(uidToDocumentMaps:Array<UidToDocumentMap>):UidToDocumentMap;
   };
 };

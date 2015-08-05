@@ -4,7 +4,7 @@
 /// <reference path="pruning-strategy/pruning-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
 /// <reference path="sanitizer/sanitizer.ts" />
-/// <reference path="search-token-to-document-map.ts" />
+/// <reference path="search-index-types.ts" />
 /// <reference path="tokenizer/simple-tokenizer.ts" />
 /// <reference path="tokenizer/tokenizer.ts" />
 
@@ -24,7 +24,7 @@ module JsSearch {
     private tokenizer_:ITokenizer;
     private sanitizer_:ISanitizer;
     private searchableFieldsMap_:Object;
-    private searchIndex_:ISearchTokenToDocumentMap;
+    private searchIndex_:SearchIndex;
     private pruningStrategy_:IPruningStrategy;
 
     /**
@@ -141,24 +141,61 @@ module JsSearch {
      */
     public search(query:string):Array<Object> {
       var tokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
-      var uidToDocumentMaps:Array<IUidToDocumentMap> = [];
+      var uidToDocumentMaps:Array<UidToDocumentMap> = [];
 
       for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
         var token:string = tokens[i];
 
-        uidToDocumentMaps.push(this.searchIndex_[token] || {});
+        uidToDocumentMaps.push(this.searchIndex_[token] && this.searchIndex_[token].$uidToDocumentMap || {});
       }
 
-      var uidToDocumentMap:IUidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
+      var uidToDocumentMap:UidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
       var documents:Array<Object> = [];
 
       for (var uid in uidToDocumentMap) {
-        documents.push(uidToDocumentMap[uid]);
+        documents.push(uidToDocumentMap[uid].$document);
       }
 
-      // TODO Sorting/prioritization
+      // Return documents sorted by TF-IDF
+      return documents.sort(function(documentA, documentB) {
+        return this.calculateTfIdf_(tokens, documentB) -
+               this.calculateTfIdf_(tokens, documentA);
+      }.bind(this));
+    }
 
-      return documents;
+    private calculateIdf_(token:string):number {
+      // TODO Implement IDF token caching; invalid when documents re-indexed
+
+      var numDocumentsWithToken:number = 0;
+
+      if (this.searchIndex_[token]) {
+        numDocumentsWithToken = <number> this.searchIndex_[token].$documentsCount;
+      }
+
+      return 1 + Math.log(this.documents_.length/(1 + numDocumentsWithToken));
+    }
+
+    private calculateTfIdf_(tokens:Array<string>, document:Object):number {
+      var score:number = 0;
+
+      for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
+        var token:string = tokens[i];
+
+        var inverseDocumentFrequency:number = this.calculateIdf_(token);
+        inverseDocumentFrequency = inverseDocumentFrequency === Infinity ? 0 : inverseDocumentFrequency;
+
+        var termFrequency:number = 0;
+        var uid:any = document && document[this.uidFieldName_];
+
+        if (this.searchIndex_[token] &&
+            this.searchIndex_[token].$uidToDocumentMap[uid]) {
+          termFrequency = this.searchIndex_[token].$uidToDocumentMap[uid].$tokenCount;
+        }
+
+        score += termFrequency * inverseDocumentFrequency;
+      }
+
+      return score;
     }
 
     private indexDocuments_(documents:Array<Object>, searchableFields:Array<string>):void {
@@ -185,10 +222,24 @@ module JsSearch {
                 var expandedToken = expandedTokens[eti];
 
                 if (!this.searchIndex_[expandedToken]) {
-                  this.searchIndex_[expandedToken] = {};
+                  this.searchIndex_[expandedToken] = {
+                    $documentsCount: 0,
+                    $totalTokenCount: 1,
+                    $uidToDocumentMap: {}
+                  };
+                } else {
+                  this.searchIndex_[expandedToken].$totalTokenCount++;
                 }
 
-                this.searchIndex_[expandedToken][uid] = document;
+                if (!this.searchIndex_[expandedToken].$uidToDocumentMap[uid]) {
+                  this.searchIndex_[expandedToken].$documentsCount++;
+                  this.searchIndex_[expandedToken].$uidToDocumentMap[uid] = {
+                    $tokenCount: 1,
+                    $document: document
+                  };
+                } else {
+                  this.searchIndex_[expandedToken].$uidToDocumentMap[uid].$tokenCount++;
+                }
               }
             }
           }

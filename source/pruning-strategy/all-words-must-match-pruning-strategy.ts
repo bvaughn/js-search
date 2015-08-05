@@ -11,11 +11,11 @@ module JsSearch {
     /**
      * @inheritDocs
      */
-    public prune(uidToDocumentMaps:Array<IUidToDocumentMap>):IUidToDocumentMap {
-      var filteredUidToDocumentMap:IUidToDocumentMap = {};
+    public prune(uidToDocumentMaps:Array<UidToDocumentMap>):UidToDocumentMap {
+      var filteredUidToDocumentMap:UidToDocumentMap = {};
 
       for (var i = 0, numMaps = uidToDocumentMaps.length; i < numMaps; i++) {
-        var uidToDocumentMap:IUidToDocumentMap = uidToDocumentMaps[i];
+        var uidToDocumentMap:UidToDocumentMap = uidToDocumentMaps[i];
 
         if (i === 0) {
           for (var uid in uidToDocumentMap) {

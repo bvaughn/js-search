@@ -162,10 +162,6 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-var JsSearch;
-(function (JsSearch) {
-    ;
-})(JsSearch || (JsSearch = {}));
 ;
 var JsSearch;
 (function (JsSearch) {
@@ -196,7 +192,7 @@ var JsSearch;
 /// <reference path="pruning-strategy/pruning-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
 /// <reference path="sanitizer/sanitizer.ts" />
-/// <reference path="search-token-to-document-map.ts" />
+/// <reference path="search-index-types.ts" />
 /// <reference path="tokenizer/simple-tokenizer.ts" />
 /// <reference path="tokenizer/tokenizer.ts" />
 var JsSearch;
@@ -277,14 +273,41 @@ var JsSearch;
             var uidToDocumentMaps = [];
             for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
                 var token = tokens[i];
-                uidToDocumentMaps.push(this.searchIndex_[token] || {});
+                uidToDocumentMaps.push(this.searchIndex_[token] && this.searchIndex_[token].$uidToDocumentMap || {});
             }
             var uidToDocumentMap = this.pruningStrategy_.prune(uidToDocumentMaps);
             var documents = [];
             for (var uid in uidToDocumentMap) {
-                documents.push(uidToDocumentMap[uid]);
+                documents.push(uidToDocumentMap[uid].$document);
             }
-            return documents;
+            return documents.sort(function (documentA, documentB) {
+                return this.calculateTfIdf_(tokens, documentB) -
+                    this.calculateTfIdf_(tokens, documentA);
+            }.bind(this));
+        };
+        Search.prototype.calculateIdf_ = function (token) {
+            // TODO Implement IDF token caching; invalid when documents re-indexed
+            var numDocumentsWithToken = 0;
+            if (this.searchIndex_[token]) {
+                numDocumentsWithToken = this.searchIndex_[token].$documentsCount;
+            }
+            return 1 + Math.log(this.documents_.length / (1 + numDocumentsWithToken));
+        };
+        Search.prototype.calculateTfIdf_ = function (tokens, document) {
+            var score = 0;
+            for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
+                var token = tokens[i];
+                var inverseDocumentFrequency = this.calculateIdf_(token);
+                inverseDocumentFrequency = inverseDocumentFrequency === Infinity ? 0 : inverseDocumentFrequency;
+                var termFrequency = 0;
+                var uid = document && document[this.uidFieldName_];
+                if (this.searchIndex_[token] &&
+                    this.searchIndex_[token].$uidToDocumentMap[uid]) {
+                    termFrequency = this.searchIndex_[token].$uidToDocumentMap[uid].$tokenCount;
+                }
+                score += termFrequency * inverseDocumentFrequency;
+            }
+            return score;
         };
         Search.prototype.indexDocuments_ = function (documents, searchableFields) {
             this.initialized_ = true;
@@ -302,9 +325,25 @@ var JsSearch;
                             for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
                                 var expandedToken = expandedTokens[eti];
                                 if (!this.searchIndex_[expandedToken]) {
-                                    this.searchIndex_[expandedToken] = {};
+                                    this.searchIndex_[expandedToken] = {
+                                        $documentsCount: 0,
+                                        $totalTokenCount: 1,
+                                        $uidToDocumentMap: {}
+                                    };
                                 }
-                                this.searchIndex_[expandedToken][uid] = document;
+                                else {
+                                    this.searchIndex_[expandedToken].$totalTokenCount++;
+                                }
+                                if (!this.searchIndex_[expandedToken].$uidToDocumentMap[uid]) {
+                                    this.searchIndex_[expandedToken].$documentsCount++;
+                                    this.searchIndex_[expandedToken].$uidToDocumentMap[uid] = {
+                                        $tokenCount: 1,
+                                        $document: document
+                                    };
+                                }
+                                else {
+                                    this.searchIndex_[expandedToken].$uidToDocumentMap[uid].$tokenCount++;
+                                }
                             }
                         }
                     }
@@ -314,102 +353,6 @@ var JsSearch;
         return Search;
     })();
     JsSearch.Search = Search;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-/// <reference path="tokenizer.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var StemmingTokenizer = (function () {
-        function StemmingTokenizer(stemmingFunction, decoratedTokenizer) {
-            this.stemmingFunction_ = stemmingFunction;
-            this.tokenizer_ = decoratedTokenizer;
-        }
-        StemmingTokenizer.prototype.tokenize = function (text) {
-            return this.tokenizer_.tokenize(text)
-                .map(function (token) {
-                return this.stemmingFunction_(token);
-            }, this);
-        };
-        return StemmingTokenizer;
-    })();
-    JsSearch.StemmingTokenizer = StemmingTokenizer;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-/// <reference path="tokenizer.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var StopWordsTokenizer = (function () {
-        function StopWordsTokenizer(decoratedTokenizer) {
-            this.tokenizer_ = decoratedTokenizer;
-        }
-        StopWordsTokenizer.prototype.tokenize = function (text) {
-            return this.tokenizer_.tokenize(text)
-                .filter(function (token) {
-                return token && JsSearch.StopWordsMap[token] !== token;
-            });
-        };
-        return StopWordsTokenizer;
-    })();
-    JsSearch.StopWordsTokenizer = StopWordsTokenizer;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-var JsSearch;
-(function (JsSearch) {
-    var TokenHighlighter = (function () {
-        function TokenHighlighter(opt_indexStrategy, opt_sanitizer, opt_wrapperTagName) {
-            this.indexStrategy_ = opt_indexStrategy || new JsSearch.PrefixIndexStrategy();
-            this.sanitizer_ = opt_sanitizer || new JsSearch.LowerCaseSanitizer();
-            this.wrapperTagName_ = opt_wrapperTagName || 'mark';
-        }
-        TokenHighlighter.prototype.highlight = function (text, tokens) {
-            var tagsLength = this.wrapText_('').length;
-            var tokenDictionary = {};
-            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-                var token = this.sanitizer_.sanitize(tokens[i]);
-                var expandedTokens = this.indexStrategy_.expandToken(token);
-                for (var j = 0, numExpandedTokens = expandedTokens.length; j < numExpandedTokens; j++) {
-                    var expandedToken = expandedTokens[j];
-                    if (!tokenDictionary[expandedToken]) {
-                        tokenDictionary[expandedToken] = [token];
-                    }
-                    else {
-                        tokenDictionary[expandedToken].push(token);
-                    }
-                }
-            }
-            var actualCurrentWord = '';
-            var sanitizedCurrentWord = '';
-            var currentWordStartIndex = 0;
-            for (var i = 0, textLength = text.length; i < textLength; i++) {
-                var character = text.charAt(i);
-                if (character === ' ') {
-                    actualCurrentWord = '';
-                    sanitizedCurrentWord = '';
-                    currentWordStartIndex = i + 1;
-                }
-                else {
-                    actualCurrentWord += character;
-                    sanitizedCurrentWord += this.sanitizer_.sanitize(character);
-                }
-                if (tokenDictionary[sanitizedCurrentWord] &&
-                    tokenDictionary[sanitizedCurrentWord].indexOf(sanitizedCurrentWord) >= 0) {
-                    actualCurrentWord = this.wrapText_(actualCurrentWord);
-                    text = text.substring(0, currentWordStartIndex) + actualCurrentWord + text.substring(i + 1);
-                    i += tagsLength;
-                    textLength += tagsLength;
-                }
-            }
-            return text;
-        };
-        TokenHighlighter.prototype.wrapText_ = function (text) {
-            return "<" + this.wrapperTagName_ + ">" + text + "</" + this.wrapperTagName_ + ">";
-        };
-        return TokenHighlighter;
-    })();
-    JsSearch.TokenHighlighter = TokenHighlighter;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
@@ -536,6 +479,102 @@ var JsSearch;
         you: 'you',
         your: 'your'
     };
+})(JsSearch || (JsSearch = {}));
+;
+/// <reference path="tokenizer.ts" />
+var JsSearch;
+(function (JsSearch) {
+    var StemmingTokenizer = (function () {
+        function StemmingTokenizer(stemmingFunction, decoratedTokenizer) {
+            this.stemmingFunction_ = stemmingFunction;
+            this.tokenizer_ = decoratedTokenizer;
+        }
+        StemmingTokenizer.prototype.tokenize = function (text) {
+            return this.tokenizer_.tokenize(text)
+                .map(function (token) {
+                return this.stemmingFunction_(token);
+            }, this);
+        };
+        return StemmingTokenizer;
+    })();
+    JsSearch.StemmingTokenizer = StemmingTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+/// <reference path="tokenizer.ts" />
+var JsSearch;
+(function (JsSearch) {
+    var StopWordsTokenizer = (function () {
+        function StopWordsTokenizer(decoratedTokenizer) {
+            this.tokenizer_ = decoratedTokenizer;
+        }
+        StopWordsTokenizer.prototype.tokenize = function (text) {
+            return this.tokenizer_.tokenize(text)
+                .filter(function (token) {
+                return token && JsSearch.StopWordsMap[token] !== token;
+            });
+        };
+        return StopWordsTokenizer;
+    })();
+    JsSearch.StopWordsTokenizer = StopWordsTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+var JsSearch;
+(function (JsSearch) {
+    var TokenHighlighter = (function () {
+        function TokenHighlighter(opt_indexStrategy, opt_sanitizer, opt_wrapperTagName) {
+            this.indexStrategy_ = opt_indexStrategy || new JsSearch.PrefixIndexStrategy();
+            this.sanitizer_ = opt_sanitizer || new JsSearch.LowerCaseSanitizer();
+            this.wrapperTagName_ = opt_wrapperTagName || 'mark';
+        }
+        TokenHighlighter.prototype.highlight = function (text, tokens) {
+            var tagsLength = this.wrapText_('').length;
+            var tokenDictionary = {};
+            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+                var token = this.sanitizer_.sanitize(tokens[i]);
+                var expandedTokens = this.indexStrategy_.expandToken(token);
+                for (var j = 0, numExpandedTokens = expandedTokens.length; j < numExpandedTokens; j++) {
+                    var expandedToken = expandedTokens[j];
+                    if (!tokenDictionary[expandedToken]) {
+                        tokenDictionary[expandedToken] = [token];
+                    }
+                    else {
+                        tokenDictionary[expandedToken].push(token);
+                    }
+                }
+            }
+            var actualCurrentWord = '';
+            var sanitizedCurrentWord = '';
+            var currentWordStartIndex = 0;
+            for (var i = 0, textLength = text.length; i < textLength; i++) {
+                var character = text.charAt(i);
+                if (character === ' ') {
+                    actualCurrentWord = '';
+                    sanitizedCurrentWord = '';
+                    currentWordStartIndex = i + 1;
+                }
+                else {
+                    actualCurrentWord += character;
+                    sanitizedCurrentWord += this.sanitizer_.sanitize(character);
+                }
+                if (tokenDictionary[sanitizedCurrentWord] &&
+                    tokenDictionary[sanitizedCurrentWord].indexOf(sanitizedCurrentWord) >= 0) {
+                    actualCurrentWord = this.wrapText_(actualCurrentWord);
+                    text = text.substring(0, currentWordStartIndex) + actualCurrentWord + text.substring(i + 1);
+                    i += tagsLength;
+                    textLength += tagsLength;
+                }
+            }
+            return text;
+        };
+        TokenHighlighter.prototype.wrapText_ = function (text) {
+            return "<" + this.wrapperTagName_ + ">" + text + "</" + this.wrapperTagName_ + ">";
+        };
+        return TokenHighlighter;
+    })();
+    JsSearch.TokenHighlighter = TokenHighlighter;
+    ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=js-search.js.map

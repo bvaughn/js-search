@@ -20,7 +20,7 @@ declare module JsSearch {
 }
 declare module JsSearch {
     interface IPruningStrategy {
-        prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
+        prune(uidToDocumentMaps: Array<UidToDocumentMap>): UidToDocumentMap;
     }
 }
 declare module JsSearch {
@@ -30,12 +30,12 @@ declare module JsSearch {
 }
 declare module JsSearch {
     class AllWordsMustMatchPruningStrategy implements IPruningStrategy {
-        prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
+        prune(uidToDocumentMaps: Array<UidToDocumentMap>): UidToDocumentMap;
     }
 }
 declare module JsSearch {
     class AnyWordsThatMatchPruningStrategy implements IPruningStrategy {
-        prune(uidToDocumentMaps: Array<IUidToDocumentMap>): IUidToDocumentMap;
+        prune(uidToDocumentMaps: Array<UidToDocumentMap>): UidToDocumentMap;
     }
 }
 declare module JsSearch {
@@ -54,8 +54,20 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    interface ISearchTokenToDocumentMap {
-        [uid: string]: IUidToDocumentMap;
+    interface SearchIndex {
+        [token: string]: TokenIndex;
+    }
+    interface TokenIndex {
+        $documentsCount: number;
+        $totalTokenCount: number;
+        $uidToDocumentMap: UidToDocumentMap;
+    }
+    interface UidToDocumentMap {
+        [uid: string]: TokenDocumentIndex;
+    }
+    interface TokenDocumentIndex {
+        $tokenCount: number;
+        $document: Object;
     }
 }
 declare module JsSearch {
@@ -88,32 +100,9 @@ declare module JsSearch {
         addDocuments(documents: Array<Object>): void;
         addIndex(field: string): void;
         search(query: string): Array<Object>;
+        private calculateIdf_(token);
+        private calculateTfIdf_(tokens, document);
         private indexDocuments_(documents, searchableFields);
-    }
-}
-declare module JsSearch {
-    class StemmingTokenizer implements ITokenizer {
-        private stemmingFunction_;
-        private tokenizer_;
-        constructor(stemmingFunction: (text: string) => string, decoratedTokenizer: ITokenizer);
-        tokenize(text: string): Array<string>;
-    }
-}
-declare module JsSearch {
-    class StopWordsTokenizer implements ITokenizer {
-        private tokenizer_;
-        constructor(decoratedTokenizer: ITokenizer);
-        tokenize(text: string): Array<string>;
-    }
-}
-declare module JsSearch {
-    class TokenHighlighter {
-        private indexStrategy_;
-        private sanitizer_;
-        private wrapperTagName_;
-        constructor(opt_indexStrategy: IIndexStrategy, opt_sanitizer: ISanitizer, opt_wrapperTagName: string);
-        highlight(text: string, tokens: Array<string>): string;
-        private wrapText_(text);
     }
 }
 declare module JsSearch {
@@ -238,4 +227,29 @@ declare module JsSearch {
         you: string;
         your: string;
     };
+}
+declare module JsSearch {
+    class StemmingTokenizer implements ITokenizer {
+        private stemmingFunction_;
+        private tokenizer_;
+        constructor(stemmingFunction: (text: string) => string, decoratedTokenizer: ITokenizer);
+        tokenize(text: string): Array<string>;
+    }
+}
+declare module JsSearch {
+    class StopWordsTokenizer implements ITokenizer {
+        private tokenizer_;
+        constructor(decoratedTokenizer: ITokenizer);
+        tokenize(text: string): Array<string>;
+    }
+}
+declare module JsSearch {
+    class TokenHighlighter {
+        private indexStrategy_;
+        private sanitizer_;
+        private wrapperTagName_;
+        constructor(opt_indexStrategy: IIndexStrategy, opt_sanitizer: ISanitizer, opt_wrapperTagName: string);
+        highlight(text: string, tokens: Array<string>): string;
+        private wrapText_(text);
+    }
 }
