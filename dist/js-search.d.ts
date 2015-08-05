@@ -24,8 +24,8 @@ declare module JsSearch {
     }
 }
 declare module JsSearch {
-    interface IUidToDocumentMap {
-        [uid: string]: Object;
+    interface UidToDocumentMap {
+        [uid: string]: TokenDocumentIndex;
     }
 }
 declare module JsSearch {
@@ -57,17 +57,23 @@ declare module JsSearch {
     interface SearchIndex {
         [token: string]: TokenIndex;
     }
+}
+declare module JsSearch {
+    interface TokenDocumentIndex {
+        $tokenCount: number;
+        $document: Object;
+    }
+}
+declare module JsSearch {
     interface TokenIndex {
         $documentsCount: number;
         $totalTokenCount: number;
         $uidToDocumentMap: UidToDocumentMap;
     }
-    interface UidToDocumentMap {
-        [uid: string]: TokenDocumentIndex;
-    }
-    interface TokenDocumentIndex {
-        $tokenCount: number;
-        $document: Object;
+}
+declare module JsSearch {
+    interface TokenToIdfCache {
+        [uid: string]: number;
     }
 }
 declare module JsSearch {
@@ -91,6 +97,7 @@ declare module JsSearch {
         private searchableFieldsMap_;
         private searchIndex_;
         private pruningStrategy_;
+        private tokenToIdfCache_;
         constructor(uidFieldName: string);
         indexStrategy: IIndexStrategy;
         pruningStrategy: IPruningStrategy;

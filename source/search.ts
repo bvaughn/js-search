@@ -4,7 +4,10 @@
 /// <reference path="pruning-strategy/pruning-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
 /// <reference path="sanitizer/sanitizer.ts" />
-/// <reference path="search-index-types.ts" />
+/// <reference path="search-index" />
+/// <reference path="token-document-index" />
+/// <reference path="token-index" />
+/// <reference path="token-to-idf-cache" />
 /// <reference path="tokenizer/simple-tokenizer.ts" />
 /// <reference path="tokenizer/tokenizer.ts" />
 
@@ -26,6 +29,7 @@ module JsSearch {
     private searchableFieldsMap_:Object;
     private searchIndex_:SearchIndex;
     private pruningStrategy_:IPruningStrategy;
+    private tokenToIdfCache_:TokenToIdfCache;
 
     /**
      * Constructor.
@@ -43,6 +47,7 @@ module JsSearch {
       this.documents_ = [];
       this.searchableFieldsMap_ = {};
       this.searchIndex_ = {};
+      this.tokenToIdfCache_ = {};
     }
 
     /**
@@ -157,24 +162,39 @@ module JsSearch {
       }
 
       // Return documents sorted by TF-IDF
-      return documents.sort(function(documentA, documentB) {
+      documents = documents.sort(function(documentA, documentB) {
         return this.calculateTfIdf_(tokens, documentB) -
                this.calculateTfIdf_(tokens, documentA);
       }.bind(this));
+
+      return documents;
     }
 
+    /**
+     * Calculate the inverse document frequency of a search token. This calculation diminishes the weight of tokens that
+     * occur very frequently in the set of searchable documents and increases the weight of terms that occur rarely.
+     */
     private calculateIdf_(token:string):number {
-      // TODO Implement IDF token caching; invalid when documents re-indexed
+      if (!this.tokenToIdfCache_[token]) {
+        var numDocumentsWithToken:number = 0;
 
-      var numDocumentsWithToken:number = 0;
+        if (this.searchIndex_[token]) {
+          numDocumentsWithToken = <number> this.searchIndex_[token].$documentsCount;
+        }
 
-      if (this.searchIndex_[token]) {
-        numDocumentsWithToken = <number> this.searchIndex_[token].$documentsCount;
+        this.tokenToIdfCache_[token] = 1 + Math.log(this.documents_.length / (1 + numDocumentsWithToken));
       }
 
-      return 1 + Math.log(this.documents_.length/(1 + numDocumentsWithToken));
+      return this.tokenToIdfCache_[token];
     }
 
+    /**
+     * Calculate the term frequency–inverse document frequency (TF-IDF) ranking for a set of search tokens and a
+     * document. The TF-IDF is a numeric statistic intended to reflect how important a word (or words) are to a document
+     * in a corpus. The TF-IDF value increases proportionally to the number of times a word appears in the document but
+     * is offset by the frequency of the word in the corpus. This helps to adjust for the fact that some words appear
+     * more frequently in general (e.g. a, and, the).
+     */
     private calculateTfIdf_(tokens:Array<string>, document:Object):number {
       var score:number = 0;
 
@@ -199,13 +219,12 @@ module JsSearch {
     }
 
     private indexDocuments_(documents:Array<Object>, searchableFields:Array<string>):void {
+      this.tokenToIdfCache_ = {}; // New index invalidates previous IDF cache
       this.initialized_ = true;
 
       for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
         var document:Object = documents[di];
         var uid:string = document[this.uidFieldName_];
-
-        // TODO Error if missing UID
 
         for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
           var searchableField:string = searchableFields[sfi];
@@ -243,8 +262,6 @@ module JsSearch {
               }
             }
           }
-
-          // TODO console.warn if missing field
         }
       }
     }

@@ -1,5 +1,9 @@
 module JsSearch {
-  export interface IUidToDocumentMap {
-    [uid: string]: Object;
-  };
+
+  /**
+   * UID to searchable document map.
+   */
+  export interface UidToDocumentMap {
+    [uid:string]:TokenDocumentIndex;
+  }
 };

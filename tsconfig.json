@@ -20,13 +20,16 @@
     "source/sanitizer/lower-case-sanitizer.ts",
     "source/sanitizer/sanitizer.ts",
     "source/search.ts",
-    "source/search-index-types.ts",
+    "source/search-index.ts",
     "source/stop-words-map.ts",
     "source/tokenizer/stemming-tokenizer.ts",
     "source/tokenizer/simple-tokenizer.ts",
     "source/tokenizer/stop-words-filtering-tokenizer.ts",
     "source/tokenizer/tokenizer.ts",
+    "source/token-document-index.ts",
     "source/token-highlighter.ts",
+    "source/token-index.ts",
+    "source/token-to-idf-cache.ts",
     "source/uid-to-document-map.ts"
   ]
 }

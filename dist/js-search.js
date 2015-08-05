@@ -67,10 +67,6 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-var JsSearch;
-(function (JsSearch) {
-    ;
-})(JsSearch || (JsSearch = {}));
 ;
 /// <reference path="pruning-strategy.ts" />
 /// <reference path="../uid-to-document-map.ts" />
@@ -163,6 +159,9 @@ var JsSearch;
 })(JsSearch || (JsSearch = {}));
 ;
 ;
+;
+;
+;
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -192,7 +191,10 @@ var JsSearch;
 /// <reference path="pruning-strategy/pruning-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
 /// <reference path="sanitizer/sanitizer.ts" />
-/// <reference path="search-index-types.ts" />
+/// <reference path="search-index" />
+/// <reference path="token-document-index" />
+/// <reference path="token-index" />
+/// <reference path="token-to-idf-cache" />
 /// <reference path="tokenizer/simple-tokenizer.ts" />
 /// <reference path="tokenizer/tokenizer.ts" />
 var JsSearch;
@@ -207,6 +209,7 @@ var JsSearch;
             this.documents_ = [];
             this.searchableFieldsMap_ = {};
             this.searchIndex_ = {};
+            this.tokenToIdfCache_ = {};
         }
         Object.defineProperty(Search.prototype, "indexStrategy", {
             get: function () {
@@ -280,18 +283,21 @@ var JsSearch;
             for (var uid in uidToDocumentMap) {
                 documents.push(uidToDocumentMap[uid].$document);
             }
-            return documents.sort(function (documentA, documentB) {
+            documents = documents.sort(function (documentA, documentB) {
                 return this.calculateTfIdf_(tokens, documentB) -
                     this.calculateTfIdf_(tokens, documentA);
             }.bind(this));
+            return documents;
         };
         Search.prototype.calculateIdf_ = function (token) {
-            // TODO Implement IDF token caching; invalid when documents re-indexed
-            var numDocumentsWithToken = 0;
-            if (this.searchIndex_[token]) {
-                numDocumentsWithToken = this.searchIndex_[token].$documentsCount;
+            if (!this.tokenToIdfCache_[token]) {
+                var numDocumentsWithToken = 0;
+                if (this.searchIndex_[token]) {
+                    numDocumentsWithToken = this.searchIndex_[token].$documentsCount;
+                }
+                this.tokenToIdfCache_[token] = 1 + Math.log(this.documents_.length / (1 + numDocumentsWithToken));
             }
-            return 1 + Math.log(this.documents_.length / (1 + numDocumentsWithToken));
+            return this.tokenToIdfCache_[token];
         };
         Search.prototype.calculateTfIdf_ = function (tokens, document) {
             var score = 0;
@@ -310,6 +316,7 @@ var JsSearch;
             return score;
         };
         Search.prototype.indexDocuments_ = function (documents, searchableFields) {
+            this.tokenToIdfCache_ = {};
             this.initialized_ = true;
             for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
                 var document = documents[di];
