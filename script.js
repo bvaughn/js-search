@@ -6,6 +6,7 @@ var removeStopWordsCheckbox = document.getElementById('removeStopWordsCheckbox')
 var indexOnTitleCheckbox = document.getElementById('indexOnTitleCheckbox');
 var useStemmingCheckbox = document.getElementById('useStemmingCheckbox');
 var sanitizerSelect = document.getElementById('sanitizerSelect');
+var tfIdfRankingCheckbox = document.getElementById('tfIdfRankingCheckbox');
 
 var rebuildAndRerunSearch = function() {
   rebuildSearchIndex();
@@ -18,6 +19,7 @@ removeStopWordsCheckbox.onchange = rebuildAndRerunSearch;
 indexOnTitleCheckbox.onchange = rebuildAndRerunSearch;
 useStemmingCheckbox.onchange = rebuildAndRerunSearch;
 sanitizerSelect.onchange = rebuildAndRerunSearch;
+tfIdfRankingCheckbox.onchange = rebuildAndRerunSearch;
 
 var rebuildSearchIndex = function() {
   search = new JsSearch.Search('isbn');
@@ -31,6 +33,12 @@ var rebuildSearchIndex = function() {
 
   search.indexStrategy =  eval('new ' + indexStrategySelect.value + '()');
   search.sanitizer =  eval('new ' + sanitizerSelect.value + '()');;
+
+  if (tfIdfRankingCheckbox.checked) {
+    search.searchIndex = new JsSearch.TfIdfSearchIndex('isbn');
+  } else {
+    search.searchIndex = new JsSearch.UnorderedSearchIndex();
+  }
 
   if (indexOnTitleCheckbox.checked) {
     search.addIndex('title');
