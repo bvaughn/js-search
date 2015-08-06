@@ -3,6 +3,13 @@
 Js Search enables efficient client-side searches of JavaScript and JSON objects.
 It is ES5 compatible and does not require jQuery or any other third-party libraries.
 
+Js Search began as a lightweight implementation of [Lunr JS](http://lunrjs.com/),  oferring runtime performance imrpovements and a smaller filesize. It has since expanded to include a rich feature set- supporting stemming, stop-words, and TF-IDF ranking. It
+
+Here are some JS Perf benchmarks comparing the two search libraries. (Thanks to [olivernn](https://github.com/olivernn) for tweaking the Lunr side for a better comparison!)
+
+* [Initial building of search index](http://jsperf.com/js-search-vs-lunr-js-build-search-index/5)
+* [Running a search](http://jsperf.com/js-search-vs-lunr-js-running-searches/5)
+
 ### Installation
 
 You can install using either [Bower](http://bower.io/) or [NPM](https://www.npmjs.com/) like so:
