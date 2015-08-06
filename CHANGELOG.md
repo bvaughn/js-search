@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+Added `ISearchIndex` interface in order to support TF-IDF (enabled by default).
+Removed `IPruningStrategy`; it didn't seem like it added sufficient value to offset performance costs.
+
 ## 1.1.1
 Udpated stop-words list to avoid filtering `Object.prototype` properties.
 
