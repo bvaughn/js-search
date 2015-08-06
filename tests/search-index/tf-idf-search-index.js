@@ -1,7 +1,22 @@
 describe('Search', function() {
-  var documents, search;
+  var documents, search, uid;
+
+  var addDocument = function(title) {
+    var document = {
+      uid: ++uid,
+      title: title
+    };
+
+    documents.push(document);
+    search.addDocument(document);
+
+    return document;
+  };
 
   beforeEach(function() {
+    documents = [];
+    uid = 0;
+
     search = new JsSearch.Search('uid');
     search.searchIndex = new JsSearch.TfIdfSearchIndex('uid');
     search.addIndex('title');
@@ -13,15 +28,8 @@ describe('Search', function() {
       'this document is about node. it has node examples'
     ];
 
-    documents = [];
     for (var i = 0, length = titles.length; i < length; ++i) {
-      var document = {
-        uid: i,
-        title: titles[i]
-      };
-
-      documents.push(document);
-      search.addDocument(document);
+      addDocument(titles[i]);
     }
   });
 
@@ -37,14 +45,25 @@ describe('Search', function() {
     it('should compute for tokens appearing only once', function() {
       assertIdf('and', 1);
     });
+
     it('should compute for tokens appearing once in each document', function() {
       assertIdf('document', 4);
     });
+
     it('should compute for tokens appearing multiple times in a document', function() {
       assertIdf('node', 3);
     });
+
     it('should compute for tokens that are not within the corpus', function() {
-      assertIdf('foob', 0);
+      assertIdf('foobar', 0);
+    });
+
+    it('should clear IFD cache if new documents are indexed', function() {
+      assertIdf('ruby', 2);
+
+      addDocument('this document is not about ruby.');
+
+      assertIdf('ruby', 3);
     });
   });
 
@@ -85,7 +104,27 @@ describe('Search', function() {
       expect(results.length).toEqual(3);
 
       // The 4th document has "node" twice so it should be first of the 3
+      // The order of the other results isn't important for this test.
       expect(results[0]).toEqual(documents[3]);
+    });
+
+    it('should give documents containing words with a lower IDF a higher relative ranking', function() {
+      var documentA = addDocument('foo bar foo bar baz baz baz baz');
+      var documentB = addDocument('foo bar foo foo baz baz baz baz');
+      var documentC = addDocument('foo bar baz bar baz baz baz baz');
+      addDocument('foo foo foo foo foo foo foo foo');
+      addDocument('foo baz foo baz foo baz foo baz');
+
+      var results = search.search('foo bar');
+
+      expect(results.length).toEqual(3);
+
+      // Document A should come first because it has 2 "bar" (which have a lower total count) and 2 "foo"
+      // Document C should come first because it has 2 "bar" (which have a lower total count) but only 1 "foo"
+      // Document B should come last because although it has 3 "foo" it has only 1 "bar"
+      expect(results[0]).toEqual(documentA);
+      expect(results[1]).toEqual(documentC);
+      expect(results[2]).toEqual(documentB);
     });
   });
 });
