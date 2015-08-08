@@ -36,7 +36,7 @@ declare module JsSearch {
 declare module JsSearch {
     interface ISearchIndex {
         indexDocument(token: string, uid: string, document: Object): void;
-        search(tokens: Array<string>, documents: Array<Object>): Array<Object>;
+        search(tokens: Array<string>, corpus: Array<Object>): Array<Object>;
     }
 }
 declare module JsSearch {
@@ -46,7 +46,7 @@ declare module JsSearch {
         private uidFieldName_;
         constructor(uidFieldName: string);
         indexDocument(token: string, uid: string, document: Object): void;
-        search(tokens: Array<string>, documents: Array<Object>): Array<Object>;
+        search(tokens: Array<string>, corpus: Array<Object>): Array<Object>;
         private calculateIdf_(token, documents);
         private calculateTfIdf_(tokens, document, documents);
     }
@@ -88,7 +88,7 @@ declare module JsSearch {
         private tokenToUidToDocumentMap_;
         constructor();
         indexDocument(token: string, uid: string, document: Object): void;
-        search(tokens: Array<string>, documents: Array<Object>): Array<Object>;
+        search(tokens: Array<string>, corpus: Array<Object>): Array<Object>;
     }
 }
 declare module JsSearch {

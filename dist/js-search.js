@@ -134,7 +134,7 @@ var JsSearch;
                 this.tokenMap_[token].$uidMap[uid].$numTokenOccurrences++;
             }
         };
-        TfIdfSearchIndex.prototype.search = function (tokens, documents) {
+        TfIdfSearchIndex.prototype.search = function (tokens, corpus) {
             var uidToDocumentMap = {};
             for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
                 var token = tokens[i];
@@ -160,8 +160,8 @@ var JsSearch;
                 documents.push(uidToDocumentMap[uid]);
             }
             return documents.sort(function (documentA, documentB) {
-                return this.calculateTfIdf_(tokens, documentB, documents) -
-                    this.calculateTfIdf_(tokens, documentA, documents);
+                return this.calculateTfIdf_(tokens, documentB, corpus) -
+                    this.calculateTfIdf_(tokens, documentA, corpus);
             }.bind(this));
         };
         TfIdfSearchIndex.prototype.calculateIdf_ = function (token, documents) {
@@ -348,7 +348,7 @@ var JsSearch;
             }
             this.tokenToUidToDocumentMap_[token][uid] = document;
         };
-        UnorderedSearchIndex.prototype.search = function (tokens, documents) {
+        UnorderedSearchIndex.prototype.search = function (tokens, corpus) {
             var uidToDocumentMap = {};
             for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
                 var token = tokens[i];

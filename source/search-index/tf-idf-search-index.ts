@@ -48,7 +48,7 @@ module JsSearch {
     /**
      * @inheritDocs
      */
-    public search(tokens:Array<string>, documents:Array<Object>):Array<Object> {
+    public search(tokens:Array<string>, corpus:Array<Object>):Array<Object> {
       var uidToDocumentMap:{[uid:string]:Object} = {};
 
       for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
@@ -81,8 +81,8 @@ module JsSearch {
 
       // Return documents sorted by TF-IDF
       return documents.sort(function (documentA, documentB) {
-        return this.calculateTfIdf_(tokens, documentB, documents) -
-               this.calculateTfIdf_(tokens, documentA, documents);
+        return this.calculateTfIdf_(tokens, documentB, corpus) -
+               this.calculateTfIdf_(tokens, documentA, corpus);
       }.bind(this));
     }
 

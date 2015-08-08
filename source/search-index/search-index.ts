@@ -19,9 +19,9 @@ module JsSearch {
      * Return all documents that match the specified tokens.
      *
      * @param query
-     * @param documents
+     * @param corpus All document in search corpus
      * @param tokens
      */
-    search(tokens:Array<string>, documents:Array<Object>):Array<Object>;
+    search(tokens:Array<string>, corpus:Array<Object>):Array<Object>;
   };
 };

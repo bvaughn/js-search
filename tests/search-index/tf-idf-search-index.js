@@ -112,8 +112,10 @@ describe('Search', function() {
       var documentA = addDocument('foo bar foo bar baz baz baz baz');
       var documentB = addDocument('foo bar foo foo baz baz baz baz');
       var documentC = addDocument('foo bar baz bar baz baz baz baz');
-      addDocument('foo foo foo foo foo foo foo foo');
-      addDocument('foo baz foo baz foo baz foo baz');
+
+      for (var i = 0; i < 10; i++) {
+        addDocument('foo foo baz foo foo baz foo foo baz foo foo baz foo foo baz foo foo baz foo foo baz foo foo');
+      }
 
       var results = search.search('foo bar');
 
