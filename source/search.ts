@@ -34,10 +34,10 @@ module JsSearch {
       this.uidFieldName_ = uidFieldName;
 
       // Set default/recommended strategies
-      this.indexStrategy_ = new PrefixIndexStrategy();
-      this.searchIndex_ = new TfIdfSearchIndex(uidFieldName);
-      this.sanitizer_ = new LowerCaseSanitizer();
-      this.tokenizer_ = new SimpleTokenizer();
+      this.indexStrategy_ = new JsSearch.PrefixIndexStrategy();
+      this.searchIndex_ = new JsSearch.TfIdfSearchIndex(uidFieldName);
+      this.sanitizer_ = new JsSearch.LowerCaseSanitizer();
+      this.tokenizer_ = new JsSearch.SimpleTokenizer();
 
       this.documents_ = [];
       this.searchableFieldsMap_ = {};

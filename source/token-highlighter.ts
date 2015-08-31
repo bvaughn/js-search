@@ -19,8 +19,8 @@ module JsSearch {
      * @param opt_wrapperTagName Optional wrapper tag name; defaults to 'mark' (e.g. <mark>)
      */
     constructor(opt_indexStrategy:IIndexStrategy, opt_sanitizer:ISanitizer, opt_wrapperTagName:string) {
-      this.indexStrategy_ = opt_indexStrategy || new PrefixIndexStrategy();
-      this.sanitizer_ = opt_sanitizer || new LowerCaseSanitizer();
+      this.indexStrategy_ = opt_indexStrategy || new JsSearch.PrefixIndexStrategy();
+      this.sanitizer_ = opt_sanitizer || new JsSearch.LowerCaseSanitizer();
       this.wrapperTagName_ = opt_wrapperTagName || 'mark';
     }
 

@@ -8,18 +8,20 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "fly": "^0.8.2",
+    "fly-ts": "^0.2.2",
+    "fly-uglify": "^1.0.0",
     "jasmine": "^2.3.1",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.3",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
     "typescript": "^1.5.3",
-    "uglify-js": "^2.4.24"
+    "uglify": "^0.1.5"
   },
   "scripts": {
-    "build": "npm run compile && npm run compress && npm run test",
-    "compile": "tsc --project .",
-    "compress": "uglifyjs --compress --mangle -o dist/js-search.min.js -- dist/js-search.js",
+    "build": "npm run compile && npm run test",
+    "compile": "fly",
     "test": "karma start karma.conf.js"
   },
   "author": "Brian Vaughn <briandavidvaughn@gmail.com> (https://github.com/bvaughn/)",

@@ -1,8 +1,3 @@
-var JsSearch;
-(function (JsSearch) {
-    ;
-})(JsSearch || (JsSearch = {}));
-;
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -26,6 +21,8 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+//# sourceMappingURL=all-substrings-index-strategy.js.map
+//# sourceMappingURL=all-substrings-index-strategy.ts.map
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -41,6 +38,15 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+//# sourceMappingURL=exact-word-index-strategy.js.map
+//# sourceMappingURL=exact-word-index-strategy.ts.map
+var JsSearch;
+(function (JsSearch) {
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=index-strategy.js.map
+//# sourceMappingURL=index-strategy.ts.map
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -62,11 +68,8 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-var JsSearch;
-(function (JsSearch) {
-    ;
-})(JsSearch || (JsSearch = {}));
-;
+//# sourceMappingURL=prefix-index-strategy.js.map
+//# sourceMappingURL=prefix-index-strategy.ts.map
 /// <reference path="sanitizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -82,6 +85,8 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+//# sourceMappingURL=case-sensitive-sanitizer.js.map
+//# sourceMappingURL=case-sensitive-sanitizer.ts.map
 /// <reference path="sanitizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -97,11 +102,22 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+//# sourceMappingURL=lower-case-sanitizer.js.map
+//# sourceMappingURL=lower-case-sanitizer.ts.map
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+//# sourceMappingURL=sanitizer.js.map
+//# sourceMappingURL=sanitizer.ts.map
+var JsSearch;
+(function (JsSearch) {
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=search-index.js.map
+//# sourceMappingURL=search-index.ts.map
 /// <reference path="search-index.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -117,7 +133,7 @@ var JsSearch;
                 this.tokenMap_[token] = {
                     $numDocumentOccurrences: 0,
                     $totalNumOccurrences: 1,
-                    $uidMap: {},
+                    $uidMap: {}
                 };
             }
             else {
@@ -197,29 +213,53 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+//# sourceMappingURL=tf-idf-search-index.js.map
+//# sourceMappingURL=tf-idf-search-index.ts.map
+/// <reference path="search-index.ts" />
 var JsSearch;
 (function (JsSearch) {
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-/// <reference path="tokenizer.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var SimpleTokenizer = (function () {
-        function SimpleTokenizer() {
+    var UnorderedSearchIndex = (function () {
+        function UnorderedSearchIndex() {
+            this.tokenToUidToDocumentMap_ = {};
         }
-        SimpleTokenizer.prototype.tokenize = function (text) {
-            return text.split(/[^a-zA-Z0-9\-']+/)
-                .filter(function (text) {
-                return !!text;
-            });
+        UnorderedSearchIndex.prototype.indexDocument = function (token, uid, document) {
+            if (!this.tokenToUidToDocumentMap_[token]) {
+                this.tokenToUidToDocumentMap_[token] = {};
+            }
+            this.tokenToUidToDocumentMap_[token][uid] = document;
         };
-        return SimpleTokenizer;
+        UnorderedSearchIndex.prototype.search = function (tokens, corpus) {
+            var uidToDocumentMap = {};
+            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+                var token = tokens[i];
+                var currentUidToDocumentMap = this.tokenToUidToDocumentMap_[token] || {};
+                if (i === 0) {
+                    for (var uid in currentUidToDocumentMap) {
+                        uidToDocumentMap[uid] = currentUidToDocumentMap[uid];
+                    }
+                }
+                else {
+                    for (var uid in uidToDocumentMap) {
+                        if (!currentUidToDocumentMap[uid]) {
+                            delete uidToDocumentMap[uid];
+                        }
+                    }
+                }
+            }
+            var documents = [];
+            for (var uid in uidToDocumentMap) {
+                documents.push(uidToDocumentMap[uid]);
+            }
+            return documents;
+        };
+        return UnorderedSearchIndex;
     })();
-    JsSearch.SimpleTokenizer = SimpleTokenizer;
+    JsSearch.UnorderedSearchIndex = UnorderedSearchIndex;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
+//# sourceMappingURL=unordered-search-index.js.map
+//# sourceMappingURL=unordered-search-index.ts.map
 /// <reference path="index-strategy/index-strategy.ts" />
 /// <reference path="index-strategy/prefix-index-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
@@ -335,49 +375,8 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-/// <reference path="search-index.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var UnorderedSearchIndex = (function () {
-        function UnorderedSearchIndex() {
-            this.tokenToUidToDocumentMap_ = {};
-        }
-        UnorderedSearchIndex.prototype.indexDocument = function (token, uid, document) {
-            if (!this.tokenToUidToDocumentMap_[token]) {
-                this.tokenToUidToDocumentMap_[token] = {};
-            }
-            this.tokenToUidToDocumentMap_[token][uid] = document;
-        };
-        UnorderedSearchIndex.prototype.search = function (tokens, corpus) {
-            var uidToDocumentMap = {};
-            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-                var token = tokens[i];
-                var currentUidToDocumentMap = this.tokenToUidToDocumentMap_[token] || {};
-                if (i === 0) {
-                    for (var uid in currentUidToDocumentMap) {
-                        uidToDocumentMap[uid] = currentUidToDocumentMap[uid];
-                    }
-                }
-                else {
-                    for (var uid in uidToDocumentMap) {
-                        if (!currentUidToDocumentMap[uid]) {
-                            delete uidToDocumentMap[uid];
-                        }
-                    }
-                }
-            }
-            var documents = [];
-            for (var uid in uidToDocumentMap) {
-                documents.push(uidToDocumentMap[uid]);
-            }
-            return documents;
-        };
-        return UnorderedSearchIndex;
-    })();
-    JsSearch.UnorderedSearchIndex = UnorderedSearchIndex;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
+//# sourceMappingURL=search.js.map
+//# sourceMappingURL=search.ts.map
 var JsSearch;
 (function (JsSearch) {
     JsSearch.StopWordsMap = {
@@ -503,45 +502,8 @@ var JsSearch;
     };
 })(JsSearch || (JsSearch = {}));
 ;
-/// <reference path="tokenizer.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var StemmingTokenizer = (function () {
-        function StemmingTokenizer(stemmingFunction, decoratedTokenizer) {
-            this.stemmingFunction_ = stemmingFunction;
-            this.tokenizer_ = decoratedTokenizer;
-        }
-        StemmingTokenizer.prototype.tokenize = function (text) {
-            return this.tokenizer_.tokenize(text)
-                .map(function (token) {
-                return this.stemmingFunction_(token);
-            }, this);
-        };
-        return StemmingTokenizer;
-    })();
-    JsSearch.StemmingTokenizer = StemmingTokenizer;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-/// <reference path="tokenizer.ts" />
-var JsSearch;
-(function (JsSearch) {
-    var StopWordsTokenizer = (function () {
-        function StopWordsTokenizer(decoratedTokenizer) {
-            this.tokenizer_ = decoratedTokenizer;
-        }
-        StopWordsTokenizer.prototype.tokenize = function (text) {
-            return this.tokenizer_.tokenize(text)
-                .filter(function (token) {
-                return token && JsSearch.StopWordsMap[token] !== token;
-            });
-        };
-        return StopWordsTokenizer;
-    })();
-    JsSearch.StopWordsTokenizer = StopWordsTokenizer;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
+//# sourceMappingURL=stop-words-map.js.map
+//# sourceMappingURL=stop-words-map.ts.map
 var JsSearch;
 (function (JsSearch) {
     var TokenHighlighter = (function () {
@@ -599,4 +561,75 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=js-search.js.map
+//# sourceMappingURL=token-highlighter.js.map
+//# sourceMappingURL=token-highlighter.ts.map
+/// <reference path="tokenizer.ts" />
+var JsSearch;
+(function (JsSearch) {
+    var SimpleTokenizer = (function () {
+        function SimpleTokenizer() {
+        }
+        SimpleTokenizer.prototype.tokenize = function (text) {
+            return text.split(/[^a-zA-Z0-9\-']+/)
+                .filter(function (text) {
+                return !!text;
+            });
+        };
+        return SimpleTokenizer;
+    })();
+    JsSearch.SimpleTokenizer = SimpleTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=simple-tokenizer.js.map
+//# sourceMappingURL=simple-tokenizer.ts.map
+/// <reference path="tokenizer.ts" />
+var JsSearch;
+(function (JsSearch) {
+    var StemmingTokenizer = (function () {
+        function StemmingTokenizer(stemmingFunction, decoratedTokenizer) {
+            this.stemmingFunction_ = stemmingFunction;
+            this.tokenizer_ = decoratedTokenizer;
+        }
+        StemmingTokenizer.prototype.tokenize = function (text) {
+            return this.tokenizer_.tokenize(text)
+                .map(function (token) {
+                return this.stemmingFunction_(token);
+            }, this);
+        };
+        return StemmingTokenizer;
+    })();
+    JsSearch.StemmingTokenizer = StemmingTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=stemming-tokenizer.js.map
+//# sourceMappingURL=stemming-tokenizer.ts.map
+/// <reference path="tokenizer.ts" />
+var JsSearch;
+(function (JsSearch) {
+    var StopWordsTokenizer = (function () {
+        function StopWordsTokenizer(decoratedTokenizer) {
+            this.tokenizer_ = decoratedTokenizer;
+        }
+        StopWordsTokenizer.prototype.tokenize = function (text) {
+            return this.tokenizer_.tokenize(text)
+                .filter(function (token) {
+                return token && JsSearch.StopWordsMap[token] !== token;
+            });
+        };
+        return StopWordsTokenizer;
+    })();
+    JsSearch.StopWordsTokenizer = StopWordsTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=stop-words-filtering-tokenizer.js.map
+//# sourceMappingURL=stop-words-filtering-tokenizer.ts.map
+var JsSearch;
+(function (JsSearch) {
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=tokenizer.js.map
+//# sourceMappingURL=tokenizer.ts.map
