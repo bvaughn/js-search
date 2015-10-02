@@ -53,7 +53,7 @@ var angelsAndDemons = {
   author: 'Dan Brown'
 };
 
-var search = new Search('isbn');
+var search = new JsSearch.Search('isbn');
 search.addIndex('title');
 search.addIndex('author');
 search.addDocuments([theGreatGatsby, theDaVinciCode, angelsAndDemons]);
