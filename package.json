@@ -1,8 +1,8 @@
 {
   "name": "js-search",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "### What is it?",
-  "main": "index.js",
+  "main": "dist/js-search.js",
   "directories": {
     "test": "tests"
   },
