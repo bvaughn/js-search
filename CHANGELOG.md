@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.1
+Modified export to better support Node environment (thanks to @scommisso).
+
 ## 1.2.0
 Added `ISearchIndex` interface in order to support TF-IDF (enabled by default).
 Removed `IPruningStrategy`; it didn't seem like it added sufficient value to offset performance costs.
