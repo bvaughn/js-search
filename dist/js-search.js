@@ -23,7 +23,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=all-substrings-index-strategy.js.map
 //# sourceMappingURL=all-substrings-index-strategy.ts.map
-
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -41,7 +40,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=exact-word-index-strategy.js.map
 //# sourceMappingURL=exact-word-index-strategy.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -49,7 +47,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=index-strategy.js.map
 //# sourceMappingURL=index-strategy.ts.map
-
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -73,7 +70,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=prefix-index-strategy.js.map
 //# sourceMappingURL=prefix-index-strategy.ts.map
-
 /// <reference path="sanitizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -91,7 +87,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=case-sensitive-sanitizer.js.map
 //# sourceMappingURL=case-sensitive-sanitizer.ts.map
-
 /// <reference path="sanitizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -109,7 +104,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=lower-case-sanitizer.js.map
 //# sourceMappingURL=lower-case-sanitizer.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -117,7 +111,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=sanitizer.js.map
 //# sourceMappingURL=sanitizer.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -125,7 +118,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=search-index.js.map
 //# sourceMappingURL=search-index.ts.map
-
 /// <reference path="search-index.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -223,7 +215,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=tf-idf-search-index.js.map
 //# sourceMappingURL=tf-idf-search-index.ts.map
-
 /// <reference path="search-index.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -269,7 +260,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=unordered-search-index.js.map
 //# sourceMappingURL=unordered-search-index.ts.map
-
 /// <reference path="index-strategy/index-strategy.ts" />
 /// <reference path="index-strategy/prefix-index-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
@@ -387,7 +377,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=search.js.map
 //# sourceMappingURL=search.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     JsSearch.StopWordsMap = {
@@ -515,7 +504,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=stop-words-map.js.map
 //# sourceMappingURL=stop-words-map.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     var TokenHighlighter = (function () {
@@ -575,7 +563,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=token-highlighter.js.map
 //# sourceMappingURL=token-highlighter.ts.map
-
 /// <reference path="tokenizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -596,7 +583,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=simple-tokenizer.js.map
 //# sourceMappingURL=simple-tokenizer.ts.map
-
 /// <reference path="tokenizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -619,7 +605,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=stemming-tokenizer.js.map
 //# sourceMappingURL=stemming-tokenizer.ts.map
-
 /// <reference path="tokenizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -641,7 +626,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=stop-words-filtering-tokenizer.js.map
 //# sourceMappingURL=stop-words-filtering-tokenizer.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -674,7 +658,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=all-substrings-index-strategy.js.map
 //# sourceMappingURL=all-substrings-index-strategy.ts.map
-
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -692,7 +675,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=exact-word-index-strategy.js.map
 //# sourceMappingURL=exact-word-index-strategy.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -700,7 +682,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=index-strategy.js.map
 //# sourceMappingURL=index-strategy.ts.map
-
 /// <reference path="index-strategy.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -724,7 +705,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=prefix-index-strategy.js.map
 //# sourceMappingURL=prefix-index-strategy.ts.map
-
 /// <reference path="sanitizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -742,7 +722,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=case-sensitive-sanitizer.js.map
 //# sourceMappingURL=case-sensitive-sanitizer.ts.map
-
 /// <reference path="sanitizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -760,7 +739,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=lower-case-sanitizer.js.map
 //# sourceMappingURL=lower-case-sanitizer.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -768,7 +746,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=sanitizer.js.map
 //# sourceMappingURL=sanitizer.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -776,7 +753,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=search-index.js.map
 //# sourceMappingURL=search-index.ts.map
-
 /// <reference path="search-index.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -874,7 +850,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=tf-idf-search-index.js.map
 //# sourceMappingURL=tf-idf-search-index.ts.map
-
 /// <reference path="search-index.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -920,7 +895,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=unordered-search-index.js.map
 //# sourceMappingURL=unordered-search-index.ts.map
-
 /// <reference path="index-strategy/index-strategy.ts" />
 /// <reference path="index-strategy/prefix-index-strategy.ts" />
 /// <reference path="sanitizer/lower-case-sanitizer.ts" />
@@ -1038,7 +1012,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=search.js.map
 //# sourceMappingURL=search.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     JsSearch.StopWordsMap = {
@@ -1166,7 +1139,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=stop-words-map.js.map
 //# sourceMappingURL=stop-words-map.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     var TokenHighlighter = (function () {
@@ -1226,7 +1198,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=token-highlighter.js.map
 //# sourceMappingURL=token-highlighter.ts.map
-
 /// <reference path="tokenizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -1247,7 +1218,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=simple-tokenizer.js.map
 //# sourceMappingURL=simple-tokenizer.ts.map
-
 /// <reference path="tokenizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -1270,7 +1240,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=stemming-tokenizer.js.map
 //# sourceMappingURL=stemming-tokenizer.ts.map
-
 /// <reference path="tokenizer.ts" />
 var JsSearch;
 (function (JsSearch) {
@@ -1292,7 +1261,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=stop-words-filtering-tokenizer.js.map
 //# sourceMappingURL=stop-words-filtering-tokenizer.ts.map
-
 var JsSearch;
 (function (JsSearch) {
     ;
@@ -1300,7 +1268,6 @@ var JsSearch;
 ;
 //# sourceMappingURL=tokenizer.js.map
 //# sourceMappingURL=tokenizer.ts.map
-
 (function (JsSearch) {
-  if (module && module.exports && JsSearch) { module.exports = JsSearch; }
+  if (typeof module !== 'undefined' && module.exports && JsSearch) { module.exports = JsSearch; }
 })(JsSearch || (JsSearch = {}));
