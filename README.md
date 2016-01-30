@@ -20,6 +20,8 @@ for tweaking the Lunr side for a better comparison!)
 * [Initial building of search index](http://jsperf.com/js-search-vs-lunr-js-build-search-index/5)
 * [Running a search](http://jsperf.com/js-search-vs-lunr-js-running-searches/5)
 
+If you're looking for a simpler, web-worker optimized JS search utility check out [js-worker-search](https://github.com/bvaughn/js-worker-search).
+
 ### Installation
 
 You can install using either [Bower](http://bower.io/) or [NPM](https://www.npmjs.com/) like so:
