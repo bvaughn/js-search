@@ -55,6 +55,7 @@ module JsSearch {
 
       this.indexStrategy_ = value;
     }
+
     public get indexStrategy():IIndexStrategy {
       return this.indexStrategy_;
     }
@@ -154,6 +155,11 @@ module JsSearch {
         for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
           var searchableField:string = searchableFields[sfi];
           var fieldValue:any = this.getValue(document, searchableField);
+
+
+          if (fieldValue && typeof fieldValue !== 'string' && fieldValue.toString) {
+            fieldValue = fieldValue.toString();
+          }
 
           if (typeof fieldValue === 'string') {
             var fieldTokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));

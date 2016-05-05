@@ -25,7 +25,8 @@ describe('Search', function() {
       uid: 'foo',
       title: 'foo',
       description: 'Is kung foo the same as kung fu?',
-      'not.nested': 'not nested foo'
+      'not.nested': 'not nested foo',
+      aNumber: 167543
     };
     nestedDocumentFoo = {
       uid: 'foo',
@@ -93,5 +94,12 @@ describe('Search', function() {
     search.addDocument(documentFoo);
 
     validateSearchResults(search.search('not nested foo'), [documentFoo]);
+  });
+
+  it('should index and find partial numbers converted to a string', function() {
+    search.addIndex('aNumber');
+    search.addDocument(documentFoo);
+
+    validateSearchResults(search.search('167'), [documentFoo]);
   });
 });

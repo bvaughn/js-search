@@ -341,6 +341,9 @@ var JsSearch;
                 for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
                     var searchableField = searchableFields[sfi];
                     var fieldValue = this.getValue(document, searchableField);
+                    if (fieldValue && typeof fieldValue !== 'string' && fieldValue.toString) {
+                        fieldValue = fieldValue.toString();
+                    }
                     if (typeof fieldValue === 'string') {
                         var fieldTokens = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));
                         for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
