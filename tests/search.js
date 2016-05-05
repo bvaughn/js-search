@@ -24,7 +24,8 @@ describe('Search', function() {
     documentFoo = {
       uid: 'foo',
       title: 'foo',
-      description: 'Is kung foo the same as kung fu?'
+      description: 'Is kung foo the same as kung fu?',
+      aNumber: 167543
     };
   });
 
@@ -63,5 +64,12 @@ describe('Search', function() {
     search.addIndex('title');
     search.addDocument(documentFoo);
     validateSearchResults(search.search('foo xyz'), []);
+  });
+
+  it('should index and find partial numbers converted to a string', function() {
+    search.addIndex('aNumber');
+    search.addDocument(documentFoo);
+
+    validateSearchResults(search.search('167'), [documentFoo]);
   });
 });
