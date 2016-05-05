@@ -81,6 +81,13 @@ describe('Search', function() {
     validateSearchResults(search.search('nested foo'), [nestedDocumentFoo]);
   });
 
+  it('should gracefully handle broken property path', function() {
+    search.addIndex('nested.title.not.existing');
+    search.addDocument(nestedDocumentFoo);
+
+    validateSearchResults(search.search('nested foo'), []);
+  });
+
   it('should index properties which look like a path', function() {
     search.addIndex('not.nested');
     search.addDocument(documentFoo);
