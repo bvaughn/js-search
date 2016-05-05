@@ -153,7 +153,7 @@ module JsSearch {
 
         for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
           var searchableField:string = searchableFields[sfi];
-          var fieldValue:any = document[searchableField];
+          var fieldValue:any = this.getValue(document, searchableField);
 
           if (typeof fieldValue === 'string') {
             var fieldTokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));
@@ -172,5 +172,40 @@ module JsSearch {
         }
       }
     }
-  };
-};
+
+    /**
+     * Find and return a nested object value.
+     *
+     * @param obj
+     * @param path Property name or dot separated nested property path
+     * @returns {any}
+     */
+    private getValue(obj:Object, path:String) {
+      // fallback to default values
+      path = path || '';
+      obj = obj || {};
+
+      // use original brackets implementation if a field name instead of a property path is specified
+      if (path.indexOf('.') < 0) {
+        return obj[path];
+      }
+
+      // get path elements to iterate over
+      var pathElements = path.split('.');
+
+      // walk down the property path
+      var value = obj;
+      for (var i = 0; i < pathElements.length; i++) {
+        value = value[pathElements[i]];
+
+        if (!value) {
+          // One of the intermediate values does not exist.
+          // As 'a.b.c' is a perfectly valid property name in javascript, lets fall back to the original brackets implementation.
+          return obj[path];
+        }
+      }
+
+      return value;
+    }
+  }
+}

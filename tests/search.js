@@ -1,5 +1,5 @@
 describe('Search', function() {
-  var documentBar, documentBaz, documentFoo, search;
+  var documentBar, documentBaz, documentFoo, nestedDocumentFoo, search;
 
   var validateSearchResults = function(results, expectedDocuments) {
     expect(results.length).toBe(expectedDocuments.length);
@@ -24,8 +24,17 @@ describe('Search', function() {
     documentFoo = {
       uid: 'foo',
       title: 'foo',
-      description: 'Is kung foo the same as kung fu?'
+      description: 'Is kung foo the same as kung fu?',
+      'not.nested': 'not nested foo'
     };
+    nestedDocumentFoo = {
+      uid: 'foo',
+      title: 'foo',
+      description: 'Is kung foo the same as kung fu?',
+      nested: {
+        title: 'nested foo'
+      }
+    }
   });
 
   it('should index a new document on all searchable fields', function() {
@@ -63,5 +72,19 @@ describe('Search', function() {
     search.addIndex('title');
     search.addDocument(documentFoo);
     validateSearchResults(search.search('foo xyz'), []);
+  });
+
+  it('should index nested document properties', function() {
+    search.addIndex('nested.title');
+    search.addDocument(nestedDocumentFoo);
+
+    validateSearchResults(search.search('nested foo'), [nestedDocumentFoo]);
+  });
+
+  it('should index properties which look like a path', function() {
+    search.addIndex('not.nested');
+    search.addDocument(documentFoo);
+
+    validateSearchResults(search.search('not nested foo'), [documentFoo]);
   });
 });
