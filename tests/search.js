@@ -19,12 +19,15 @@ describe('Search', function() {
     documentBaz = {
       uid: 'baz',
       title: 'BAZ',
-      description: 'All about baz'
+      description: 'All about baz',
+      array: ['test']
     };
     documentFoo = {
       uid: 'foo',
       title: 'foo',
-      description: 'Is kung foo the same as kung fu?'
+      description: 'Is kung foo the same as kung fu?',
+      aNumber: 167543,
+      array: [123, 'test', 'foo']
     };
   });
 
@@ -63,5 +66,19 @@ describe('Search', function() {
     search.addIndex('title');
     search.addDocument(documentFoo);
     validateSearchResults(search.search('foo xyz'), []);
+  });
+
+  it('should index and find partial numbers converted to a string', function() {
+    search.addIndex('aNumber');
+    search.addDocument(documentFoo);
+
+    validateSearchResults(search.search('167'), [documentFoo]);
+  });
+
+  it('should stringified arrays', function() {
+    search.addIndex('array');
+    search.addDocuments([documentFoo, documentBaz]);
+
+    validateSearchResults(search.search('test'), [documentFoo, documentBaz]);
   });
 });
