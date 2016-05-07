@@ -55,7 +55,7 @@ var angelsAndDemons = {
   isbn: '074349346X',
   title: 'Angels & Demons',
   author: 'Dan Brown',
-  tags: ['book', 'mystery]
+  tags: ['book', 'mystery']
 };
 
 var search = new JsSearch.Search('isbn');
