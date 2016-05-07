@@ -14,19 +14,22 @@ describe('Search', function() {
     documentBar = {
       uid: 'bar',
       title: 'Bar',
-      description: 'This is a document about bar'
+      description: 'This is a document about bar',
+      aNumber: 0,
+      aBoolean: false
     };
     documentBaz = {
       uid: 'baz',
       title: 'BAZ',
       description: 'All about baz',
-      array: ['test']
+      array: ['test', true, 456]
     };
     documentFoo = {
       uid: 'foo',
       title: 'foo',
       description: 'Is kung foo the same as kung fu?',
       aNumber: 167543,
+      aBoolean: true,
       array: [123, 'test', 'foo']
     };
     nestedDocumentFoo = {
@@ -76,11 +79,16 @@ describe('Search', function() {
     validateSearchResults(search.search('foo xyz'), []);
   });
 
-  it('should index and find partial numbers converted to a string', function() {
+  it('should index and find non-string values if they can be converted to strings', function() {
+    search.addIndex('aBoolean');
     search.addIndex('aNumber');
+    search.addDocument(documentBar);
     search.addDocument(documentFoo);
 
     validateSearchResults(search.search('167'), [documentFoo]);
+    validateSearchResults(search.search('true'), [documentFoo]);
+    validateSearchResults(search.search('0'), [documentBar]);
+    validateSearchResults(search.search('false'), [documentBar]);
   });
 
   it('should stringified arrays', function() {
@@ -88,6 +96,8 @@ describe('Search', function() {
     search.addDocuments([documentFoo, documentBaz]);
 
     validateSearchResults(search.search('test'), [documentFoo, documentBaz]);
+    validateSearchResults(search.search('true'), [documentBaz]);
+    validateSearchResults(search.search('456'), [documentBaz]);
   });
 
   it('should index nested document properties', function() {

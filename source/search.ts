@@ -173,8 +173,11 @@ module JsSearch {
             fieldValue = document[searchableField];
           }
 
-
-          if (fieldValue && typeof fieldValue !== 'string' && fieldValue.toString) {
+          if (
+            fieldValue != null &&
+            typeof fieldValue !== 'string' &&
+            fieldValue.toString
+          ) {
             fieldValue = fieldValue.toString();
           }
 
@@ -199,21 +202,21 @@ module JsSearch {
     /**
      * Find and return a nested object value.
      *
-     * @param obj
+     * @param object to crawl
      * @param path Property path
      * @returns {any}
      */
-    private static getNestedFieldValue(obj:Object, path:Array<string>) {
-      // fallback to default values
+    private static getNestedFieldValue(object:Object, path:Array<string>) {
       path = path || [];
-      obj = obj || {};
+      object = object || {};
+
+      var value = object;
 
       // walk down the property path
-      var value = obj;
       for (var i = 0; i < path.length; i++) {
         value = value[path[i]];
 
-        if (!value) {
+        if (value == null) {
           return null;
         }
       }
