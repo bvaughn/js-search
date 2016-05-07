@@ -1,6 +1,6 @@
 {
   "name": "js-search",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "### What is it?",
   "main": "dist/js-search.js",
   "directories": {

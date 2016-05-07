@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+`Search.addIndex` supports `Array` parameter for nested values.
+`Search` indexing supports non-string values (eg numbers).
+Special thanks to @konradjurk for this release.
+
 ## 1.2.2
 Small tweak to Node export check to avoid `module is not defined` error for browser-based users.
 
