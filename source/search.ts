@@ -20,7 +20,12 @@ module JsSearch {
     private indexStrategy_:IIndexStrategy;
     private initialized_:boolean;
     private sanitizer_:ISanitizer;
-    private searchableFieldsMap_:Object;
+
+    /**
+     * Array containing either a property name or a path (list of property names) to a nested value
+     */
+    private searchableFields:Array<string|Array<string>>;
+
     private searchIndex_:ISearchIndex;
     private tokenizer_:ITokenizer;
     private uidFieldName_:string;
@@ -40,7 +45,7 @@ module JsSearch {
       this.tokenizer_ = new JsSearch.SimpleTokenizer();
 
       this.documents_ = [];
-      this.searchableFieldsMap_ = {};
+      this.searchableFields = [];
     }
 
     /**
@@ -121,15 +126,16 @@ module JsSearch {
      */
     public addDocuments(documents:Array<Object>):void {
       this.documents_.push.apply(this.documents_, documents);
-      this.indexDocuments_(documents, Object.keys(this.searchableFieldsMap_));
+      this.indexDocuments_(documents, this.searchableFields);
     }
 
     /**
      * Add a new searchable field to the index. Existing documents will automatically be indexed using this new field.
-     * @param field Searchable field (e.g. "title")
+     *
+     * @param field Searchable field or field path. Pass a string to index a top-level field and an array of strings for nested fields.
      */
-    public addIndex(field:string):void {
-      this.searchableFieldsMap_[field] = true;
+    public addIndex(field:string|Array<string>) {
+      this.searchableFields.push(field);
       this.indexDocuments_(this.documents_, [field]);
     }
 
@@ -144,7 +150,12 @@ module JsSearch {
       return this.searchIndex_.search(tokens, this.documents_);
     }
 
-    private indexDocuments_(documents:Array<Object>, searchableFields:Array<string>):void {
+    /**
+     * @param documents
+     * @param searchableFields Array containing property names and paths (lists of property names) to nested values
+     * @private
+     */
+    private indexDocuments_(documents:Array<Object>, searchableFields:Array<string|Array<string>>):void {
       this.initialized_ = true;
 
       for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
@@ -152,8 +163,14 @@ module JsSearch {
         var uid:string = document[this.uidFieldName_];
 
         for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
-          var searchableField:string = searchableFields[sfi];
-          var fieldValue:any = this.getValue(document, searchableField);
+          var fieldValue:any;
+          var searchableField:string|Array<string> = searchableFields[sfi];
+
+          if (searchableField instanceof Array) {
+            fieldValue = Search.getNestedFieldValue(document, searchableField);
+          } else {
+            fieldValue = document[searchableField];
+          }
 
           if (typeof fieldValue === 'string') {
             var fieldTokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(fieldValue));
@@ -177,31 +194,21 @@ module JsSearch {
      * Find and return a nested object value.
      *
      * @param obj
-     * @param path Property name or dot separated nested property path
+     * @param path Property path
      * @returns {any}
      */
-    private getValue(obj:Object, path:String) {
+    private static getNestedFieldValue(obj:Object, path:Array<string>) {
       // fallback to default values
-      path = path || '';
+      path = path || [];
       obj = obj || {};
-
-      // use original brackets implementation if a field name instead of a property path is specified
-      if (path.indexOf('.') < 0) {
-        return obj[path];
-      }
-
-      // get path elements to iterate over
-      var pathElements = path.split('.');
 
       // walk down the property path
       var value = obj;
-      for (var i = 0; i < pathElements.length; i++) {
-        value = value[pathElements[i]];
+      for (var i = 0; i < path.length; i++) {
+        value = value[path[i]];
 
         if (!value) {
-          // One of the intermediate values does not exist.
-          // As 'a.b.c' is a perfectly valid property name in javascript, lets fall back to the original brackets implementation.
-          return obj[path];
+          return null;
         }
       }
 
