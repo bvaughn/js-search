@@ -22,7 +22,8 @@
   "scripts": {
     "build": "npm run compile && npm run test",
     "compile": "fly",
-    "test": "karma start karma.conf.js"
+    "test": "karma start karma.conf.js",
+    "tdd": "karma start karma.conf.js --auto-watch --no-single-run"
   },
   "author": "Brian Vaughn <briandavidvaughn@gmail.com> (https://github.com/bvaughn/)",
   "license": "MIT",
