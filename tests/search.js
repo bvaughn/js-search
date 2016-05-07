@@ -1,5 +1,5 @@
 describe('Search', function() {
-  var documentBar, documentBaz, documentFoo, search;
+  var documentBar, documentBaz, documentFoo, nestedDocumentFoo, search;
 
   var validateSearchResults = function(results, expectedDocuments) {
     expect(results.length).toBe(expectedDocuments.length);
@@ -29,6 +29,14 @@ describe('Search', function() {
       aNumber: 167543,
       array: [123, 'test', 'foo']
     };
+    nestedDocumentFoo = {
+      uid: 'foo',
+      title: 'foo',
+      description: 'Is kung foo the same as kung fu?',
+      nested: {
+        title: 'nested foo'
+      }
+    }
   });
 
   it('should index a new document on all searchable fields', function() {
@@ -80,5 +88,19 @@ describe('Search', function() {
     search.addDocuments([documentFoo, documentBaz]);
 
     validateSearchResults(search.search('test'), [documentFoo, documentBaz]);
+  });
+
+  it('should index nested document properties', function() {
+    search.addIndex(['nested', 'title']);
+    search.addDocument(nestedDocumentFoo);
+
+    validateSearchResults(search.search('nested foo'), [nestedDocumentFoo]);
+  });
+
+  it('should gracefully handle broken property path', function() {
+    search.addIndex(['nested', 'title', 'not', 'existing']);
+    search.addDocument(nestedDocumentFoo);
+
+    validateSearchResults(search.search('nested foo'), []);
   });
 });
