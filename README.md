@@ -42,26 +42,31 @@ For example, a simple use of JS Search would be as follows:
 var theGreatGatsby = {
   isbn: '9781597226769',
   title: 'The Great Gatsby',
-  author: 'F. Scott Fitzgerald'
+  author: 'F. Scott Fitzgerald',
+  tags: ['book', 'inspirational']
 };
 var theDaVinciCode = {
   isbn: '0307474275',
   title: 'The DaVinci Code',
-  author: 'Dan Brown'
+  author: 'Dan Brown',
+  tags: ['book', 'mystery']
 };
 var angelsAndDemons = {
   isbn: '074349346X',
   title: 'Angels & Demons',
-  author: 'Dan Brown'
+  author: 'Dan Brown',
+  tags: ['book', 'mystery']
 };
 
 var search = new JsSearch.Search('isbn');
 search.addIndex('title');
 search.addIndex('author');
+search.addIndex('tags')
 search.addDocuments([theGreatGatsby, theDaVinciCode, angelsAndDemons]);
-search.search('The');   // [theGreatGatsby, theDaVinciCode]
-search.search('scott'); // [theGreatGatsby]
-search.search('d');     // [angelsAndDemons, theDaVinciCode]
+search.search('The');     // [theGreatGatsby, theDaVinciCode]
+search.search('scott');   // [theGreatGatsby]
+search.search('d');       // [angelsAndDemons, theDaVinciCode]
+search.search('mystery')  // [angelsAndDemons, theDaVinciCode]
 ```
 
 ### Tokenization
