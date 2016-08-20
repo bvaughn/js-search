@@ -126,7 +126,7 @@ module JsSearch {
      * @param document
      */
     public addDocuments(documents:Array<Object>):void {
-      this.documents_.push.apply(this.documents_, documents);
+      this.documents_ = this.documents_.concat(documents);
       this.indexDocuments_(documents, this.searchableFields);
     }
 

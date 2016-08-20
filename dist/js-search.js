@@ -326,7 +326,7 @@ var JsSearch;
             this.addDocuments([document]);
         };
         Search.prototype.addDocuments = function (documents) {
-            this.documents_.push.apply(this.documents_, documents);
+            this.documents_ = this.documents_.concat(documents);
             this.indexDocuments_(documents, this.searchableFields);
         };
         Search.prototype.addIndex = function (field) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+Replaced `array.push.call` with `array.concat` in `addDocuments`.
+This avoids potential stack overflow for large documents arrays.
+
 ## 1.3.0
 `Search.addIndex` supports `Array` parameter for nested values.
 `Search` indexing supports non-string values (eg numbers).
