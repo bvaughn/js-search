@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.2
+Fixed tokenizer bug affecting IE <= 10 that caused prefix and substring token strategies incorrectly index terms.
+
 ## 1.3.1
 Replaced `array.push.call` with `array.concat` in `addDocuments`.
 This avoids potential stack overflow for large documents arrays.

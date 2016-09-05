@@ -13,12 +13,8 @@ module JsSearch {
     public expandToken(token:string):Array<string> {
       var expandedTokens = [];
 
-      var prefixString:string = '';
-
       for (var i = 0, length = token.length; i < length; ++i) {
-        prefixString += token.charAt(i);
-
-        expandedTokens.push(prefixString);
+        expandedTokens.push(token.substring(0, i + 1));
       }
 
       return expandedTokens;

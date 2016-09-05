@@ -7,10 +7,8 @@ var JsSearch;
         AllSubstringsIndexStrategy.prototype.expandToken = function (token) {
             var expandedTokens = [];
             for (var i = 0, length = token.length; i < length; ++i) {
-                var prefixString = '';
                 for (var j = i; j < length; ++j) {
-                    prefixString += token.charAt(j);
-                    expandedTokens.push(prefixString);
+                    expandedTokens.push(token.substring(i, j + 1));
                 }
             }
             return expandedTokens;
@@ -52,10 +50,8 @@ var JsSearch;
         }
         PrefixIndexStrategy.prototype.expandToken = function (token) {
             var expandedTokens = [];
-            var prefixString = '';
             for (var i = 0, length = token.length; i < length; ++i) {
-                prefixString += token.charAt(i);
-                expandedTokens.push(prefixString);
+                expandedTokens.push(token.substring(0, i + 1));
             }
             return expandedTokens;
         };
@@ -416,15 +412,15 @@ var JsSearch;
         could: 'could',
         dear: 'dear',
         did: 'did',
-        do: 'do',
+        'do': 'do',
         does: 'does',
         either: 'either',
-        else: 'else',
+        'else': 'else',
         ever: 'ever',
         every: 'every',
-        for: 'for',
+        'for': 'for',
         from: 'from',
-        get: 'get',
+        'get': 'get',
         got: 'got',
         had: 'had',
         has: 'has',
@@ -437,8 +433,8 @@ var JsSearch;
         how: 'how',
         however: 'however',
         i: 'i',
-        if: 'if',
-        in: 'in',
+        'if': 'if',
+        'in': 'in',
         into: 'into',
         is: 'is',
         it: 'it',
@@ -485,7 +481,7 @@ var JsSearch;
         there: 'there',
         these: 'these',
         they: 'they',
-        this: 'this',
+        'this': 'this',
         tis: 'tis',
         to: 'to',
         too: 'too',
@@ -499,12 +495,12 @@ var JsSearch;
         when: 'when',
         where: 'where',
         which: 'which',
-        while: 'while',
+        'while': 'while',
         who: 'who',
         whom: 'whom',
         why: 'why',
         will: 'will',
-        with: 'with',
+        'with': 'with',
         would: 'would',
         yet: 'yet',
         you: 'you',

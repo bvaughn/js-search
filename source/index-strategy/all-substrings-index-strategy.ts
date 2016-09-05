@@ -14,12 +14,8 @@ module JsSearch {
       var expandedTokens = [];
 
       for (var i = 0, length = token.length; i < length; ++i) {
-        var prefixString:string = '';
-
         for (var j = i; j < length; ++j) {
-          prefixString += token.charAt(j);
-
-          expandedTokens.push(prefixString);
+          expandedTokens.push(token.substring(i, j + 1));
         }
       }
 
