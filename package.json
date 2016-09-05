@@ -22,6 +22,7 @@
   "scripts": {
     "build": "npm run compile && npm run test",
     "compile": "fly",
+    "dev": "fly watchAndBuild",
     "test": "karma start karma.conf.js",
     "tdd": "karma start karma.conf.js --auto-watch --no-single-run"
   },
