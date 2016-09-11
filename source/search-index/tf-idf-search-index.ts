@@ -48,7 +48,7 @@ module JsSearch {
     /**
      * @inheritDocs
      */
-    public search(tokens:Array<string>, corpus:Array<Object>):Array<Object> {
+    public search(query:string, tokens:Array<string>, corpus:Array<Object>):Array<Object> {
       var uidToDocumentMap:{[uid:string]:Object} = {};
 
       for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
