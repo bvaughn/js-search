@@ -41,6 +41,10 @@ describe('Search', function() {
     expect(search.searchIndex.calculateIdf_(term, search.documents_)).toEqual(calculateIdf(numDocumentsWithToken));
   };
 
+  it('should handle special words like "constructor"', function () {
+    addDocument('constructor');
+  });
+
   describe('IDF', function() {
     it('should compute for tokens appearing only once', function() {
       assertIdf('and', 1);

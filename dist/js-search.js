@@ -1,4 +1,4 @@
-/// <reference path="index-strategy.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var AllSubstringsIndexStrategy = (function () {
@@ -14,13 +14,13 @@ var JsSearch;
             return expandedTokens;
         };
         return AllSubstringsIndexStrategy;
-    })();
+    }());
     JsSearch.AllSubstringsIndexStrategy = AllSubstringsIndexStrategy;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=all-substrings-index-strategy.js.map
-/// <reference path="index-strategy.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var ExactWordIndexStrategy = (function () {
@@ -30,19 +30,20 @@ var JsSearch;
             return token ? [token] : [];
         };
         return ExactWordIndexStrategy;
-    })();
+    }());
     JsSearch.ExactWordIndexStrategy = ExactWordIndexStrategy;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=exact-word-index-strategy.js.map
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=index-strategy.js.map
-/// <reference path="index-strategy.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var PrefixIndexStrategy = (function () {
@@ -56,13 +57,13 @@ var JsSearch;
             return expandedTokens;
         };
         return PrefixIndexStrategy;
-    })();
+    }());
     JsSearch.PrefixIndexStrategy = PrefixIndexStrategy;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=prefix-index-strategy.js.map
-/// <reference path="sanitizer.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var CaseSensitiveSanitizer = (function () {
@@ -72,13 +73,13 @@ var JsSearch;
             return text ? text.trim() : '';
         };
         return CaseSensitiveSanitizer;
-    })();
+    }());
     JsSearch.CaseSensitiveSanitizer = CaseSensitiveSanitizer;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=case-sensitive-sanitizer.js.map
-/// <reference path="sanitizer.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var LowerCaseSanitizer = (function () {
@@ -88,25 +89,27 @@ var JsSearch;
             return text ? text.toLocaleLowerCase().trim() : '';
         };
         return LowerCaseSanitizer;
-    })();
+    }());
     JsSearch.LowerCaseSanitizer = LowerCaseSanitizer;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=lower-case-sanitizer.js.map
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=sanitizer.js.map
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=search-index.js.map
-/// <reference path="search-index.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var TfIdfSearchIndex = (function () {
@@ -117,7 +120,7 @@ var JsSearch;
         }
         TfIdfSearchIndex.prototype.indexDocument = function (token, uid, document) {
             this.tokenToIdfCache_ = {};
-            if (!this.tokenMap_[token]) {
+            if (typeof this.tokenMap_[token] !== 'object') {
                 this.tokenMap_[token] = {
                     $numDocumentOccurrences: 0,
                     $totalNumOccurrences: 1,
@@ -192,7 +195,7 @@ var JsSearch;
             return score;
         };
         return TfIdfSearchIndex;
-    })();
+    }());
     JsSearch.TfIdfSearchIndex = TfIdfSearchIndex;
     ;
     ;
@@ -202,7 +205,7 @@ var JsSearch;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=tf-idf-search-index.js.map
-/// <reference path="search-index.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var UnorderedSearchIndex = (function () {
@@ -240,20 +243,13 @@ var JsSearch;
             return documents;
         };
         return UnorderedSearchIndex;
-    })();
+    }());
     JsSearch.UnorderedSearchIndex = UnorderedSearchIndex;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=unordered-search-index.js.map
-/// <reference path="index-strategy/index-strategy.ts" />
-/// <reference path="index-strategy/prefix-index-strategy.ts" />
-/// <reference path="sanitizer/lower-case-sanitizer.ts" />
-/// <reference path="sanitizer/sanitizer.ts" />
-/// <reference path="search-index/search-index.ts" />
-/// <reference path="search-index/tf-idf-search-index.ts" />
-/// <reference path="tokenizer/simple-tokenizer.ts" />
-/// <reference path="tokenizer/tokenizer.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var Search = (function () {
@@ -379,10 +375,11 @@ var JsSearch;
             return value;
         };
         return Search;
-    })();
+    }());
     JsSearch.Search = Search;
 })(JsSearch || (JsSearch = {}));
 //# sourceMappingURL=search.js.map
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     JsSearch.StopWordsMap = {
@@ -509,6 +506,7 @@ var JsSearch;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=stop-words-map.js.map
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var TokenHighlighter = (function () {
@@ -561,13 +559,13 @@ var JsSearch;
             return "<" + this.wrapperTagName_ + ">" + text + "</" + this.wrapperTagName_ + ">";
         };
         return TokenHighlighter;
-    })();
+    }());
     JsSearch.TokenHighlighter = TokenHighlighter;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=token-highlighter.js.map
-/// <reference path="tokenizer.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var SimpleTokenizer = (function () {
@@ -580,13 +578,13 @@ var JsSearch;
             });
         };
         return SimpleTokenizer;
-    })();
+    }());
     JsSearch.SimpleTokenizer = SimpleTokenizer;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=simple-tokenizer.js.map
-/// <reference path="tokenizer.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var StemmingTokenizer = (function () {
@@ -601,13 +599,13 @@ var JsSearch;
             }, this);
         };
         return StemmingTokenizer;
-    })();
+    }());
     JsSearch.StemmingTokenizer = StemmingTokenizer;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=stemming-tokenizer.js.map
-/// <reference path="tokenizer.ts" />
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     var StopWordsTokenizer = (function () {
@@ -621,12 +619,13 @@ var JsSearch;
             });
         };
         return StopWordsTokenizer;
-    })();
+    }());
     JsSearch.StopWordsTokenizer = StopWordsTokenizer;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
 //# sourceMappingURL=stop-words-filtering-tokenizer.js.map
+"use strict";
 var JsSearch;
 (function (JsSearch) {
     ;

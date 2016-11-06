@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.3
+Fixed a bug in `TfIdfSearchIndex` that caused errors when indexing certain reserved keywords (eg "constructor").
+
 ## 1.3.2
 Fixed tokenizer bug affecting IE <= 10 that caused prefix and substring token strategies incorrectly index terms.
 

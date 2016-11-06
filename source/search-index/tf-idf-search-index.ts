@@ -23,7 +23,7 @@ module JsSearch {
     public indexDocument(token:string, uid:string, document:Object):void {
       this.tokenToIdfCache_ = {}; // New index invalidates previous IDF caches
 
-      if (!this.tokenMap_[token]) {
+      if (typeof this.tokenMap_[token] !== 'object') {
         this.tokenMap_[token] = {
           $numDocumentOccurrences: 0,
           $totalNumOccurrences: 1,
