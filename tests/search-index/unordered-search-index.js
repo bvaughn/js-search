@@ -37,4 +37,20 @@ describe('Search', function() {
 
     validateSearchResults(results, [documents[0], documents[2], documents[3]]);
   });
+
+  it('should serialize indexed documents', function() {
+    expect(search.searchIndex.serialize()).toBeTruthy();
+  });
+
+  it('should restore persisted indexed documents', function() {
+    const serialized = search.searchIndex.serialize();
+
+    search = new JsSearch.Search('uid');
+    search.searchIndex = new JsSearch.UnorderedSearchIndex();
+    search.searchIndex.restore(serialized);
+
+    var results = search.search('node');
+
+    validateSearchResults(results, [documents[0], documents[2], documents[3]]);
+  });
 });

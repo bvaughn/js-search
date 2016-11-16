@@ -48,6 +48,17 @@ module JsSearch {
     /**
      * @inheritDocs
      */
+    public restore(serialized:string):void {
+      const data = JSON.parse(serialized);
+
+      this.tokenMap_ = data.tokenMap;
+      this.tokenToIdfCache_ = data.tokenToIdfCache;
+      this.uidFieldName_ = data.uidFieldName;
+    }
+
+    /**
+     * @inheritDocs
+     */
     public search(tokens:Array<string>, corpus:Array<Object>):Array<Object> {
       var uidToDocumentMap:{[uid:string]:Object} = {};
 
@@ -84,6 +95,17 @@ module JsSearch {
         return this.calculateTfIdf_(tokens, documentB, corpus) -
                this.calculateTfIdf_(tokens, documentA, corpus);
       }.bind(this));
+    }
+
+    /**
+     * @inheritDocs
+     */
+    public serialize():string {
+      return JSON.stringify({
+        tokenMap: this.tokenMap_,
+        tokenToIdfCache: this.tokenToIdfCache_,
+        uidFieldName: this.uidFieldName_
+      });
     }
 
     /**

@@ -8,11 +8,11 @@ const files = {
   minified: 'js-search.min.js'
 }
 
-export default function* () {
+module.exports.default = function* () {
   yield this.start('build')
 }
 
-export function* build () {
+module.exports.build = function* () {
   yield this.clear(paths.dist)
 
   yield this
@@ -38,6 +38,6 @@ export function* build () {
     .target(paths.dist)
 }
 
-export function* watchAndBuild () {
+module.exports.watchAndBuild = function* () {
   yield this.watch(paths.source, 'build')
 }

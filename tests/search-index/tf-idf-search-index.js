@@ -133,4 +133,22 @@ describe('Search', function() {
       expect(results[2]).toEqual(documentB);
     });
   });
+
+  describe('serialize and restore', function() {
+    it('should persist indexed documents', function() {
+      expect(search.searchIndex.serialize()).toBeTruthy();
+    });
+
+    it('should restore persisted indexed documents', function() {
+      const serialized = search.searchIndex.serialize();
+
+      search = new JsSearch.Search('uid');
+      search.searchIndex = new JsSearch.TfIdfSearchIndex('uid');
+      search.searchIndex.restore(serialized);
+
+      var results = search.search('node');
+
+      expect(results.length).toEqual(3);
+    });
+  })
 });
