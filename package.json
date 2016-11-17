@@ -8,9 +8,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "fly": "^0.8.2",
-    "fly-ts": "^0.2.2",
-    "fly-uglify": "^1.0.0",
+    "fly": "^1.4.1",
+    "fly-ts": "^0.2.4",
+    "fly-uglify": "^3.0.0",
     "jasmine": "^2.3.1",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.3",
