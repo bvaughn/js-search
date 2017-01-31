@@ -1,3 +1,5 @@
+import { Search } from '../search';
+
 describe('Search', function() {
   var documentBar, documentBaz, documentFoo, nestedDocumentFoo, search;
 
@@ -9,7 +11,7 @@ describe('Search', function() {
   };
 
   beforeEach(function() {
-    search = new JsSearch.Search('uid');
+    search = new Search('uid');
 
     documentBar = {
       uid: 'bar',
@@ -44,16 +46,16 @@ describe('Search', function() {
 
   it('should index a new document on all searchable fields', function() {
     search.addIndex('title');
-    spyOn(search.indexStrategy_, 'expandToken').and.returnValue([]);
+    spyOn(search._indexStrategy, 'expandToken').and.returnValue([]);
     search.addDocument(documentBar);
-    expect(search.indexStrategy_.expandToken).toHaveBeenCalledWith('bar');
+    expect(search._indexStrategy.expandToken).toHaveBeenCalledWith('bar');
   });
 
   it('should re-index existing documents if a new searchable field is added', function() {
     search.addDocument(documentBar);
-    spyOn(search.indexStrategy_, 'expandToken').and.returnValue([]);
+    spyOn(search._indexStrategy, 'expandToken').and.returnValue([]);
     search.addIndex('title');
-    expect(search.indexStrategy_.expandToken).toHaveBeenCalledWith('bar');
+    expect(search._indexStrategy.expandToken).toHaveBeenCalledWith('bar');
 
   });
 

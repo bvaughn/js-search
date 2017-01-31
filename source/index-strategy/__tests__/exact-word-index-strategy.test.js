@@ -1,8 +1,10 @@
+import { ExactWordIndexStrategy } from '../exact-word-index-strategy';
+
 describe('ExactWordIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {
-    indexStrategy = new JsSearch.ExactWordIndexStrategy();
+    indexStrategy = new ExactWordIndexStrategy();
   });
 
   it('should not expand empty tokens', function() {

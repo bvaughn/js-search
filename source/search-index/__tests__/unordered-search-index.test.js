@@ -1,9 +1,12 @@
+import { Search } from '../../search';
+import { UnorderedSearchIndex } from '../unordered-search-index';
+
 describe('Search', function() {
   var documents, search;
 
   beforeEach(function() {
-    search = new JsSearch.Search('uid');
-    search.searchIndex = new JsSearch.UnorderedSearchIndex();
+    search = new Search('uid');
+    search.searchIndex = new UnorderedSearchIndex();
     search.addIndex('title');
 
     var titles = [

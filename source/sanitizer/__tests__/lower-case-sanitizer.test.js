@@ -1,8 +1,10 @@
+import { LowerCaseSanitizer } from '../lower-case-sanitizer';
+
 describe('LowerCaseSanitizer', function() {
   var sanitizer;
 
   beforeEach(function() {
-    sanitizer = new JsSearch.LowerCaseSanitizer();
+    sanitizer = new LowerCaseSanitizer();
   });
 
   it('should handle falsy values', function() {

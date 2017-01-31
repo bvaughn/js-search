@@ -1,8 +1,10 @@
+import { AllSubstringsIndexStrategy } from '../all-substrings-index-strategy';
+
 describe('AllSubstringsIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {
-    indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
+    indexStrategy = new AllSubstringsIndexStrategy();
   });
 
   it('should not expand empty tokens', function() {

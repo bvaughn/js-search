@@ -1,8 +1,10 @@
+import { TokenHighlighter } from '../token-highlighter';
+
 describe('TokenHighlighter', function() {
   var tag, tokenHighlighter;
 
   beforeEach(function() {
-    tokenHighlighter = new JsSearch.TokenHighlighter();
+    tokenHighlighter = new TokenHighlighter();
   });
 
   it('should handle empty strings', function() {
@@ -19,7 +21,7 @@ describe('TokenHighlighter', function() {
   it('should highlight tokens that equal the full string', function() {
     var tokens = ['foo'];
     var text = 'foo';
-    expect(tokenHighlighter.highlight(text, tokens)).toEqual(tokenHighlighter.wrapText_(text));
+    expect(tokenHighlighter.highlight(text, tokens)).toEqual(tokenHighlighter._wrapText(text));
   });
 
   it('should not highlight words ending with tokens', function() {
@@ -31,42 +33,42 @@ describe('TokenHighlighter', function() {
   it('should highlight multiple matches for multiple tokens', function() {
     var tokens = ['bar', 'baz'];
     var text = 'foo bar baz foo';
-    var expectedText = 'foo ' + tokenHighlighter.wrapText_('bar') + ' ' + tokenHighlighter.wrapText_('baz') + ' foo';
+    var expectedText = 'foo ' + tokenHighlighter._wrapText('bar') + ' ' + tokenHighlighter._wrapText('baz') + ' foo';
     expect(tokenHighlighter.highlight(text, tokens)).toEqual(expectedText);
   });
 
   it('should highlight the last word in the text', function() {
     var tokens = ['bar'];
     var text = 'foo bar';
-    var expectedText = 'foo ' + tokenHighlighter.wrapText_('bar');
+    var expectedText = 'foo ' + tokenHighlighter._wrapText('bar');
     expect(tokenHighlighter.highlight(text, tokens)).toEqual(expectedText);
   });
 
   it('should highlight the first word in the text', function() {
     var tokens = ['foo'];
     var text = 'foo bar';
-    var expectedText = tokenHighlighter.wrapText_('foo') + ' bar';
+    var expectedText = tokenHighlighter._wrapText('foo') + ' bar';
     expect(tokenHighlighter.highlight(text, tokens)).toEqual(expectedText);
   });
 
   it('should highlight tokens within tokens', function() {
     var tokens = ['foo', 'foobar'];
     var text = 'bar foobar baz';
-    var expectedText = 'bar ' + tokenHighlighter.wrapText_(tokenHighlighter.wrapText_('foo') + 'bar') + ' baz';
+    var expectedText = 'bar ' + tokenHighlighter._wrapText(tokenHighlighter._wrapText('foo') + 'bar') + ' baz';
     expect(tokenHighlighter.highlight(text, tokens)).toEqual(expectedText);
   });
 
   it('should highlight using sanitized text', function() {
     var tokens = ['foo', 'BAR'];
     var text = 'Foo bar baz';
-    var expectedText = tokenHighlighter.wrapText_('Foo') + ' ' + tokenHighlighter.wrapText_('bar') + ' baz';
+    var expectedText = tokenHighlighter._wrapText('Foo') + ' ' + tokenHighlighter._wrapText('bar') + ' baz';
     expect(tokenHighlighter.highlight(text, tokens)).toEqual(expectedText);
   });
 
   it('should highlight the correct words regardless of leading or trailing spaces', function() {
     var tokens = ['foo', 'baz'];
     var text = '  foo bar baz ';
-    var expectedText = '  ' + tokenHighlighter.wrapText_('foo') + ' bar ' + tokenHighlighter.wrapText_('baz') + ' ';
+    var expectedText = '  ' + tokenHighlighter._wrapText('foo') + ' bar ' + tokenHighlighter._wrapText('baz') + ' ';
     expect(tokenHighlighter.highlight(text, tokens)).toEqual(expectedText);
   });
 });

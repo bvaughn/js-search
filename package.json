@@ -8,12 +8,16 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-latest": "^6.22.0",
     "flow-bin": "^0.38.0",
     "fly": "^1.4.1",
     "fly-ts": "^0.2.4",
     "fly-uglify": "^3.0.0",
     "jasmine": "^2.3.1",
     "jasmine-core": "^2.3.4",
+    "jest": "^18.1.0",
     "karma": "^0.13.3",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
@@ -24,8 +28,8 @@
     "build": "npm run compile && npm run test",
     "compile": "fly",
     "dev": "fly watchAndBuild",
-    "test": "karma start karma.conf.js",
-    "tdd": "karma start karma.conf.js --auto-watch --no-single-run"
+    "test": "jest",
+    "tdd": "jest --watch"
   },
   "author": "Brian Vaughn <briandavidvaughn@gmail.com> (https://github.com/bvaughn/)",
   "license": "MIT",
@@ -45,5 +49,13 @@
   "bugs": {
     "url": "https://github.com/bvaughn/js-search/issues"
   },
-  "homepage": "https://github.com/bvaughn/js-search"
+  "homepage": "https://github.com/bvaughn/js-search",
+  "jest": {
+    "setupFiles": [],
+    "testPathDirs": [
+      "./source"
+    ],
+    "testRegex": "\\.test\\.js$",
+    "verbose": true
+  }
 }

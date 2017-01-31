@@ -1,3 +1,6 @@
+import { SimpleTokenizer } from '../simple-tokenizer';
+import { StemmingTokenizer } from '../stemming-tokenizer';
+
 describe('StemmingTokenizer', function() {
   var tokenizer;
 
@@ -10,7 +13,7 @@ describe('StemmingTokenizer', function() {
       }
     };
 
-    tokenizer = new JsSearch.StemmingTokenizer(stemmingFunction, new JsSearch.SimpleTokenizer());
+    tokenizer = new StemmingTokenizer(stemmingFunction, new SimpleTokenizer());
   });
 
   it('should handle empty values', function() {

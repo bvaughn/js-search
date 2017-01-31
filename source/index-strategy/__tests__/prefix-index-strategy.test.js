@@ -1,8 +1,10 @@
+import { PrefixIndexStrategy } from '../prefix-index-strategy';
+
 describe('PrefixIndexStrategy', function() {
   var indexStrategy;
 
   beforeEach(function() {
-    indexStrategy = new JsSearch.PrefixIndexStrategy();
+    indexStrategy = new PrefixIndexStrategy();
   });
 
   it('should not expand empty tokens', function() {

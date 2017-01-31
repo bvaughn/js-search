@@ -1,8 +1,11 @@
+import { SimpleTokenizer } from '../simple-tokenizer';
+import { StopWordsTokenizer } from '../stop-words-tokenizer';
+
 describe('StopWordsTokenizer', function() {
   var tokenizer;
 
   beforeEach(function() {
-    tokenizer = new JsSearch.StopWordsTokenizer(new JsSearch.SimpleTokenizer());
+    tokenizer = new StopWordsTokenizer(new SimpleTokenizer());
   });
 
   it('should handle empty values', function() {

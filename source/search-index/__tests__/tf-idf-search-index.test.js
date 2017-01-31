@@ -1,3 +1,6 @@
+import { Search } from '../../search';
+import { TfIdfSearchIndex } from '../tf-idf-search-index';
+
 describe('Search', function() {
   var documents, search, uid;
 
@@ -17,8 +20,8 @@ describe('Search', function() {
     documents = [];
     uid = 0;
 
-    search = new JsSearch.Search('uid');
-    search.searchIndex = new JsSearch.TfIdfSearchIndex('uid');
+    search = new Search('uid');
+    search.searchIndex = new TfIdfSearchIndex('uid');
     search.addIndex('title');
 
     var titles = [
@@ -34,11 +37,11 @@ describe('Search', function() {
   });
 
   var calculateIdf = function(numDocumentsWithToken) {
-    return 1 + Math.log(search.documents_.length/(1 + numDocumentsWithToken));
+    return 1 + Math.log(search._documents.length/(1 + numDocumentsWithToken));
   };
 
   var assertIdf = function(term, numDocumentsWithToken) {
-    expect(search.searchIndex.calculateIdf_(term, search.documents_)).toEqual(calculateIdf(numDocumentsWithToken));
+    expect(search.searchIndex._calculateIdf(term, search._documents)).toEqual(calculateIdf(numDocumentsWithToken));
   };
 
   it('should handle special words like "constructor"', function () {
@@ -76,7 +79,7 @@ describe('Search', function() {
   };
 
   var assertTfIdf = function(terms, document, expectedTfIdf) {
-    expect(search.searchIndex.calculateTfIdf_(terms, document, search.documents_)).toEqual(expectedTfIdf);
+    expect(search.searchIndex._calculateTfIdf(terms, document, search._documents)).toEqual(expectedTfIdf);
   };
 
   describe('TF-IDF', function() {

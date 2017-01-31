@@ -1,8 +1,10 @@
+import { SimpleTokenizer } from '../simple-tokenizer';
+
 describe('SimpleTokenizer', function() {
   var tokenizer
 
   beforeEach(function() {
-    tokenizer = new JsSearch.SimpleTokenizer();
+    tokenizer = new SimpleTokenizer();
   });
 
   it('should convert single-token strings', function() {

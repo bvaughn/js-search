@@ -1,8 +1,10 @@
+import { CaseSensitiveSanitizer } from '../case-sensitive-sanitizer';
+
 describe('CaseSensitiveSanitizer', function() {
   var sanitizer;
 
   beforeEach(function() {
-    sanitizer = new JsSearch.CaseSensitiveSanitizer();
+    sanitizer = new CaseSensitiveSanitizer();
   });
 
   it('should handle falsy values', function() {
