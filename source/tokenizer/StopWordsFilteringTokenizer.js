@@ -1,8 +1,8 @@
 // @flow
 
-import type { ITokenizer } from './tokenizer';
+import type { ITokenizer } from './Tokenizer';
 
-import { StopWordsMap } from '../stop-words-map';
+import { StopWordsMap } from '../StopWordsMap';
 
 /**
  * Stop words are very common (e.g. "a", "and", "the") and are often not semantically meaningful in the context of a

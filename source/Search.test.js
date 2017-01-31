@@ -1,4 +1,4 @@
-import { Search } from '../search';
+import { Search } from './Search';
 
 describe('Search', function() {
   var documentBar, documentBaz, documentFoo, nestedDocumentFoo, search;

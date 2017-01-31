@@ -4,24 +4,24 @@ export {
   AllSubstringsIndexStrategy,
   ExactWordIndexStrategy,
   PrefixIndexStrategy
-} from './index-strategy';
+} from './IndexStrategy';
 
 export {
   CaseSensitiveSanitizer,
   LowerCaseSanitizer
-} from './sanitizer';
+} from './Sanitizer';
 
 export {
   TfIdfSearchIndex,
   UnorderedSearchIndex
-} from './search-index';
+} from './SearchIndex';
 
 export {
   SimpleTokenizer,
   StemmingTokenizer,
   StopWordsTokenizer
-} from './tokenizer';
+} from './Tokenizer';
 
-export { Search } from './search';
-export { StopWordsMap } from './stop-words-map';
-export { TokenHighlighter } from './token-highlighter';
+export { Search } from './Search';
+export { StopWordsMap } from './StopWordsMap';
+export { TokenHighlighter } from './TokenHighlighter';

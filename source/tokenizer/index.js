@@ -1,7 +1,7 @@
 // @flow
 
-export { SimpleTokenizer } from './simple-tokenizer';
-export { StemmingTokenizer } from './stemming-tokenizer';
-export { StopWordsTokenizer } from './stop-words-filtering-tokenizer';
+export { SimpleTokenizer } from './SimpleTokenizer';
+export { StemmingTokenizer } from './StemmingTokenizer';
+export { StopWordsTokenizer } from './StopWordsFilteringTokenizer';
 
-export type { ITokenizer } from './tokenizer';
+export type { ITokenizer } from './Tokenizer';

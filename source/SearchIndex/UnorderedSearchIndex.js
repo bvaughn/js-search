@@ -1,6 +1,6 @@
 // @flow
 
-import type { ISearchIndex } from './search-index';
+import type { ISearchIndex } from './SearchIndex';
 
 /**
  * Search index capable of returning results matching a set of tokens but without any meaningful rank or order.

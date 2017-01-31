@@ -1,4 +1,4 @@
-import { TokenHighlighter } from '../token-highlighter';
+import { TokenHighlighter } from './TokenHighlighter';
 
 describe('TokenHighlighter', function() {
   var tag, tokenHighlighter;

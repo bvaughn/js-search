@@ -1,6 +1,6 @@
 // @flow
 
-import type { ISanitizer } from './sanitizer';
+import type { ISanitizer } from './Sanitizer';
 
 /**
  * Enforces case-sensitive text matches.

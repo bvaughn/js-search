@@ -1,10 +1,10 @@
 // @flow
 
-import { PrefixIndexStrategy } from './index-strategy';
-import { LowerCaseSanitizer } from './sanitizer';
+import { PrefixIndexStrategy } from './IndexStrategy';
+import { LowerCaseSanitizer } from './Sanitizer';
 
-import type { IIndexStrategy } from './index-strategy';
-import type { ISanitizer } from './sanitizer';
+import type { IIndexStrategy } from './IndexStrategy';
+import type { ISanitizer } from './Sanitizer';
 
 /**
  * This utility highlights the occurrences of tokens within a string of text. It can be used to give visual indicators

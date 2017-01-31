@@ -1,4 +1,4 @@
-import { PrefixIndexStrategy } from '../prefix-index-strategy';
+import { PrefixIndexStrategy } from './PrefixIndexStrategy';
 
 describe('PrefixIndexStrategy', function() {
   var indexStrategy;

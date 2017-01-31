@@ -1,5 +1,5 @@
-import { Search } from '../../search';
-import { TfIdfSearchIndex } from '../tf-idf-search-index';
+import { Search } from '../Search';
+import { TfIdfSearchIndex } from './TfIdfSearchIndex';
 
 describe('Search', function() {
   var documents, search, uid;

@@ -1,6 +1,6 @@
 // @flow
 
-import type { ISanitizer } from './sanitizer';
+import type { ISanitizer } from './Sanitizer';
 
 /**
  * Sanitizes text by converting to a locale-friendly lower-case version and triming leading and trailing whitespace.

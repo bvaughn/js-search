@@ -1,5 +1,5 @@
-import { Search } from '../../search';
-import { UnorderedSearchIndex } from '../unordered-search-index';
+import { Search } from '../Search';
+import { UnorderedSearchIndex } from './UnorderedSearchIndex';
 
 describe('Search', function() {
   var documents, search;

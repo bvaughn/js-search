@@ -1,6 +1,6 @@
 // @flow
 
-import type { IIndexStrategy } from './index-strategy';
+import type { IIndexStrategy } from './IndexStrategy';
 
 /**
  * Indexes for exact word matches.

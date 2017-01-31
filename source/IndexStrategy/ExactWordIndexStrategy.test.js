@@ -1,4 +1,4 @@
-import { ExactWordIndexStrategy } from '../exact-word-index-strategy';
+import { ExactWordIndexStrategy } from './ExactWordIndexStrategy';
 
 describe('ExactWordIndexStrategy', function() {
   var indexStrategy;

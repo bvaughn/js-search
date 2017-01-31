@@ -1,6 +1,6 @@
 // @flow
 
-import type { IIndexStrategy } from './index-strategy';
+import type { IIndexStrategy } from './IndexStrategy';
 
 /**
  * Indexes for prefix searches (e.g. the term "cat" is indexed as "c", "ca", and "cat" allowing prefix search lookups).

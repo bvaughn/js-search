@@ -1,10 +1,10 @@
-import { LowerCaseSanitizer } from '../lower-case-sanitizer';
+import { CaseSensitiveSanitizer } from './CaseSensitiveSanitizer';
 
-describe('LowerCaseSanitizer', function() {
+describe('CaseSensitiveSanitizer', function() {
   var sanitizer;
 
   beforeEach(function() {
-    sanitizer = new LowerCaseSanitizer();
+    sanitizer = new CaseSensitiveSanitizer();
   });
 
   it('should handle falsy values', function() {
@@ -27,7 +27,7 @@ describe('LowerCaseSanitizer', function() {
     expect(sanitizer.sanitize(' c ')).toEqual('c');
   });
 
-  it('should convert uppercase to lower case', function() {
-    expect(sanitizer.sanitize('AbC')).toEqual('abc');
+  it('should not modify case', function() {
+    expect(sanitizer.sanitize('AbC')).toEqual('AbC');
   });
 });

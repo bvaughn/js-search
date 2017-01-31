@@ -1,6 +1,6 @@
 // @flow
 
-import type { ITokenizer } from './tokenizer';
+import type { ITokenizer } from './Tokenizer';
 
 type StemmingFunction = (text : string) => string;
 

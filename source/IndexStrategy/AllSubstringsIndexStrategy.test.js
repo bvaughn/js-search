@@ -1,4 +1,4 @@
-import { AllSubstringsIndexStrategy } from '../all-substrings-index-strategy';
+import { AllSubstringsIndexStrategy } from './AllSubstringsIndexStrategy';
 
 describe('AllSubstringsIndexStrategy', function() {
   var indexStrategy;

@@ -1,6 +1,6 @@
 // @flow
 
-import type { ITokenizer } from './tokenizer';
+import type { ITokenizer } from './Tokenizer';
 
 const REGEX = /[^a-zа-яё0-9\-']+/i;
 

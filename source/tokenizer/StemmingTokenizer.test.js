@@ -1,5 +1,5 @@
-import { SimpleTokenizer } from '../simple-tokenizer';
-import { StemmingTokenizer } from '../stemming-tokenizer';
+import { SimpleTokenizer } from './SimpleTokenizer';
+import { StemmingTokenizer } from './StemmingTokenizer';
 
 describe('StemmingTokenizer', function() {
   var tokenizer;

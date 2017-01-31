@@ -1,5 +1,5 @@
-import { SimpleTokenizer } from '../simple-tokenizer';
-import { StopWordsTokenizer } from '../stop-words-tokenizer';
+import { SimpleTokenizer } from '../SimpleTokenizer';
+import { StopWordsTokenizer } from '../StopWordsTokenizer';
 
 describe('StopWordsTokenizer', function() {
   var tokenizer;

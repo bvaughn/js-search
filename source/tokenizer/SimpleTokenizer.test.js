@@ -1,4 +1,4 @@
-import { SimpleTokenizer } from '../simple-tokenizer';
+import { SimpleTokenizer } from './SimpleTokenizer';
 
 describe('SimpleTokenizer', function() {
   var tokenizer

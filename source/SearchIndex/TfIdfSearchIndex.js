@@ -1,6 +1,6 @@
 // @flow
 
-import type { ISearchIndex } from './search-index';
+import type { ISearchIndex } from './SearchIndex';
 
 type ITfIdfTokenMap = {
   [token : string] : ITfIdfTokenMetadata;
