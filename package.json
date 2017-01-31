@@ -8,6 +8,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "flow-bin": "^0.38.0",
     "fly": "^1.4.1",
     "fly-ts": "^0.2.4",
     "fly-uglify": "^3.0.0",
