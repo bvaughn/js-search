@@ -96,6 +96,7 @@ export class TokenHighlighter {
    * @private
    */
   _wrapText(text : string) : string {
-    return `<${this._wrapperTagName}>${text}</${this._wrapperTagName}>`;
+    const tagName = this._wrapperTagName;
+    return `<${tagName}>${text}</${tagName}>`;
   }
 };

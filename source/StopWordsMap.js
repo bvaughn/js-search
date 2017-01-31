@@ -1,8 +1,8 @@
 // @flow
 
 /**
-* Stop words list copied from Lunr JS.
-*/
+ * Stop words list copied from Lunr JS.
+ */
 export const StopWordsMap = {
   a: 'a',
   able: 'able',
