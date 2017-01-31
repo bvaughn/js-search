@@ -27,11 +27,6 @@ module.exports.build = function* () {
     .target(paths.dist)
 
   yield this
-    .source(paths.dist + files.main, 'source/node-export.js')
-    .concat(files.main)
-    .target(paths.dist)
-
-  yield this
     .source(paths.dist + files.main)
     .uglify()
     .concat(files.minified)
