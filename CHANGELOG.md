@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.4
+Simple tokenizer now supports cyrillic. ([De-Luxis](https://github.com/De-Luxis) - [#21](https://github.com/bvaughn/js-search/pull/21))
+
 ## 1.3.3
 Fixed a bug in `TfIdfSearchIndex` that caused errors when indexing certain reserved keywords (eg "constructor").
 

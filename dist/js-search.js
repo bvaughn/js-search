@@ -19,7 +19,7 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=all-substrings-index-strategy.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -35,14 +35,14 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=exact-word-index-strategy.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=index-strategy.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -62,7 +62,7 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=prefix-index-strategy.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -78,7 +78,7 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=case-sensitive-sanitizer.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -94,21 +94,21 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=lower-case-sanitizer.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=sanitizer.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=search-index.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -204,7 +204,7 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=tf-idf-search-index.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -248,7 +248,7 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=unordered-search-index.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -378,7 +378,66 @@ var JsSearch;
     }());
     JsSearch.Search = Search;
 })(JsSearch || (JsSearch = {}));
-//# sourceMappingURL=search.js.map
+//# sourceMappingURL=module.js.map
+"use strict";
+var JsSearch;
+(function (JsSearch) {
+    var TokenHighlighter = (function () {
+        function TokenHighlighter(opt_indexStrategy, opt_sanitizer, opt_wrapperTagName) {
+            this.indexStrategy_ = opt_indexStrategy || new JsSearch.PrefixIndexStrategy();
+            this.sanitizer_ = opt_sanitizer || new JsSearch.LowerCaseSanitizer();
+            this.wrapperTagName_ = opt_wrapperTagName || 'mark';
+        }
+        TokenHighlighter.prototype.highlight = function (text, tokens) {
+            var tagsLength = this.wrapText_('').length;
+            var tokenDictionary = {};
+            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
+                var token = this.sanitizer_.sanitize(tokens[i]);
+                var expandedTokens = this.indexStrategy_.expandToken(token);
+                for (var j = 0, numExpandedTokens = expandedTokens.length; j < numExpandedTokens; j++) {
+                    var expandedToken = expandedTokens[j];
+                    if (!tokenDictionary[expandedToken]) {
+                        tokenDictionary[expandedToken] = [token];
+                    }
+                    else {
+                        tokenDictionary[expandedToken].push(token);
+                    }
+                }
+            }
+            var actualCurrentWord = '';
+            var sanitizedCurrentWord = '';
+            var currentWordStartIndex = 0;
+            for (var i = 0, textLength = text.length; i < textLength; i++) {
+                var character = text.charAt(i);
+                if (character === ' ') {
+                    actualCurrentWord = '';
+                    sanitizedCurrentWord = '';
+                    currentWordStartIndex = i + 1;
+                }
+                else {
+                    actualCurrentWord += character;
+                    sanitizedCurrentWord += this.sanitizer_.sanitize(character);
+                }
+                if (tokenDictionary[sanitizedCurrentWord] &&
+                    tokenDictionary[sanitizedCurrentWord].indexOf(sanitizedCurrentWord) >= 0) {
+                    actualCurrentWord = this.wrapText_(actualCurrentWord);
+                    text = text.substring(0, currentWordStartIndex) + actualCurrentWord + text.substring(i + 1);
+                    i += tagsLength;
+                    textLength += tagsLength;
+                }
+            }
+            return text;
+        };
+        TokenHighlighter.prototype.wrapText_ = function (text) {
+            return "<" + this.wrapperTagName_ + ">" + text + "</" + this.wrapperTagName_ + ">";
+        };
+        return TokenHighlighter;
+    }());
+    JsSearch.TokenHighlighter = TokenHighlighter;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -505,85 +564,7 @@ var JsSearch;
     };
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=stop-words-map.js.map
-"use strict";
-var JsSearch;
-(function (JsSearch) {
-    var TokenHighlighter = (function () {
-        function TokenHighlighter(opt_indexStrategy, opt_sanitizer, opt_wrapperTagName) {
-            this.indexStrategy_ = opt_indexStrategy || new JsSearch.PrefixIndexStrategy();
-            this.sanitizer_ = opt_sanitizer || new JsSearch.LowerCaseSanitizer();
-            this.wrapperTagName_ = opt_wrapperTagName || 'mark';
-        }
-        TokenHighlighter.prototype.highlight = function (text, tokens) {
-            var tagsLength = this.wrapText_('').length;
-            var tokenDictionary = {};
-            for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-                var token = this.sanitizer_.sanitize(tokens[i]);
-                var expandedTokens = this.indexStrategy_.expandToken(token);
-                for (var j = 0, numExpandedTokens = expandedTokens.length; j < numExpandedTokens; j++) {
-                    var expandedToken = expandedTokens[j];
-                    if (!tokenDictionary[expandedToken]) {
-                        tokenDictionary[expandedToken] = [token];
-                    }
-                    else {
-                        tokenDictionary[expandedToken].push(token);
-                    }
-                }
-            }
-            var actualCurrentWord = '';
-            var sanitizedCurrentWord = '';
-            var currentWordStartIndex = 0;
-            for (var i = 0, textLength = text.length; i < textLength; i++) {
-                var character = text.charAt(i);
-                if (character === ' ') {
-                    actualCurrentWord = '';
-                    sanitizedCurrentWord = '';
-                    currentWordStartIndex = i + 1;
-                }
-                else {
-                    actualCurrentWord += character;
-                    sanitizedCurrentWord += this.sanitizer_.sanitize(character);
-                }
-                if (tokenDictionary[sanitizedCurrentWord] &&
-                    tokenDictionary[sanitizedCurrentWord].indexOf(sanitizedCurrentWord) >= 0) {
-                    actualCurrentWord = this.wrapText_(actualCurrentWord);
-                    text = text.substring(0, currentWordStartIndex) + actualCurrentWord + text.substring(i + 1);
-                    i += tagsLength;
-                    textLength += tagsLength;
-                }
-            }
-            return text;
-        };
-        TokenHighlighter.prototype.wrapText_ = function (text) {
-            return "<" + this.wrapperTagName_ + ">" + text + "</" + this.wrapperTagName_ + ">";
-        };
-        return TokenHighlighter;
-    }());
-    JsSearch.TokenHighlighter = TokenHighlighter;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-//# sourceMappingURL=token-highlighter.js.map
-"use strict";
-var JsSearch;
-(function (JsSearch) {
-    var SimpleTokenizer = (function () {
-        function SimpleTokenizer() {
-        }
-        SimpleTokenizer.prototype.tokenize = function (text) {
-            return text.split(/[^a-zA-Z0-9\-']+/)
-                .filter(function (text) {
-                return !!text;
-            });
-        };
-        return SimpleTokenizer;
-    }());
-    JsSearch.SimpleTokenizer = SimpleTokenizer;
-    ;
-})(JsSearch || (JsSearch = {}));
-;
-//# sourceMappingURL=simple-tokenizer.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -604,7 +585,26 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=stemming-tokenizer.js.map
+//# sourceMappingURL=module.js.map
+"use strict";
+var JsSearch;
+(function (JsSearch) {
+    var SimpleTokenizer = (function () {
+        function SimpleTokenizer() {
+        }
+        SimpleTokenizer.prototype.tokenize = function (text) {
+            return text.split(/[^a-zа-яё 0-9\-']+/i)
+                .filter(function (text) {
+                return !!text;
+            });
+        };
+        return SimpleTokenizer;
+    }());
+    JsSearch.SimpleTokenizer = SimpleTokenizer;
+    ;
+})(JsSearch || (JsSearch = {}));
+;
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
@@ -624,14 +624,11 @@ var JsSearch;
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=stop-words-filtering-tokenizer.js.map
+//# sourceMappingURL=module.js.map
 "use strict";
 var JsSearch;
 (function (JsSearch) {
     ;
 })(JsSearch || (JsSearch = {}));
 ;
-//# sourceMappingURL=tokenizer.js.map
-(function (JsSearch) {
-  if (typeof module !== 'undefined' && module.exports && JsSearch) { module.exports = JsSearch; }
-})(JsSearch || (JsSearch = {}));
+//# sourceMappingURL=module.js.map

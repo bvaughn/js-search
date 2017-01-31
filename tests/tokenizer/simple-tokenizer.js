@@ -1,5 +1,5 @@
 describe('SimpleTokenizer', function() {
-  var tokenizer;
+  var tokenizer
 
   beforeEach(function() {
     tokenizer = new JsSearch.SimpleTokenizer();
@@ -27,5 +27,23 @@ describe('SimpleTokenizer', function() {
 
   it('should not remove apostrophes', function() {
     expect(tokenizer.tokenize('it\'s')).toEqual(['it\'s']);
+  });
+
+  it('should handle cyrillic', function() {
+    expect(tokenizer.tokenize('Есть хоть одна девушка, которую ты хочешь? Или ты устал от женщин'))
+      .toEqual([
+        'Есть',
+        'хоть',
+        'одна',
+        'девушка',
+        'которую',
+        'ты',
+        'хочешь',
+        'Или',
+        'ты',
+        'устал',
+        'от',
+        'женщин'
+      ]);
   });
 });
