@@ -27,6 +27,13 @@ module JsSearch {
     /**
      * @inheritDocs
      */
+    public restore(serialized:string):void {
+      this.tokenToUidToDocumentMap_ = JSON.parse(serialized);
+    }
+
+    /**
+     * @inheritDocs
+     */
     public search(tokens:Array<string>, corpus:Array<Object>):Array<Object> {
       var uidToDocumentMap:{[uid:string]:any} = {};
 
@@ -54,6 +61,13 @@ module JsSearch {
       }
 
       return documents;
+    }
+
+    /**
+     * @inheritDocs
+     */
+    public serialize():string {
+      return JSON.stringify(this.tokenToUidToDocumentMap_);
     }
   };
 };
