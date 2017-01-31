@@ -148,7 +148,7 @@ module JsSearch {
     public search(query:string):Array<Object> {
       var tokens:Array<string> = this.tokenizer_.tokenize(this.sanitizer_.sanitize(query));
 
-      return this.searchIndex_.search(tokens, this.documents_);
+      return this.searchIndex_.search(query, tokens, this.documents_);
     }
 
     /**

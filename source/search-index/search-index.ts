@@ -22,6 +22,6 @@ module JsSearch {
      * @param corpus All document in search corpus
      * @return Array of matching documents
      */
-    search(tokens:Array<string>, corpus:Array<Object>):Array<Object>;
+    search(query:string, tokens:Array<string>, corpus:Array<Object>):Array<Object>;
   };
 };
