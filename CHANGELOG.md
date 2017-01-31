@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.5
+Fixed (hopefully) previous broken build.
+
 ## 1.3.4
 Simple tokenizer now supports cyrillic. ([De-Luxis](https://github.com/De-Luxis) - [#21](https://github.com/bvaughn/js-search/pull/21))
 
