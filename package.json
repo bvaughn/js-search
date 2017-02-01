@@ -16,6 +16,7 @@
     "jest": "^18.1.0",
     "rimraf": "^2.5.4",
     "uglify": "^0.1.5",
+    "uglify-js": "^2.7.5",
     "webpack": "^2.2.1"
   },
   "scripts": {
@@ -25,6 +26,7 @@
     "clean": "rimraf dist",
     "prebuild:commonjs": "rimraf dist/commonjs",
     "prebuild:umd": "rimraf dist/umd",
+    "postbuild:umd": "uglifyjs dist/umd/js-search.js -o dist/umd/js-search.min.js --source-map dist/umd/js-search.min.js.map -p 5 -c -m",
     "test": "jest",
     "tdd": "jest --watch"
   },
