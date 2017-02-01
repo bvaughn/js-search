@@ -1,14 +1,14 @@
 // @flow
 
-import { PrefixIndexStrategy } from './IndexStrategy';
-import { LowerCaseSanitizer } from './Sanitizer';
-import { TfIdfSearchIndex } from './SearchIndex';
-import { SimpleTokenizer } from './Tokenizer';
+import { PrefixIndexStrategy } from './IndexStrategy/index';
+import { LowerCaseSanitizer } from './Sanitizer/index';
+import { TfIdfSearchIndex } from './SearchIndex/index';
+import { SimpleTokenizer } from './Tokenizer/index';
 
-import type { IIndexStrategy } from './IndexStrategy';
-import type { ISanitizer } from './Sanitizer';
-import type { ISearchIndex } from './SearchIndex';
-import type { ITokenizer } from './Tokenizer';
+import type { IIndexStrategy } from './IndexStrategy/index';
+import type { ISanitizer } from './Sanitizer/index';
+import type { ISearchIndex } from './SearchIndex/index';
+import type { ITokenizer } from './Tokenizer/index';
 
 /**
  * Simple client-side searching within a set of documents.

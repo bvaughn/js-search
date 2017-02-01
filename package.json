@@ -6,28 +6,25 @@
   "directories": {
     "test": "tests"
   },
-  "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.22.2",
+    "babel-loader": "^6.2.10",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-latest": "^6.22.0",
+    "cross-env": "^3.1.4",
     "flow-bin": "^0.38.0",
-    "fly": "^1.4.1",
-    "fly-ts": "^0.2.4",
-    "fly-uglify": "^3.0.0",
-    "jasmine": "^2.3.1",
-    "jasmine-core": "^2.3.4",
     "jest": "^18.1.0",
-    "karma": "^0.13.3",
-    "karma-chrome-launcher": "^0.2.0",
-    "karma-jasmine": "^0.3.6",
-    "typescript": "^1.5.3",
-    "uglify": "^0.1.5"
+    "rimraf": "^2.5.4",
+    "uglify": "^0.1.5",
+    "webpack": "^2.2.1"
   },
   "scripts": {
-    "build": "npm run compile && npm run test",
-    "compile": "fly",
-    "dev": "fly watchAndBuild",
+    "build": "npm run build:commonjs && npm run build:umd",
+    "build:commonjs": "cross-env NODE_ENV=production babel source --out-dir dist/commonjs --source-maps --ignore test.js",
+    "build:umd": "cross-env NODE_ENV=production webpack --config webpack.config.js --bail",
+    "clean": "rimraf dist",
+    "prebuild:commonjs": "rimraf dist/commonjs",
+    "prebuild:umd": "rimraf dist/umd",
     "test": "jest",
     "tdd": "jest --watch"
   },

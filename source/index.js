@@ -4,23 +4,23 @@ export {
   AllSubstringsIndexStrategy,
   ExactWordIndexStrategy,
   PrefixIndexStrategy
-} from './IndexStrategy';
+} from './IndexStrategy/index';
 
 export {
   CaseSensitiveSanitizer,
   LowerCaseSanitizer
-} from './Sanitizer';
+} from './Sanitizer/index';
 
 export {
   TfIdfSearchIndex,
   UnorderedSearchIndex
-} from './SearchIndex';
+} from './SearchIndex/index';
 
 export {
   SimpleTokenizer,
   StemmingTokenizer,
   StopWordsTokenizer
-} from './Tokenizer';
+} from './Tokenizer/index';
 
 export { Search } from './Search';
 export { StopWordsMap } from './StopWordsMap';
