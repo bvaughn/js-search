@@ -24,9 +24,12 @@
     "build:commonjs": "cross-env NODE_ENV=production babel source --out-dir dist/commonjs --source-maps --ignore test.js",
     "build:umd": "cross-env NODE_ENV=production webpack --config webpack.config.js --bail",
     "clean": "rimraf dist",
+    "flow": "flow source",
+    "prebuild": "flow",
     "prebuild:commonjs": "rimraf dist/commonjs",
     "prebuild:umd": "rimraf dist/umd",
     "postbuild:umd": "uglifyjs dist/umd/js-search.js -o dist/umd/js-search.min.js --source-map dist/umd/js-search.min.js.map -p 5 -c -m",
+    "pretest": "flow",
     "test": "jest",
     "tdd": "jest --watch"
   },

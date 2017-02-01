@@ -1,34 +1,33 @@
-import { SimpleTokenizer } from '../SimpleTokenizer';
-import { StopWordsTokenizer } from '../StopWordsTokenizer';
+// @flow
 
-describe('StopWordsTokenizer', function() {
-  var tokenizer;
+import type { ITokenizer } from './Tokenizer';
 
-  beforeEach(function() {
-    tokenizer = new StopWordsTokenizer(new SimpleTokenizer());
-  });
+import { StopWordsMap } from '../StopWordsMap';
 
-  it('should handle empty values', function() {
-    expect(tokenizer.tokenize('')).toEqual([]);
-    expect(tokenizer.tokenize(' ')).toEqual([]);
-  });
+/**
+ * Stop words are very common (e.g. "a", "and", "the") and are often not semantically meaningful in the context of a
+ * search. This tokenizer removes stop words from a set of tokens before passing the remaining tokens along for
+ * indexing or searching purposes.
+ */
+export class StopWordsTokenizer implements ITokenizer {
+  _tokenizer : ITokenizer;
 
-  it('should not remove tokens that are not stop words', function() {
-    expect(tokenizer.tokenize('software')).toEqual(['software']);
-  });
+  /**
+   * Constructor.
+   *
+   * @param decoratedIndexStrategy Index strategy to be run after all stop words have been removed.
+   */
+  constructor(decoratedTokenizer : ITokenizer) {
+    this._tokenizer = decoratedTokenizer;
+  }
 
-  it('should remove stop word tokens', function() {
-    expect(tokenizer.tokenize('and testing')).toEqual(['testing']);
-  });
-
-  it('should handle all stop word token sets', function() {
-    expect(tokenizer.tokenize('a and the')).toEqual([]);
-  });
-
-  it('should not remove Object.prototype properties', function() {
-    expect(tokenizer.tokenize('constructor')).toEqual(['constructor']);
-    expect(tokenizer.tokenize('hasOwnProperty')).toEqual(['hasOwnProperty']);
-    expect(tokenizer.tokenize('toString')).toEqual(['toString']);
-    expect(tokenizer.tokenize('valueOf')).toEqual(['valueOf']);
-  });
-});
+  /**
+   * @inheritDocs
+   */
+  tokenize(text : string) : Array<string> {
+    return this._tokenizer.tokenize(text)
+      .filter(
+        (token) => token && StopWordsMap[token] !== token
+      );
+  }
+};

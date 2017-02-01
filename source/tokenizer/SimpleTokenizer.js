@@ -2,7 +2,7 @@
 
 import type { ITokenizer } from './Tokenizer';
 
-const REGEX = /[^a-zа-яё0-9\-']+/i;
+const REGEX = /[^a-zа-яё0-9\-\u00000']+/i;
 
 /**
  * Simple tokenizer that splits strings on whitespace characters and returns an array of all non-empty substrings.
