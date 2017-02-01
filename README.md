@@ -3,7 +3,7 @@
 [Tokenization](#tokenization) |
 [Stemming](#stemming) |
 [Stop Words](#stop-words) |
-[TF-IDF ranking](#TfIdfranking)
+[TF-IDF ranking](#tf-idf-ranking)
 
 # Js Search: client-side search library
 
@@ -17,7 +17,7 @@ stop-words, and TF-IDF ranking.
 Here are some JS Perf benchmarks comparing the two search libraries. (Thanks to [olivernn](https://github.com/olivernn)
 for tweaking the Lunr side for a better comparison!)
 
-* [Initial building of search index](http://jsperf.com/js-search-vs-lunr-js-build-SearchIndex/5)
+* [Initial building of search index](http://jsperf.com/js-search-vs-lunr-js-build-search-index/5)
 * [Running a search](http://jsperf.com/js-search-vs-lunr-js-running-searches/5)
 
 If you're looking for a simpler, web-worker optimized JS search utility check out [js-worker-search](https://github.com/bvaughn/js-worker-search).
