@@ -1,0 +1,25 @@
+{
+  "name": "js-search-benchmark",
+  "version": "1.0.0",
+  "description": "",
+  "main": "create-index.js",
+  "dependencies": {
+    "js-search": "^1.3.5",
+    "beautify-benchmark": "^0.2.4",
+    "lodash": "^4.17.4",
+    "benchmark": "^2.1.3",
+    "lunr": "^0.7.2"
+  },
+  "devDependencies": {
+    "beautify-benchmark": "^0.2.4",
+    "benchmark": "^2.1.3",
+    "js-search": "^1.3.5",
+    "lunr": "^0.7.2",
+    "microtime": "^2.1.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
