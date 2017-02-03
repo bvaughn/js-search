@@ -20,7 +20,7 @@ node ./regression-test.js
 You can also compare two local builds of js-search:
 
 ```bash
-# Assumes you've frun `yarn install` in both directories prior
+# Assumes you've run `yarn install` in both directories prior
 
 cd /path/to/js-search
 
