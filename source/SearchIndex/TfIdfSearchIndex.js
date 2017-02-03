@@ -103,10 +103,10 @@ export class TfIdfSearchIndex implements ISearchIndex {
     }
 
     // Return documents sorted by TF-IDF
-    return documents.sort(function (documentA, documentB) {
-      return this._calculateTfIdf(tokens, documentB, corpus) -
-        this._calculateTfIdf(tokens, documentA, corpus);
-    }.bind(this));
+    return documents.sort((documentA, documentB) =>
+      this._calculateTfIdf(tokens, documentB, corpus) -
+      this._calculateTfIdf(tokens, documentA, corpus)
+    );
   }
 
   /**
