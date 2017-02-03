@@ -25,7 +25,7 @@ export class Search {
   /**
    * Array containing either a property name or a path (list of property names) to a nested value
    */
-  searchableFields : Array<string|Array<string>>;
+  _searchableFields : Array<string|Array<string>>;
 
   _searchIndex : ISearchIndex;
   _tokenizer : ITokenizer;
@@ -46,7 +46,7 @@ export class Search {
     this._tokenizer = new SimpleTokenizer();
 
     this._documents = [];
-    this.searchableFields = [];
+    this._searchableFields = [];
   }
 
   /**
@@ -128,7 +128,7 @@ export class Search {
    */
   addDocuments(documents : Array<Object>) : void {
     this._documents = this._documents.concat(documents);
-    this.indexDocuments_(documents, this.searchableFields);
+    this.indexDocuments_(documents, this._searchableFields);
   }
 
   /**
@@ -137,7 +137,7 @@ export class Search {
    * @param field Searchable field or field path. Pass a string to index a top-level field and an array of strings for nested fields.
    */
   addIndex(field : string|Array<string>) {
-    this.searchableFields.push(field);
+    this._searchableFields.push(field);
     this.indexDocuments_(this._documents, [field]);
   }
 
@@ -154,24 +154,30 @@ export class Search {
 
   /**
    * @param documents
-   * @param searchableFields Array containing property names and paths (lists of property names) to nested values
+   * @param _searchableFields Array containing property names and paths (lists of property names) to nested values
    * @private
    */
-  indexDocuments_(documents : Array<Object>, searchableFields : Array<string|Array<string>>) : void {
+  indexDocuments_(documents : Array<Object>, _searchableFields : Array<string|Array<string>>) : void {
     this._initialized = true;
 
-    for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
-      var document : Object = documents[di];
-      var uid : string = document[this._uidFieldName];
+    var indexStrategy = this._indexStrategy;
+    var sanitizer = this._sanitizer;
+    var searchIndex = this._searchIndex;
+    var tokenizer = this._tokenizer;
+    var uidFieldName = this._uidFieldName;
 
-      for (var sfi = 0, numSearchableFields = searchableFields.length; sfi < numSearchableFields; sfi++) {
-        var fieldValue : any;
-        var searchableField : string|Array<string> = searchableFields[sfi];
+    for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
+      var doc = documents[di];
+      var uid = doc[uidFieldName];
+
+      for (var sfi = 0, numSearchableFields = _searchableFields.length; sfi < numSearchableFields; sfi++) {
+        var fieldValue;
+        var searchableField = _searchableFields[sfi];
 
         if (searchableField instanceof Array) {
-          fieldValue = Search.getNestedFieldValue(document, searchableField);
+          fieldValue = getNestedFieldValue(doc, searchableField);
         } else {
-          fieldValue = document[searchableField];
+          fieldValue = doc[searchableField];
         }
 
         if (
@@ -183,45 +189,45 @@ export class Search {
         }
 
         if (typeof fieldValue === 'string') {
-          var fieldTokens : Array<string> = this._tokenizer.tokenize(this._sanitizer.sanitize(fieldValue));
+          var fieldTokens = tokenizer.tokenize(sanitizer.sanitize(fieldValue));
 
           for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
-            var fieldToken : string = fieldTokens[fti];
-            var expandedTokens : Array<string> = this._indexStrategy.expandToken(fieldToken);
+            var fieldToken = fieldTokens[fti];
+            var expandedTokens = indexStrategy.expandToken(fieldToken);
 
             for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
               var expandedToken = expandedTokens[eti];
 
-              this._searchIndex.indexDocument(expandedToken, uid, document);
+              searchIndex.indexDocument(expandedToken, uid, doc);
             }
           }
         }
       }
     }
   }
+}
 
-  /**
-   * Find and return a nested object value.
-   *
-   * @param object to crawl
-   * @param path Property path
-   * @returns {any}
-   */
-  static getNestedFieldValue(object : Object, path : Array<string>) {
-    path = path || [];
-    object = object || {};
+/**
+ * Find and return a nested object value.
+ *
+ * @param object to crawl
+ * @param path Property path
+ * @returns {any}
+ */
+function getNestedFieldValue(object : Object, path : Array<string>) {
+  path = path || [];
+  object = object || {};
 
-    var value = object;
+  var value = object;
 
-    // walk down the property path
-    for (var i = 0; i < path.length; i++) {
-      value = value[path[i]];
+  // walk down the property path
+  for (var i = 0; i < path.length; i++) {
+    value = value[path[i]];
 
-      if (value == null) {
-        return null;
-      }
+    if (value == null) {
+      return null;
     }
-
-    return value;
   }
+
+  return value;
 }
