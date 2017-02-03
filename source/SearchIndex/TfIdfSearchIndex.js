@@ -38,28 +38,33 @@ export class TfIdfSearchIndex implements ISearchIndex {
   /**
    * @inheritDocs
    */
-  indexDocument(token : string, uid : string, document : Object) : void {
+  indexDocument(token : string, uid : string, doc : Object) : void {
     this._tokenToIdfCache = {}; // New index invalidates previous IDF caches
 
-    if (typeof this._tokenMap[token] !== 'object') {
-      this._tokenMap[token] = {
+    var tokenMap = this._tokenMap;
+    var tokenDatum;
+
+    if (!tokenMap.hasOwnProperty(token)) {
+      tokenMap[token] = tokenDatum = {
         $numDocumentOccurrences: 0,
         $totalNumOccurrences: 1,
         $uidMap: {},
       };
     } else {
-      this._tokenMap[token].$totalNumOccurrences++;
+      tokenDatum = tokenMap[token];
+      tokenDatum.$totalNumOccurrences++;
     }
 
-    if (!this._tokenMap[token].$uidMap[uid]) {
-      this._tokenMap[token].$numDocumentOccurrences++;
+    var uidMap = tokenDatum.$uidMap;
 
-      this._tokenMap[token].$uidMap[uid] = {
-        $document: document,
+    if (!uidMap.hasOwnProperty(uid)) {
+      tokenDatum.$numDocumentOccurrences++;
+      uidMap[uid] = {
+        $document: doc,
         $numTokenOccurrences: 1
       };
     } else {
-      this._tokenMap[token].$uidMap[uid].$numTokenOccurrences++;
+      uidMap[uid].$numTokenOccurrences++;
     }
   }
 
