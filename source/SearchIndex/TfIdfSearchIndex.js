@@ -108,55 +108,48 @@ export class TfIdfSearchIndex implements ISearchIndex {
       documents.push(uidToDocumentMap[uid]);
     }
 
-    // Return documents sorted by TF-IDF
-    return documents.sort((documentA, documentB) =>
-      this._calculateTfIdf(tokens, documentB, corpus) -
-      this._calculateTfIdf(tokens, documentA, corpus)
-    );
-  }
+    var tokenMap = this._tokenMap;
+    var tokenToIdfCache = this._tokenToIdfCache;
+    var uidFieldName = this._uidFieldName;
 
-  /**
-   * Calculate the inverse document frequency of a search token. This calculation diminishes the weight of tokens that
-   * occur very frequently in the set of searchable documents and increases the weight of terms that occur rarely.
-   */
-  _calculateIdf(token : string, documents : Array<Object>) : number {
-    if (!this._tokenToIdfCache[token]) {
-      var numDocumentsWithToken:number = this._tokenMap[token] && this._tokenMap[token].$numDocumentOccurrences || 0;
+    function calculateIdf(token : string, documents : Array<Object>) : number {
+      if (!tokenToIdfCache[token]) {
+        var numDocumentsWithToken:number = tokenMap[token] && tokenMap[token].$numDocumentOccurrences || 0;
 
-      this._tokenToIdfCache[token] = 1 + Math.log(documents.length / (1 + numDocumentsWithToken));
-    }
-
-    return this._tokenToIdfCache[token];
-  }
-
-  /**
-   * Calculate the term frequency–inverse document frequency (TF-IDF) ranking for a set of search tokens and a
-   * document. The TF-IDF is a numeric statistic intended to reflect how important a word (or words) are to a document
-   * in a corpus. The TF-IDF value increases proportionally to the number of times a word appears in the document but
-   * is offset by the frequency of the word in the corpus. This helps to adjust for the fact that some words appear
-   * more frequently in general (e.g. a, and, the).
-   */
-  _calculateTfIdf(tokens : Array<string>, document : Object, documents : Array<Object>) : number {
-    var score:number = 0;
-
-    for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
-      var token:string = tokens[i];
-
-      var inverseDocumentFrequency:number = this._calculateIdf(token, documents);
-
-      if (inverseDocumentFrequency === Infinity) {
-        inverseDocumentFrequency = 0;
+        tokenToIdfCache[token] = 1 + Math.log(documents.length / (1 + numDocumentsWithToken));
       }
 
-      var uid:any = document && document[this._uidFieldName];
-      var termFrequency:number =
-        this._tokenMap[token] &&
-        this._tokenMap[token].$uidMap[uid] &&
-        this._tokenMap[token].$uidMap[uid].$numTokenOccurrences || 0;
-
-      score += termFrequency * inverseDocumentFrequency;
+      return tokenToIdfCache[token];
     }
 
-    return score;
+    function calculateTfIdf(tokens : Array<string>, document : Object, documents : Array<Object>) : number {
+      var score:number = 0;
+
+      for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
+        var token:string = tokens[i];
+
+        var inverseDocumentFrequency:number = calculateIdf(token, documents);
+
+        if (inverseDocumentFrequency === Infinity) {
+          inverseDocumentFrequency = 0;
+        }
+
+        var uid:any = document && document[uidFieldName];
+        var termFrequency:number =
+          tokenMap[token] &&
+          tokenMap[token].$uidMap[uid] &&
+          tokenMap[token].$uidMap[uid].$numTokenOccurrences || 0;
+
+        score += termFrequency * inverseDocumentFrequency;
+      }
+
+      return score;
+    }
+
+    // Return documents sorted by TF-IDF
+    return documents.sort((documentA, documentB) =>
+      calculateTfIdf(tokens, documentB, corpus) -
+      calculateTfIdf(tokens, documentA, corpus)
+    );
   }
 };
