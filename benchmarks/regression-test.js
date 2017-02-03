@@ -17,6 +17,10 @@ fs.readFile('books.json', 'utf8',
   (err, data) => setupBenchmarks(JSON.parse(data).books)
 );
 
+var filter = process.argv.length === 3
+  ? new RegExp(process.argv[2])
+  : null;
+
 var benchmarks = [];
 
 function setupBenchmarks(corpus) {
@@ -67,6 +71,14 @@ function initBenchmark({
   indexStrategy,
   searchIndex
 }) {
+  if (
+    filter &&
+    !indexStrategy.match(filter) &&
+    !searchIndex.match(filter)
+  ) {
+    return;
+  }
+
   console.log(`Initializing benchmark\t${indexStrategy}\t${searchIndex}`);
 
   initBenchmarkForCreateIndex({
