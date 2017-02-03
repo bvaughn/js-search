@@ -13,5 +13,27 @@ cd ./benchmarks
 yarn install
 
 # Run a benchmark of your choice
+# eg Compare your local build of js-search to the latest released build
+node ./regression-test.js
+```
+
+You can also compare two local builds of js-search:
+
+```bash
+# Assumes you've frun `yarn install` in both directories prior
+
+cd /path/to/js-search
+
+# Make some changes and then build js-search
+npm run build
+
+# Move your build into the benchmarks folder as the 'latest'
+cp -r ./dist ./benchmarks/node_modules/js-search/
+
+# Make more changes and then re-build js-search
+npm run build
+
+# Compare your most recent build to the previous one
+cd ./benchmarks
 node ./regression-test.js
 ```
