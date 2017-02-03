@@ -3,7 +3,7 @@
 /**
  * Stop words list copied from Lunr JS.
  */
-export const StopWordsMap = {
+export var StopWordsMap = {
   a: 'a',
   able: 'able',
   about: 'about',
