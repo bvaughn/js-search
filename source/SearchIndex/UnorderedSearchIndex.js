@@ -49,7 +49,7 @@ export class UnorderedSearchIndex implements ISearchIndex {
         for (var i = 0; i < numKeys; i++) {
           var uid = keys[i];
 
-          if (!documentMap[uid]) {
+          if (!documentMap.hasOwnProperty(uid)) {
             delete intersectingDocumentMap[uid];
           }
         }
