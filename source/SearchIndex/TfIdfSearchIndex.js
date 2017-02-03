@@ -84,12 +84,18 @@ export class TfIdfSearchIndex implements ISearchIndex {
       }
 
       if (i === 0) {
-        for (var uid in tokenMetadata.$uidMap) {
+        var keys = Object.keys(tokenMetadata.$uidMap);
+        for (var j = 0, numKeys = keys.length; j < numKeys; j++) {
+          var uid = keys[j];
+
           uidToDocumentMap[uid] = tokenMetadata.$uidMap[uid].$document;
         }
       } else {
-        for (var uid in uidToDocumentMap) {
-          if (!tokenMetadata.$uidMap[uid]) {
+        var keys = Object.keys(uidToDocumentMap);
+        for (var j = 0, numKeys = keys.length; j < numKeys; j++) {
+          var uid = keys[j];
+
+          if (!tokenMetadata.$uidMap.hasOwnProperty(uid)) {
             delete uidToDocumentMap[uid];
           }
         }
