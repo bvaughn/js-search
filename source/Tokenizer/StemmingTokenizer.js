@@ -35,9 +35,8 @@ export class StemmingTokenizer implements ITokenizer {
    * @inheritDocs
    */
   tokenize(text : string) : Array<string> {
-    return this._tokenizer.tokenize(text)
-      .map(
-        (token) => this._stemmingFunction(token)
-      );
+    return this._tokenizer
+      .tokenize(text)
+      .map(this._stemmingFunction);
   }
 };
