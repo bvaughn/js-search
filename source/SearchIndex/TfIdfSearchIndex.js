@@ -127,7 +127,9 @@ export class TfIdfSearchIndex implements ISearchIndex {
 
     return function calculateIdf(token : string, documents : Array<Object>) : number {
       if (!tokenToIdfCache[token]) {
-        var numDocumentsWithToken:number = tokenMap[token] && tokenMap[token].$numDocumentOccurrences || 0;
+        var numDocumentsWithToken:number = tokenMap[token]
+          ? tokenMap[token].$numDocumentOccurrences
+          : 0;
 
         tokenToIdfCache[token] = 1 + Math.log(documents.length / (1 + numDocumentsWithToken));
       }
@@ -154,10 +156,9 @@ export class TfIdfSearchIndex implements ISearchIndex {
         }
 
         var uid:any = document && document[uidFieldName];
-        var termFrequency:number =
-          tokenMap[token] &&
-          tokenMap[token].$uidMap[uid] &&
-          tokenMap[token].$uidMap[uid].$numTokenOccurrences || 0;
+        var termFrequency:number = tokenMap[token] && tokenMap[token].$uidMap[uid]
+          ? tokenMap[token].$uidMap[uid].$numTokenOccurrences
+          : 0;
 
         score += termFrequency * inverseDocumentFrequency;
       }
