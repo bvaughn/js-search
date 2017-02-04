@@ -75,8 +75,8 @@ export class TfIdfSearchIndex implements ISearchIndex {
     var uidToDocumentMap : {[uid : string] : Object} = {};
 
     for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
-      var token:string = tokens[i];
-      var tokenMetadata:ITfIdfTokenMetadata = this._tokenMap[token];
+      var token = tokens[i];
+      var tokenMetadata = this._tokenMap[token];
 
       // Short circuit if no matches were found for any given token.
       if (!tokenMetadata) {
@@ -102,7 +102,7 @@ export class TfIdfSearchIndex implements ISearchIndex {
       }
     }
 
-    var documents : Array<Object> = [];
+    var documents = [];
 
     for (var uid in uidToDocumentMap) {
       documents.push(uidToDocumentMap[uid]);

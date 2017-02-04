@@ -16,7 +16,7 @@ export class UnorderedSearchIndex implements ISearchIndex {
    * @inheritDocs
    */
   indexDocument(token : string, uid : string, doc : Object) : void {
-    if (!this._tokenToUidToDocumentMap[token]) {
+    if (!this._tokenToUidToDocumentMap.hasOwnProperty(token)) {
       this._tokenToUidToDocumentMap[token] = {};
     }
 
@@ -29,25 +29,30 @@ export class UnorderedSearchIndex implements ISearchIndex {
   search(tokens : Array<string>, corpus : Array<Object>) : Array<Object> {
     var intersectingDocumentMap = {};
 
+    var tokenToUidToDocumentMap = this._tokenToUidToDocumentMap;
+
     for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
       var token = tokens[i];
-      var documentMap = this._tokenToUidToDocumentMap[token] || {};
+      var documentMap = tokenToUidToDocumentMap[token];
+
+      // Short circuit if no matches were found for any given token.
+      if (!documentMap) {
+        return [];
+      }
 
       if (i === 0) {
         var keys = Object.keys(documentMap);
-        var numKeys = keys.length;
 
-        for (var i = 0; i < numKeys; i++) {
-          var uid = keys[i];
+        for (var j = 0, numKeys = keys.length; j < numKeys; j++) {
+          var uid = keys[j];
 
           intersectingDocumentMap[uid] = documentMap[uid];
         }
       } else {
         var keys = Object.keys(intersectingDocumentMap);
-        var numKeys = keys.length;
 
-        for (var i = 0; i < numKeys; i++) {
-          var uid = keys[i];
+        for (var j = 0, numKeys = keys.length; j < numKeys; j++) {
+          var uid = keys[j];
 
           if (!documentMap.hasOwnProperty(uid)) {
             delete intersectingDocumentMap[uid];
@@ -57,10 +62,9 @@ export class UnorderedSearchIndex implements ISearchIndex {
     }
 
     var keys = Object.keys(intersectingDocumentMap);
-    var numKeys = keys.length;
     var documents = [];
 
-    for (var i = 0; i < numKeys; i++) {
+    for (var i = 0, numKeys = keys.length; i < numKeys; i++) {
       var uid = keys[i];
 
       documents.push(intersectingDocumentMap[uid]);
