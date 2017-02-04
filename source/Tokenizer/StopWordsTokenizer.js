@@ -27,7 +27,7 @@ export class StopWordsTokenizer implements ITokenizer {
   tokenize(text : string) : Array<string> {
     return this._tokenizer.tokenize(text)
       .filter(
-        (token) => token && StopWordsMap[token] !== token
+        (token) => !StopWordsMap[token]
       );
   }
 };
