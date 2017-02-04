@@ -1,7 +1,8 @@
 const Benchmark = require('benchmark');
 const bb = require('beautify-benchmark');
 const lunr = require('lunr');
-const JsSearch = require('js-search');
+const JsSearchLatest = require('js-search');
+const JsSearchLocal = require('../dist/umd/js-search');
 
 let books;
 function loadBooks() {
@@ -33,8 +34,10 @@ function setupTest() {
     lunrJsIndex.add(books[i]);
   }
 
-  searchLatest = buildIndex(JsSearch.Search, JsSearch.UnorderedSearchIndex);
-  searchLatestTfIdf = buildIndex(JsSearch.Search, JsSearch.TfIdfSearchIndex);
+  searchLatest = buildIndex(JsSearchLatest.Search, JsSearchLatest.UnorderedSearchIndex);
+  searchLatestTfIdf = buildIndex(JsSearchLatest.Search, JsSearchLatest.TfIdfSearchIndex);
+  searchLocal = buildIndex(JsSearchLocal.Search, JsSearchLocal.UnorderedSearchIndex);
+  searchLocalTfIdf = buildIndex(JsSearchLocal.Search, JsSearchLocal.TfIdfSearchIndex);
 
   runTests();
 }
@@ -67,11 +70,17 @@ function runTests() {
     .add('lunr', () => {
       doSearch(lunrJsIndex);
     })
-    .add('js-search (TF-IDF index)', () => {
+    .add('js-search:latest (TF-IDF index)', () => {
       doSearch(searchLatestTfIdf);
     })
-    .add('js-search (unordered index)', () => {
+    .add('js-search:latest (unordered index)', () => {
       doSearch(searchLatest);
+    })
+    .add('js-search:local (TF-IDF index)', () => {
+      doSearch(searchLocalTfIdf);
+    })
+    .add('js-search:local (unordered index)', () => {
+      doSearch(searchLocal);
     })
     .run({ 'async': true });  
 }
