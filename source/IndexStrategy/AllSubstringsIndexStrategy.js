@@ -12,10 +12,14 @@ export class AllSubstringsIndexStrategy implements IIndexStrategy {
    */
   expandToken(token : string) : Array<string> {
     var expandedTokens = [];
+    var string;
 
     for (var i = 0, length = token.length; i < length; ++i) {
+      string = '';
+
       for (var j = i; j < length; ++j) {
-        expandedTokens.push(token.substring(i, j + 1));
+        string += token.charAt(j);
+        expandedTokens.push(string);
       }
     }
 

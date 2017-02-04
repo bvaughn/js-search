@@ -12,9 +12,11 @@ export class PrefixIndexStrategy implements IIndexStrategy {
    */
   expandToken(token : string) : Array<string> {
     var expandedTokens = [];
+    var string = '';
 
     for (var i = 0, length = token.length; i < length; ++i) {
-      expandedTokens.push(token.substring(0, i + 1));
+      string += token.charAt(i);
+      expandedTokens.push(string);
     }
 
     return expandedTokens;

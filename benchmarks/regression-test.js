@@ -24,28 +24,65 @@ var filter = process.argv.length === 3
 var benchmarks = [];
 
 function setupBenchmarks(corpus) {
+  // Index strategies
   initBenchmark({
     corpus,
-    indexStrategy: 'PrefixIndexStrategy',
-    searchIndex: 'UnorderedSearchIndex'
+    indexStrategy: 'PrefixIndexStrategy'
   });
   initBenchmark({
     corpus,
-    indexStrategy: 'AllSubstringsIndexStrategy',
-    searchIndex: 'UnorderedSearchIndex'
+    indexStrategy: 'AllSubstringsIndexStrategy'
   });
   initBenchmark({
     corpus,
-    indexStrategy: 'ExactWordIndexStrategy',
+    indexStrategy: 'PrefixIndexStrategy'
+  });
+
+  // Search indices
+  initBenchmark({
+    corpus,
     searchIndex: 'TfIdfSearchIndex'
   });
   initBenchmark({
     corpus,
-    indexStrategy: 'ExactWordIndexStrategy',
     searchIndex: 'UnorderedSearchIndex'
   });
 
+  // Tokenizers
+  initBenchmark({
+    corpus,
+    tokenizer: 'SimpleTokenizer'
+  });
+  initBenchmark({
+    corpus,
+    tokenizer: 'StemmingTokenizer'
+  });
+  initBenchmark({
+    corpus,
+    tokenizer: 'StopWordsTokenizer'
+  });
+
   runNextTest();
+}
+
+function identity(text) {
+  return text;
+}
+
+function createTokenizer(module, tokenizer) {
+  switch (tokenizer) {
+    case 'SimpleTokenizer':
+      return new module.SimpleTokenizer();
+    case 'StemmingTokenizer':
+      return new module.StemmingTokenizer(
+        identity,
+        new module.SimpleTokenizer()
+      );
+    case 'StopWordsTokenizer':
+      return new module.StopWordsTokenizer(
+        new module.SimpleTokenizer()
+      );
+  }
 }
 
 function createBenchmark() {
@@ -68,36 +105,36 @@ function runNextTest() {
 
 function initBenchmark({
   corpus,
-  indexStrategy,
-  searchIndex
+  indexStrategy = 'PrefixIndexStrategy',
+  searchIndex = 'UnorderedSearchIndex',
+  tokenizer = 'SimpleTokenizer'
 }) {
-  if (
-    filter &&
-    !indexStrategy.match(filter) &&
-    !searchIndex.match(filter)
-  ) {
-    return;
-  }
-
-  console.log(`Initializing benchmark\t${indexStrategy}\t${searchIndex}`);
-
   initBenchmarkForCreateIndex({
     corpus,
     indexStrategy,
-    searchIndex
+    searchIndex,
+    tokenizer
   });
   initBenchmarkForSearch({
     corpus,
     indexStrategy,
-    searchIndex
+    searchIndex,
+    tokenizer
   });
 }
 
 function initBenchmarkForCreateIndex({
   corpus,
   indexStrategy,
-  searchIndex
+  searchIndex,
+  tokenizer
 }) {
+  var label = `index\t${indexStrategy}\t${searchIndex}\t${tokenizer}`;
+
+  if (filter && !label.match(filter)) {
+    return;
+  }
+
   var benchmark = createBenchmark();
 
   versions.forEach(version => {
@@ -105,10 +142,11 @@ function initBenchmarkForCreateIndex({
     var Search = version.module.Search;
     var SearchIndex = version.module[searchIndex];
 
-    benchmark.add(`[${version.label}]\tCreate index\t${searchIndex}\t${indexStrategy}`, () => {
+    benchmark.add(`[${version.label}]\t${label}`, () => {
       var search = new Search('isbn');
       search.indexStrategy = new IndexStrategy();
       search.searchIndex = new SearchIndex('isbn');
+      search.tokenizer = createTokenizer(version.module, tokenizer);
       search.addIndex('title');
       search.addIndex('author');
       search.addDocuments(corpus);
@@ -121,8 +159,15 @@ function initBenchmarkForCreateIndex({
 function initBenchmarkForSearch({
   corpus,
   indexStrategy,
-  searchIndex
+  searchIndex,
+  tokenizer
 }) {
+  var label = `search\t${indexStrategy}\t${searchIndex}\t${tokenizer}`;
+
+  if (filter && !label.match(filter)) {
+    return;
+  }
+
   var searchTerms = ['letter', 'world', 'wife', 'love', 'foobar'];
   var searchTermsLength = searchTerms.length;
 
@@ -136,11 +181,12 @@ function initBenchmarkForSearch({
     var search = new Search('isbn');
     search.indexStrategy = new IndexStrategy();
     search.searchIndex = new SearchIndex('isbn');
+    search.tokenizer = createTokenizer(version.module, tokenizer);
     search.addIndex('title');
     search.addIndex('author');
     search.addDocuments(corpus);
 
-    benchmark.add(`[${version.label}]\tSearch strings\t${searchIndex}\t${indexStrategy}`, () => {
+    benchmark.add(`[${version.label}]\t${label}`, () => {
       for (var i = 0, length = searchTermsLength; i < length; i++) {
         search.search(searchTerms[i]);
       }

@@ -41,7 +41,8 @@ describe('Search', function() {
   };
 
   var assertIdf = function(term, numDocumentsWithToken) {
-    expect(search.searchIndex._calculateIdf(term, search._documents)).toEqual(calculateIdf(numDocumentsWithToken));
+    var _calculateIdf = search.searchIndex._createCalculateIdf();
+    expect(_calculateIdf(term, search._documents)).toEqual(calculateIdf(numDocumentsWithToken));
   };
 
   it('should handle special words like "constructor"', function () {
@@ -79,7 +80,8 @@ describe('Search', function() {
   };
 
   var assertTfIdf = function(terms, document, expectedTfIdf) {
-    expect(search.searchIndex._calculateTfIdf(terms, document, search._documents)).toEqual(expectedTfIdf);
+    var _calculateTfIdf = search.searchIndex._createCalculateTfIdf();
+    expect(_calculateTfIdf(terms, document, search._documents)).toEqual(expectedTfIdf);
   };
 
   describe('TF-IDF', function() {
