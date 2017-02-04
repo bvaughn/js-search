@@ -112,7 +112,20 @@ export class TfIdfSearchIndex implements ISearchIndex {
     var tokenToIdfCache = this._tokenToIdfCache;
     var uidFieldName = this._uidFieldName;
 
-    function calculateIdf(token : string, documents : Array<Object>) : number {
+    var calculateTfIdf = this._createCalculateTfIdf();
+
+    // Return documents sorted by TF-IDF
+    return documents.sort((documentA, documentB) =>
+      calculateTfIdf(tokens, documentB, corpus) -
+      calculateTfIdf(tokens, documentA, corpus)
+    );
+  }
+
+  _createCalculateIdf () : Function {
+    var tokenMap = this._tokenMap;
+    var tokenToIdfCache = this._tokenToIdfCache;
+
+    return function calculateIdf(token : string, documents : Array<Object>) : number {
       if (!tokenToIdfCache[token]) {
         var numDocumentsWithToken:number = tokenMap[token] && tokenMap[token].$numDocumentOccurrences || 0;
 
@@ -121,8 +134,14 @@ export class TfIdfSearchIndex implements ISearchIndex {
 
       return tokenToIdfCache[token];
     }
+  }
 
-    function calculateTfIdf(tokens : Array<string>, document : Object, documents : Array<Object>) : number {
+  _createCalculateTfIdf () : Function {
+    var tokenMap = this._tokenMap;
+    var uidFieldName = this._uidFieldName;
+    var calculateIdf = this._createCalculateIdf();
+
+    return function calculateTfIdf(tokens : Array<string>, document : Object, documents : Array<Object>) : number {
       var score:number = 0;
 
       for (var i = 0, numTokens = tokens.length; i < numTokens; ++i) {
@@ -145,11 +164,5 @@ export class TfIdfSearchIndex implements ISearchIndex {
 
       return score;
     }
-
-    // Return documents sorted by TF-IDF
-    return documents.sort((documentA, documentB) =>
-      calculateTfIdf(tokens, documentB, corpus) -
-      calculateTfIdf(tokens, documentA, corpus)
-    );
   }
 };
