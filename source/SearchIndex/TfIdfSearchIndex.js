@@ -44,7 +44,7 @@ export class TfIdfSearchIndex implements ISearchIndex {
     var tokenMap = this._tokenMap;
     var tokenDatum;
 
-    if (!tokenMap.hasOwnProperty(token)) {
+    if (typeof tokenMap[token] !== 'object') {
       tokenMap[token] = tokenDatum = {
         $numDocumentOccurrences: 0,
         $totalNumOccurrences: 1,
@@ -57,7 +57,7 @@ export class TfIdfSearchIndex implements ISearchIndex {
 
     var uidMap = tokenDatum.$uidMap;
 
-    if (!uidMap.hasOwnProperty(uid)) {
+    if (typeof uidMap[uid] !== 'object') {
       tokenDatum.$numDocumentOccurrences++;
       uidMap[uid] = {
         $document: doc,
@@ -95,7 +95,7 @@ export class TfIdfSearchIndex implements ISearchIndex {
         for (var j = 0, numKeys = keys.length; j < numKeys; j++) {
           var uid = keys[j];
 
-          if (!tokenMetadata.$uidMap.hasOwnProperty(uid)) {
+          if (typeof tokenMetadata.$uidMap[uid] !== 'object') {
             delete uidToDocumentMap[uid];
           }
         }
@@ -127,7 +127,7 @@ export class TfIdfSearchIndex implements ISearchIndex {
 
     return function calculateIdf(token : string, documents : Array<Object>) : number {
       if (!tokenToIdfCache[token]) {
-        var numDocumentsWithToken:number = tokenMap[token]
+        var numDocumentsWithToken:number = typeof tokenMap[token] !== 'undefined'
           ? tokenMap[token].$numDocumentOccurrences
           : 0;
 
@@ -156,9 +156,11 @@ export class TfIdfSearchIndex implements ISearchIndex {
         }
 
         var uid:any = document && document[uidFieldName];
-        var termFrequency:number = tokenMap[token] && tokenMap[token].$uidMap[uid]
-          ? tokenMap[token].$uidMap[uid].$numTokenOccurrences
-          : 0;
+        var termFrequency:number =
+          typeof tokenMap[token] !== 'undefined' &&
+          typeof tokenMap[token].$uidMap[uid] !== 'undefined'
+            ? tokenMap[token].$uidMap[uid].$numTokenOccurrences
+            : 0;
 
         score += termFrequency * inverseDocumentFrequency;
       }

@@ -16,7 +16,7 @@ export class UnorderedSearchIndex implements ISearchIndex {
    * @inheritDocs
    */
   indexDocument(token : string, uid : string, doc : Object) : void {
-    if (!this._tokenToUidToDocumentMap.hasOwnProperty(token)) {
+    if (typeof this._tokenToUidToDocumentMap[token] !== 'object') {
       this._tokenToUidToDocumentMap[token] = {};
     }
 
@@ -54,7 +54,7 @@ export class UnorderedSearchIndex implements ISearchIndex {
         for (var j = 0, numKeys = keys.length; j < numKeys; j++) {
           var uid = keys[j];
 
-          if (!documentMap.hasOwnProperty(uid)) {
+          if (typeof documentMap[uid] !== 'object') {
             delete intersectingDocumentMap[uid];
           }
         }
