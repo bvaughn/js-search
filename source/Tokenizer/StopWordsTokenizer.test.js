@@ -1,5 +1,6 @@
 import { SimpleTokenizer } from './SimpleTokenizer';
 import { StopWordsTokenizer } from './StopWordsTokenizer';
+import { StopWordsMap } from '../StopWordsMap';
 
 describe('StopWordsTokenizer', function() {
   var tokenizer;
@@ -30,5 +31,11 @@ describe('StopWordsTokenizer', function() {
     expect(tokenizer.tokenize('hasOwnProperty')).toEqual(['hasOwnProperty']);
     expect(tokenizer.tokenize('toString')).toEqual(['toString']);
     expect(tokenizer.tokenize('valueOf')).toEqual(['valueOf']);
+  });
+
+  it('should allow stop-words to be overridden', function() {
+    StopWordsMap.the = false;
+    expect(tokenizer.tokenize('a and the')).toEqual(['the']);
+    StopWordsMap.the = true;
   });
 });
