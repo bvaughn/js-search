@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.6
+Performance tuning and removal of eager deopts.
+
+Behind the scenes, this release also includes a rewrite from TypeScript to Flowtype.
+The external API should not be impacted by this rewrite however.
+
 ## 1.3.5
 Fixed (hopefully) previous broken build.
 
