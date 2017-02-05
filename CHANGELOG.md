@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.7
+Fixed `package.json` to include correct files.
+
 ## 1.3.6
 Performance tuning and removal of eager deopts.
 
