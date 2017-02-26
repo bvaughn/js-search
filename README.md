@@ -80,7 +80,7 @@ search.search('mystery') // [angelsAndDemons, theDaVinciCode]
 ### Tokenization
 
 Tokenization is the process of breaking text (e.g. sentences) into smaller, searchable tokens (e.g. words or parts of
-words). Js Search provides a basic tokenizer that should work well for English but you can provider your own like so:
+words). Js Search provides a basic tokenizer that should work well for English but you can provide your own like so:
 
 ```javascript
 search.tokenizer = {
