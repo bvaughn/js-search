@@ -1,7 +1,7 @@
 {
   "name": "js-search",
   "version": "1.3.7",
-  "description": "### What is it?",
+  "description": "JS Search is an efficient, client-side search library for JavaScript and JSON objects",
   "main": "dist/commonjs/index.js",
   "directories": {
     "test": "tests"
