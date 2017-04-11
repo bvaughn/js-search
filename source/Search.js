@@ -1,4 +1,5 @@
 // @flow
+import getNestedFieldValue from './getNestedFieldValue';
 
 import { PrefixIndexStrategy } from './IndexStrategy/index';
 import { LowerCaseSanitizer } from './Sanitizer/index';
@@ -29,14 +30,14 @@ export class Search {
 
   _searchIndex : ISearchIndex;
   _tokenizer : ITokenizer;
-  _uidFieldName : string;
+  _uidFieldName : string | Array<string>;
 
   /**
    * Constructor.
    * @param uidFieldName Field containing values that uniquely identify search documents; this field's values are used
    *                     to ensure that a search result set does not contain duplicate objects.
    */
-  constructor(uidFieldName : string) {
+  constructor(uidFieldName : string | Array<string>) {
     this._uidFieldName = uidFieldName;
 
     // Set default/recommended strategies
@@ -168,7 +169,13 @@ export class Search {
 
     for (var di = 0, numDocuments = documents.length; di < numDocuments; di++) {
       var doc = documents[di];
-      var uid = doc[uidFieldName];
+      var uid;
+
+      if (uidFieldName instanceof Array) {
+        uid = getNestedFieldValue(doc, uidFieldName);
+      } else {
+        uid = doc[uidFieldName];
+      }
 
       for (var sfi = 0, numSearchableFields = _searchableFields.length; sfi < numSearchableFields; sfi++) {
         var fieldValue;
@@ -205,29 +212,4 @@ export class Search {
       }
     }
   }
-}
-
-/**
- * Find and return a nested object value.
- *
- * @param object to crawl
- * @param path Property path
- * @returns {any}
- */
-function getNestedFieldValue(object : Object, path : Array<string>) {
-  path = path || [];
-  object = object || {};
-
-  var value = object;
-
-  // walk down the property path
-  for (var i = 0; i < path.length; i++) {
-    value = value[path[i]];
-
-    if (value == null) {
-      return null;
-    }
-  }
-
-  return value;
 }

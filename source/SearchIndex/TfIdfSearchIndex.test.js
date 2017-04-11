@@ -138,4 +138,29 @@ describe('Search', function() {
       expect(results[2]).toEqual(documentB);
     });
   });
+
+  it('should support nested uid paths', function() {
+    const melissaSmith = {
+      name: 'Melissa Smith',
+      login: {
+        userId: 2562
+      }
+    };
+    const johnSmith = {
+      name: 'John Smith',
+      login: {
+        userId: 54213
+      }
+    };
+
+    var searchIndex = new TfIdfSearchIndex(['login', 'userId']);
+    searchIndex.indexDocument(['Melissa'], 2562, melissaSmith);
+    searchIndex.indexDocument(['Smith'], 2562, melissaSmith);
+    searchIndex.indexDocument(['John'], 54213, johnSmith);
+    searchIndex.indexDocument(['Smith'], 54213, johnSmith);
+
+    expect(searchIndex.search(['Melissa'], [melissaSmith, johnSmith])).toEqual([melissaSmith]);
+    expect(searchIndex.search(['John'], [melissaSmith, johnSmith])).toEqual([johnSmith]);
+    expect(searchIndex.search(['Smith'], [melissaSmith, johnSmith])).toEqual([melissaSmith, johnSmith]);
+  });
 });

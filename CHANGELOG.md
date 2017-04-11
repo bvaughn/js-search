@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0
+Search uid field can now be an array (for nested/deep keys).
+
 ## 1.3.7
 Fixed `package.json` to include correct files.
 

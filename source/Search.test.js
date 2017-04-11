@@ -115,4 +115,35 @@ describe('Search', function() {
 
     validateSearchResults(search.search('nested foo'), []);
   });
+
+  it('should support nested uid paths', function() {
+    const melissaSmith = {
+      name: 'Melissa Smith',
+      email: 'melissa.allen@example.com',
+      login: {
+        userId: 2562,
+        username: 'heavycat937'
+      }
+    };
+    const johnSmith = {
+      name: 'John Smith',
+      email: 'john.allen@example.com',
+      login: {
+        userId: 54213,
+        username: 'jhon123'
+      }
+    };
+
+    var search = new Search(['login', 'userId']);
+    search.addIndex('title');
+    search.addIndex(['login', 'username']);
+    search.addIndex('name');
+    search.addIndex('email');
+    search.addDocuments([melissaSmith, johnSmith]);
+
+    validateSearchResults(search.search('Smith'), [melissaSmith, johnSmith]);
+    validateSearchResults(search.search('allen'), [melissaSmith, johnSmith]);
+    validateSearchResults(search.search('heavycat937'), [melissaSmith]);
+    validateSearchResults(search.search('jhon123'), [johnSmith]);
+  });
 });

@@ -1,4 +1,5 @@
 // @flow
+import getNestedFieldValue from '../getNestedFieldValue';
 
 import type { ISearchIndex } from './SearchIndex';
 
@@ -25,11 +26,11 @@ type ITfIdfUidMetadata = {
  * Search index capable of returning results matching a set of tokens and ranked according to TF-IDF.
  */
 export class TfIdfSearchIndex implements ISearchIndex {
-  _uidFieldName : string;
+  _uidFieldName : string | Array<string>;
   _tokenToIdfCache : {[token : string] : number};
   _tokenMap : ITfIdfTokenMap;
 
-  constructor(uidFieldName : string) {
+  constructor(uidFieldName : string | Array<string>) {
     this._uidFieldName = uidFieldName;
     this._tokenToIdfCache = {};
     this._tokenMap = {};
@@ -108,10 +109,6 @@ export class TfIdfSearchIndex implements ISearchIndex {
       documents.push(uidToDocumentMap[uid]);
     }
 
-    var tokenMap = this._tokenMap;
-    var tokenToIdfCache = this._tokenToIdfCache;
-    var uidFieldName = this._uidFieldName;
-
     var calculateTfIdf = this._createCalculateTfIdf();
 
     // Return documents sorted by TF-IDF
@@ -155,7 +152,13 @@ export class TfIdfSearchIndex implements ISearchIndex {
           inverseDocumentFrequency = 0;
         }
 
-        var uid:any = document && document[uidFieldName];
+        var uid:any;
+        if (uidFieldName instanceof Array) {
+          uid = document && getNestedFieldValue(document, uidFieldName);
+        } else {
+          uid = document && document[uidFieldName];
+        }
+
         var termFrequency:number =
           typeof tokenMap[token] !== 'undefined' &&
           typeof tokenMap[token].$uidMap[uid] !== 'undefined'
