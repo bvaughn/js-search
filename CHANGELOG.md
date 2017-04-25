@@ -1,7 +1,10 @@
 # Changelog
 
-## 1.4.1
+## 1.4.2
 Throw an error if `Search` is instantiated without the required `uidFieldName` constructor parameter.
+
+## 1.4.1
+-
 
 ## 1.4.0
 Search uid field can now be an array (for nested/deep keys).
