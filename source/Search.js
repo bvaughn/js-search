@@ -38,6 +38,10 @@ export class Search {
    *                     to ensure that a search result set does not contain duplicate objects.
    */
   constructor(uidFieldName : string | Array<string>) {
+    if (!uidFieldName) {
+      throw Error('js-search requires a uid field name constructor parameter');
+    }
+
     this._uidFieldName = uidFieldName;
 
     // Set default/recommended strategies

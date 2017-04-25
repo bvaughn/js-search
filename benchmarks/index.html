@@ -1,0 +1,28 @@
+<html>
+<head>
+  <script src="../dist/umd/js-search.js"></script>
+  <script>
+    var books;
+
+    fetch('./books.json', {
+      method: 'get'
+    }).then(async response => {
+      var data = await response.json();
+      books = data.books;
+
+      var search = new JsSearch.Search('isbn');
+      search.addIndex('title');
+      search.addIndex('author');
+
+      for (var i = 0; i < 10000; i++) {
+        search.addDocuments(books);
+
+        search.search('the');
+        search.search('an');
+        search.search('of');
+      }
+    });
+  </script>
+</head>
+<body></body>
+</html>

@@ -44,6 +44,12 @@ describe('Search', function() {
     }
   });
 
+  it('should throw an error if instantiated without the :uidFieldName parameter', function() {
+    expect(function() {
+      new Search();
+    }).toThrow();
+  });
+
   it('should index a new document on all searchable fields', function() {
     search.addIndex('title');
     spyOn(search._indexStrategy, 'expandToken').and.returnValue([]);

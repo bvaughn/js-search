@@ -1,6 +1,6 @@
 {
   "name": "js-search",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "JS Search is an efficient, client-side search library for JavaScript and JSON objects",
   "main": "dist/commonjs/index.js",
   "directories": {
