@@ -10,7 +10,7 @@
 Js Search enables efficient client-side searches of JavaScript and JSON objects.
 It is ES5 compatible and does not require jQuery or any other third-party libraries.
 
-Js Search began as a lightweight implementation of [Lunr JS](http://lunrjs.com/),  oferring runtime performance
+Js Search began as a lightweight implementation of [Lunr JS](http://lunrjs.com/), offering runtime performance
 improvements and a smaller file size. It has since expanded to include a rich feature set- supporting stemming,
 stop-words, and TF-IDF ranking.
 
