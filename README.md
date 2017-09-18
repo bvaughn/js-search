@@ -39,6 +39,8 @@ objects to be searched.
 For example, a simple use of JS Search would be as follows:
 
 ```javascript
+import * as JsSearch from 'js-search';
+
 var theGreatGatsby = {
   isbn: '9781597226769',
   title: 'The Great Gatsby',
