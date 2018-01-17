@@ -3,7 +3,8 @@
 [Tokenization](#tokenization) |
 [Stemming](#stemming) |
 [Stop Words](#stop-words) |
-[TF-IDF ranking](#tf-idf-ranking)
+[Search Index](#configuring-the-search-index) |
+[Index Stragegy](#configuring-the-index-strategy) 
 
 # Js Search: client-side search library
 
@@ -144,7 +145,7 @@ appears in the document but is offset by the frequency of the word in the corpus
 some words (e.g. and, or, the) appear more frequently than others.
 
 By default Js Search supports TF-IDF ranking but this can be disabled for performance reasons if it is not required. You
-can specify an alternate [`ISearchIndex`](https://github.com/wuweiweiwu/js-search/blob/master/source/SearchIndex/SearchIndex.js)
+can specify an alternate [`ISearchIndex`](https://github.com/bvaughn/js-search/blob/master/source/SearchIndex/SearchIndex.js)
 implementation in order to disable TF-IDF, like so:
 
 ```javascript
@@ -160,12 +161,16 @@ search.searchIndex = new JsSearch.UnorderedSearchIndex();
 
 There are three index strategies packaged with `js-search`.
 
-`PrefixIndexStrategy` indexes for prefix searches
+`PrefixIndexStrategy` indexes for prefix searches.
 (e.g. the term "cat" is indexed as "c", "ca", and "cat" allowing prefix search lookups).
 
 `AllSubstringsIndexStrategy` indexes for all substrings. In other word "c", "ca", "cat", "a", "at", and "t" all match "cat".
 
 `ExactWordIndexStrategy` indexes for exact word matches. For example "bob" will match "bob jones".
+
+By default Js Search supports prefix indexing but this can be disabled if it is not required. You
+can specify an alternate [`IIndexStrategy`](https://github.com/bvaughn/js-search/blob/master/source/IndexStrategy/IndexStrategy.js)
+implementation in order to disable prefix indexing, like so:
 
 ```javascript
 // default
