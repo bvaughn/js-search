@@ -4,7 +4,7 @@
 [Stemming](#stemming) |
 [Stop Words](#stop-words) |
 [Search Index](#configuring-the-search-index) |
-[Index Stragegy](#configuring-the-index-strategy) 
+[Index Strategy](#configuring-the-index-strategy) 
 
 # Js Search: client-side search library
 
