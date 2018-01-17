@@ -134,7 +134,9 @@ JsSearch.StopWordsMap.bob = true;  // Treat "bob" as a stop word
 Note that stop words are lower case and so using a case-sensitive sanitizer may prevent some stop words from being
 removed.
 
-### TF-IDF ranking
+### Configuring the search index
+
+There are two search indices packaged with `js-search`.
 
 Term frequency–inverse document frequency (or TF-IDF) is a numeric statistic intended to reflect how important a word
 (or words) are to a document within a corpus. The TF-IDF value increases proportionally to the number of times a word
@@ -142,8 +144,36 @@ appears in the document but is offset by the frequency of the word in the corpus
 some words (e.g. and, or, the) appear more frequently than others.
 
 By default Js Search supports TF-IDF ranking but this can be disabled for performance reasons if it is not required. You
-can specify an alternate `ISearchIndex` implementation in order to disable TF-IDF, like so:
+can specify an alternate [`ISearchIndex`](https://github.com/wuweiweiwu/js-search/blob/master/source/SearchIndex/SearchIndex.js)
+implementation in order to disable TF-IDF, like so:
 
 ```javascript
+// default
+search.searchIndex = new JsSearch.TfIdfSearchIndex();
+
+// Search index capable of returning results matching a set of tokens
+// but without any meaningful rank or order.
 search.searchIndex = new JsSearch.UnorderedSearchIndex();
+```
+
+### Configuring the index strategy
+
+There are three index strategies packaged with `js-search`.
+
+`PrefixIndexStrategy` indexes for prefix searches
+(e.g. the term "cat" is indexed as "c", "ca", and "cat" allowing prefix search lookups).
+
+`AllSubstringsIndexStrategy` indexes for all substrings. In other word "c", "ca", "cat", "a", "at", and "t" all match "cat".
+
+`ExactWordIndexStrategy` indexes for exact word matches. For example "bob" will match "bob jones".
+
+```javascript
+// default
+search.indexStrategy = new JsSearch.PrefixIndexStrategy();
+
+// this index strategy is built for all substrings matches.
+search.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
+
+// this index strategy is built for exact word matches.
+search.indexStrategy = new JsSearch.ExactWordIndexStrategy();
 ```
