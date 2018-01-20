@@ -166,9 +166,9 @@ There are three index strategies packaged with `js-search`.
 
 `AllSubstringsIndexStrategy` indexes for all substrings. In other word "c", "ca", "cat", "a", "at", and "t" all match "cat".
 
-`ExactWordIndexStrategy` indexes for exact word matches. For example "bob" will match "bob jones".
+`ExactWordIndexStrategy` indexes for exact word matches. For example "bob" will match "bob jones" (but "bo" will not).
 
-By default Js Search supports prefix indexing but this can be disabled if it is not required. You
+By default Js Search supports prefix indexing but this is configurable. You
 can specify an alternate [`IIndexStrategy`](https://github.com/bvaughn/js-search/blob/master/source/IndexStrategy/IndexStrategy.js)
 implementation in order to disable prefix indexing, like so:
 
