@@ -9,7 +9,7 @@ module.exports = {
     'js-search': './source/index.js'
   },
   output: {
-    path: 'dist/umd',
+    path: path.join(__dirname,'dist/umd'),
     filename: 'js-search.js',
     libraryTarget: 'umd',
     library: 'JsSearch'
