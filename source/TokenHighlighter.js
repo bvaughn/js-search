@@ -40,7 +40,7 @@ export class TokenHighlighter {
   highlight(text : string, tokens : Array<string>) {
     var tagsLength : number = this._wrapText('').length;
 
-    var tokenDictionary = Object.create(null);
+    var tokenDictionary = ((Object.create(null): any): Object);
 
     // Create a token map for easier lookup below.
     for (var i = 0, numTokens = tokens.length; i < numTokens; i++) {
