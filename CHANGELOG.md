@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.3
+Don't inherit from the default Object for the token dictionary. ([davidlukerice](https://github.com/davidlukerice) - [#73](https://github.com/bvaughn/js-search/pull/73))
+
 ## 1.4.2
 Throw an error if `Search` is instantiated without the required `uidFieldName` constructor parameter.
 
