@@ -49,6 +49,13 @@ describe('Search', function() {
       writers: [
         { name: 'ABC' },
         { name: 'xyz' }
+      ],
+      deeplyNested: [
+        {
+          writers: [
+            { name: 'deeply nested name'}
+          ]
+        }
       ]
     };
   });
@@ -129,6 +136,20 @@ describe('Search', function() {
     search.addDocument(nestedArrayDocumentFoo);
 
     validateSearchResults(search.search('ABC'), [nestedArrayDocumentFoo]);
+  });
+
+  it('should index deeply nested arrays document properties', function() {
+    search.addIndex(['deeplyNested', '[]', 'writers', '[]', 'name']);
+    search.addDocument(nestedArrayDocumentFoo);
+
+    validateSearchResults(search.search('deeply nested'), [nestedArrayDocumentFoo]);
+  });
+
+  it('should not give false results for deeply nested arrays document properties', function() {
+    search.addIndex(['deeplyNested', '[]', 'writers', '[]', 'name']);
+    search.addDocument(nestedArrayDocumentFoo);
+
+    validateSearchResults(search.search('something not findable'), []);
   });
 
   it('should gracefully handle broken property path', function() {
