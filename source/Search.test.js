@@ -1,7 +1,7 @@
 import { Search } from './Search';
 
 describe('Search', function() {
-  var documentBar, documentBaz, documentFoo, nestedDocumentFoo, search;
+  var documentBar, documentBaz, documentFoo, nestedDocumentFoo, nestedArrayDocumentFoo, search;
 
   var validateSearchResults = function(results, expectedDocuments) {
     expect(results.length).toBe(expectedDocuments.length);
@@ -42,6 +42,15 @@ describe('Search', function() {
         title: 'nested foo'
       }
     }
+    nestedArrayDocumentFoo = {
+      uid: 'foo',
+      title: 'foo',
+      description: 'Is kung foo the same as kung fu?',
+      writers: [
+        { name: 'ABC' },
+        { name: 'xyz' }
+      ]
+    };
   });
 
   it('should throw an error if instantiated without the :uidFieldName parameter', function() {
@@ -113,6 +122,13 @@ describe('Search', function() {
     search.addDocument(nestedDocumentFoo);
 
     validateSearchResults(search.search('nested foo'), [nestedDocumentFoo]);
+  });
+
+  it('should index nested arrays document properties', function() {
+    search.addIndex(['writers', '[]', 'name']);
+    search.addDocument(nestedArrayDocumentFoo);
+
+    validateSearchResults(search.search('ABC'), [nestedArrayDocumentFoo]);
   });
 
   it('should gracefully handle broken property path', function() {
