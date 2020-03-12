@@ -2,36 +2,34 @@
   "name": "js-search",
   "version": "1.4.3",
   "description": "JS Search is an efficient, client-side search library for JavaScript and JSON objects",
-  "main": "dist/commonjs/index.js",
-  "directories": {
-    "test": "tests"
+  "main": "./dist/umd/js-search.js",
+  "module": "./dist/esm/js-search.js",
+  "exports": {
+    ".": {
+      "require": "./dist/umd/js-search.js",
+      "import": "./dist/esm/js-search.js"
+    }
   },
   "files": [
     "dist"
   ],
   "devDependencies": {
-    "babel-cli": "^6.22.2",
-    "babel-loader": "^6.2.10",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-latest": "^6.22.0",
-    "cross-env": "^3.1.4",
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-flow": "^7.8.3",
+    "babel-jest": "^25.1.0",
     "flow-bin": "^0.50.0",
-    "jest": "^20.0.4",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
     "rimraf": "^2.5.4",
-    "uglify": "^0.1.5",
-    "uglify-js": "^2.7.5",
-    "webpack": "^2.2.1"
+    "rollup": "^2.0.5",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-terser": "^5.3.0"
   },
   "scripts": {
-    "build": "npm run build:commonjs && npm run build:umd",
-    "build:commonjs": "cross-env NODE_ENV=production babel source --out-dir dist/commonjs --source-maps --ignore test.js",
-    "build:umd": "cross-env NODE_ENV=production webpack --config webpack.config.js --bail",
-    "clean": "rimraf dist",
     "flow": "flow source",
     "prebuild": "flow",
-    "prebuild:commonjs": "rimraf dist/commonjs",
-    "prebuild:umd": "rimraf dist/umd",
-    "postbuild:umd": "uglifyjs dist/umd/js-search.js -o dist/umd/js-search.min.js --source-map dist/umd/js-search.min.js.map -p 5 -c -m",
+    "build": "rimraf dist && rollup -c",
     "pretest": "flow",
     "test": "jest",
     "tdd": "jest --watch"
