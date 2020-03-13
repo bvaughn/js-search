@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.0
+
+Added es modules support for bundlers via "module" field and for node via "exports" field.
+Commonjs output is no longer provided. Entry point is UMD now.
+UMD/ESM are bundled with rollup which reduced minified bundle size twice from 17432 to 7759 bytes!
+Flow types are distributed with sources.
+
 ## 1.4.3
 Don't inherit from the default Object for the token dictionary. ([davidlukerice](https://github.com/davidlukerice) - [#73](https://github.com/bvaughn/js-search/pull/73))
 
