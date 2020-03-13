@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * Find and return a nested object value.
  *
@@ -5,7 +7,7 @@
  * @param path Property path
  * @returns {any}
  */
-export default function getNestedFieldValue(object : Object, path : Array<string>) {
+export default function getNestedFieldValue(object : Object, path : Array<string>): any {
   path = path || [];
   object = object || {};
 

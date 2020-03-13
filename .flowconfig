@@ -1,5 +1,13 @@
 [ignore]
-<PROJECT_ROOT>/benchmarks/.*
+
+[include]
+
+[libs]
+
+[lints]
+untyped-type-import=error
+untyped-import=error
 
 [options]
-unsafe.enable_getters_and_setters=true
+
+[strict]
