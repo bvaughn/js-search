@@ -6,7 +6,7 @@
   "dependencies": {
     "js-search": "^1.3.5",
     "beautify-benchmark": "^0.2.4",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.19",
     "benchmark": "^2.1.3",
     "lunr": "^0.7.2"
   },
