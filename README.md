@@ -4,7 +4,7 @@
 [Stemming](#stemming) |
 [Stop Words](#stop-words) |
 [Search Index](#configuring-the-search-index) |
-[Index Strategy](#configuring-the-index-strategy) 
+[Index Strategy](#configuring-the-index-strategy)
 
 # Js Search: client-side search library
 
@@ -23,6 +23,9 @@ for tweaking the Lunr side for a better comparison!)
 
 If you're looking for a simpler, web-worker optimized JS search utility check out [js-worker-search](https://github.com/bvaughn/js-worker-search).
 
+---
+### If you like this project, 🎉 [become a sponsor](https://github.com/sponsors/bvaughn/) or ☕ [buy me a coffee](http://givebrian.coffee/)
+---
 ### Installation
 
 You can install using either [Bower](http://bower.io/) or [NPM](https://www.npmjs.com/) like so:

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1
+README update. (No code changes.)
+
 ## 2.0.0
 
 Added es modules support for bundlers via "module" field and for node via "exports" field.
