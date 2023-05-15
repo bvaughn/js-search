@@ -1,5 +1,6 @@
 // @flow
 import getNestedFieldValue from './getNestedFieldValue';
+import getNestedFieldValues from './getNestedFieldValues';
 
 import { PrefixIndexStrategy } from './IndexStrategy/index';
 import { LowerCaseSanitizer } from './Sanitizer/index';
@@ -157,6 +158,44 @@ export class Search {
     return this._searchIndex.search(tokens, this._documents);
   }
 
+    /**
+   * @param doc
+   * @param fieldValue Value to index
+   * @private
+   */
+  indexDocumentsValue_(doc : Object, uid : string, fieldValue : string) : void {
+    this._initialized = true;
+
+    var indexStrategy = this._indexStrategy;
+    var sanitizer = this._sanitizer;
+    var searchIndex = this._searchIndex;
+    var tokenizer = this._tokenizer;
+    var uidFieldName = this._uidFieldName;
+
+    if (
+      fieldValue != null &&
+      typeof fieldValue !== 'string' &&
+      fieldValue.toString
+    ) {
+      fieldValue = fieldValue.toString();
+    }
+
+    if (typeof fieldValue === 'string') {
+      var fieldTokens = tokenizer.tokenize(sanitizer.sanitize(fieldValue));
+
+      for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
+        var fieldToken = fieldTokens[fti];
+        var expandedTokens = indexStrategy.expandToken(fieldToken);
+
+        for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
+          var expandedToken = expandedTokens[eti];
+
+          searchIndex.indexDocument(expandedToken, uid, doc);
+        }
+      }
+    }
+  }
+
   /**
    * @param documents
    * @param _searchableFields Array containing property names and paths (lists of property names) to nested values
@@ -182,36 +221,17 @@ export class Search {
       }
 
       for (var sfi = 0, numSearchableFields = _searchableFields.length; sfi < numSearchableFields; sfi++) {
-        var fieldValue;
+        var fieldValue, fieldValues;
         var searchableField = _searchableFields[sfi];
 
         if (searchableField instanceof Array) {
-          fieldValue = getNestedFieldValue(doc, searchableField);
+          fieldValues = getNestedFieldValues(doc, searchableField);
+          for (var i = 0; i < fieldValues.length; i++) {
+            this.indexDocumentsValue_(doc, uid, fieldValues[i]);
+          }
         } else {
           fieldValue = doc[searchableField];
-        }
-
-        if (
-          fieldValue != null &&
-          typeof fieldValue !== 'string' &&
-          fieldValue.toString
-        ) {
-          fieldValue = fieldValue.toString();
-        }
-
-        if (typeof fieldValue === 'string') {
-          var fieldTokens = tokenizer.tokenize(sanitizer.sanitize(fieldValue));
-
-          for (var fti = 0, numFieldValues = fieldTokens.length; fti < numFieldValues; fti++) {
-            var fieldToken = fieldTokens[fti];
-            var expandedTokens = indexStrategy.expandToken(fieldToken);
-
-            for (var eti = 0, nummExpandedTokens = expandedTokens.length; eti < nummExpandedTokens; eti++) {
-              var expandedToken = expandedTokens[eti];
-
-              searchIndex.indexDocument(expandedToken, uid, doc);
-            }
-          }
+          this.indexDocumentsValue_(doc, uid, fieldValue);
         }
       }
     }
